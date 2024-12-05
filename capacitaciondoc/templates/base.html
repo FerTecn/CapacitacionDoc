@@ -61,15 +61,14 @@
                     <div class="bg-white py-2 collapse-inner rounded">
                         <a class="collapse-item" href="{% url 'instructorlista' %}">Instructores</a>
                         <a class="collapse-item" href="{% url 'docentelista' %}">Docentes</a>
-                        <a class="collapse-item" href="cards.html">Departamentos</a>
-                        <a class="collapse-item" href="cards.html">Dirigidos a</a>
-                        <a class="collapse-item" href="cards.html">Género</a>
+                        <a class="collapse-item" href="{% url 'departamentolista' %}">Departamentos</a>
+                        <a class="collapse-item" href="{% url 'dirigidolista' %}">Dirigidos a</a>
+                        <a class="collapse-item" href="{% url 'génerolista' %}">Género</a>
                         <a class="collapse-item" href="{% url 'gradolista' %}">Grado académico</a>
                         <a class="collapse-item" href="{% url 'sedelista' %}">Sedes</a>
                         <a class="collapse-item" href="{% url 'lugarlista' %}">Lugar</a>
-                        <a class="collapse-item" href="cards.html">Perfil de curso</a>
-                        <a class="collapse-item" href="cards.html">Periodo</a>
-                        <a class="collapse-item" href="cards.html">Opciones de validación</a>
+                        <a class="collapse-item" href="{% url 'perfilcursolista' %}">Perfil de curso</a>
+                        <a class="collapse-item" href="{% url 'periodolista' %}">Periodo</a>
                     </div>
                 </div>
             </li>
