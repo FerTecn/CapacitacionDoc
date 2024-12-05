@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Ver Sede{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1> Datos</h1>
+    <p><strong>Clave:</strong> {{ sede.clave }}</p>
+    <p><strong>Sede:</strong> {{ sede.sede }}</p>
+
+    <div class="text-center">
+        <a href="{% url 'sedelista' %}" class="btn btn-primary">Regresar</a> 
+    </div>
+</div>
+{% endblock %}

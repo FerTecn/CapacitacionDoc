@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Crear evento{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Datos del Evento</h1>
+    <form method="post">
+        {% csrf_token %}
+        <p><strong>Clave:</strong> {{ evento.curso.clave }}</p>
+        <p><strong>Nombre:</strong> {{ evento.curso.nombre }}</p>
+        <p><strong>Objetivo:</strong> {{ evento.curso.objetivo }}</p>
+        <p><strong>Periodo:</strong> {{ evento.curso.periodo }}</p>
+        <p><strong>Sede:</strong> {{ evento.curso.sede }}</p>
+        <p><strong>Horas:</strong> {{ evento.curso.horas }}</p>
+        <p><strong>Instructor:</strong> {{ evento.curso.instructor }}</p>
+        <p><strong>Dirigido a:</strong> {{ evento.curso.dirigido }}</p>
+        <p><strong>Perfil de Curso:</strong> {{ evento.curso.perfilCurso }}</p>
+
+        <p><strong>Lugar:</strong></p>
+        <div class="d-flex align-items-center">
+            <select name="lugar" class="form-control" required style="max-width: 70%;">
+                <option value="">Seleccione un lugar</option>
+                {% for lugar in lugares %}
+                    <option value="{{ lugar.id }}" 
+                            {% if lugar_seleccionado and lugar.id == lugar_seleccionado.id %}selected{% endif %}>
+                        {{ lugar.nombreEdificio }} - {{ lugar.ubicacion }}
+                    </option>
+                {% endfor %}
+            </select>
+            <button type="button" class="btn btn-success ml-2" onclick="window.location.href='{% url 'añadirlugar' %}'">Añadir nuevo lugar</button>
+        </div>
+        
+
+        <br>
+        <button type="submit" class="btn btn-primary">Guardar</button>
+        <a href="{% url 'eventolista' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

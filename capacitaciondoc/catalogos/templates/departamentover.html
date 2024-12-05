@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Ver Departamento{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Datos</h1>
+    <p><strong>Clave:</strong> {{ departamento.clave }}</p>
+    <p><strong>Departamento:</strong> {{ departamento.departamento }}</p>
+    
+    <div class="text-center">
+        <a href="{% url 'departamentolista' %}" class="btn btn-primary">Regresar</a> 
+    </div> 
+</div>
+{% endblock %}

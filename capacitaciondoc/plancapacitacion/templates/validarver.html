@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Ver curso{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Datos</h1>
+    <p><strong>Clave:</strong> {{ curso.clave }}</p>
+    <p><strong>Curso:</strong> {{ curso.nombre}}</p>
+    <p><strong>Objetivo:</strong> {{ curso.objetivo }}</p>
+    <p><strong>Periodo:</strong> {{ curso.periodo }}</p>
+    <p><strong>Sede:</strong> {{ curso.sede }}</p>
+    <p><strong>Horas:</strong> {{ curso.horas }}</p>
+    <p><strong>Instructor:</strong> {{ curso.instructor }}</p>
+    <p><strong>Dirigido a:</strong> {{ curso.dirigido }}</p>
+    <p><strong>Perfil de Curso:</strong> {{ curso.perfilCurso }}</p>
+    <p><strong>Estatus:</strong> 
+        {% if curso.aceptado %}
+            Aceptado
+        {% else %}
+            Rechazado
+        {% endif %}
+    </p>
+
+    <a href="{% url 'validarcursolista' %}" class="btn btn-primary">Regresar</a> 
+</div>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Ver dirigido{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Datos</h1>
+    <p><strong>Clave:</strong> {{ dirigido.clave }}</p>
+    <p><strong>Dirigido:</strong> {{ dirigido.dirigido }}</p>
+    
+    <div class="text-center">
+        <a href="{% url 'dirigidolista' %}" class="btn btn-primary">Regresar</a> 
+    </div> 
+</div>
+{% endblock %}

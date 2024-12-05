@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Ver Instructor{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Datos</h1>
+    <p><strong>Clave:</strong> {{ instructor.clave }}</p>
+    <p><strong>Nombre:</strong> {{ instructor.nombre }}</p>
+    <p><strong>Apellido paterno:</strong> {{ instructor.apPaterno }}</p>
+    <p><strong>Apellido materno:</strong> {{ instructor.apMaterno }}</p>
+    <p><strong>Fecha de nacimiento:</strong>{{ instructor.fechaNac}}</p>
+    <p><strong>CURP:</strong>{{ instructor.CURP}}</p>
+    <p><strong>RFC:</strong>{{ instructor.RFC}}</p>
+    <p><strong>Teléfono:</strong>{{ instructor.telefono}}</p>
+
+    <!--Formación academica-->
+    <p><strong>Institución:</strong>{{ instructor.institucion}}</p>
+    <p><strong>Grado académico:</strong>{{ instructor.grado}}</p>
+    <p><strong>Cédula profesional:</strong>{{ instructor.cedulaProf}}</p>
+
+    <!--Experiencia laboral-->
+    <p><strong>Puesto laboral:</strong>{{ instructor.puesto}}</p>
+    <p><strong>Empresa y/o institución:</strong>{{ instructor.empresa}}</p>
+
+    <!--Experiencia docente-->
+    <p><strong>Materia:</strong>{{ instructor.materia}}</p>
+    <p><strong>Periodo:</strong>{{ instructor.periodo}}</p>
+
+    <!--Participacion como instructor-->
+    <p><strong>Nombre del curso:</strong>{{ instructor.curso}}</p>
+    <p><strong>Empresa y/o institución:</strong>{{ instructor.nombreEmpresa}}</p>
+    <p><strong>Duración de horas del curso:</strong>{{ instructor.duracionHoras}}</p>
+    <p><strong>Fecha de participación:</strong>{{ instructor.fechaParticipacion}}</p>
+
+
+    <div class="text-center">
+        <a href="{% url 'instructorlista' %}" class="btn btn-primary">Regresar</a>
+    </div>
+</div>
+{% endblock %}

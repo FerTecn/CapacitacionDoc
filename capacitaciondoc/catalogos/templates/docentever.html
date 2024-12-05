@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Ver Docente{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Datos</h1>
+    <p><strong>Clave:</strong> {{ docente.clave }}</p>
+    <p><strong>Nombre:</strong> {{ docente.nombre }}</p>
+    <p><strong>Apellido paterno:</strong> {{ docente.apPaterno }}</p>
+    <p><strong>Apellido materno:</strong> {{ docente.apMaterno }}</p>
+    <p><strong>Genéro:</strong>{{ docente.genero}}</p>
+    <p><strong>CURP:</strong>{{ docente.CURP}}</p>
+    <p><strong>RFC:</strong>{{ docente.RFC}}</p>
+    <p><strong>Teléfono:</strong>{{ docente.telefono}}</p>
+    <p><strong>Correo electrónico:</strong>{{ docente.email}}</p>
+    <p><strong>Departamento al que corresponde:</strong>{{ docente.deportamento}}</p>
+
+
+    <div class="text-center">
+        <a href="{% url 'docentelista' %}" class="btn btn-primary">Regresar</a> 
+    </div> 
+</div>
+{% endblock %}

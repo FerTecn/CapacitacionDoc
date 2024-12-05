@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Ver Perfil de Curso{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Datos</h1>
+    <p><strong>Clave:</strong> {{ perfilCurso.clave }}</p>
+    <p><strong>Genero:</strong> {{ perfilCurso.perfilCurso }}</p>
+    
+    <div class="text-center">
+        <a href="{% url 'perfilcursolista' %}" class="btn btn-primary">Regresar</a> 
+    </div> 
+</div>
+{% endblock %}

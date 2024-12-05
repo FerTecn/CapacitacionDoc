@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Actualizar Perfil de Curso{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="h3 mb-2 text-gray-800">Editar perfil cuso</h1>
+    <div class="card">
+        <div class="card-body">
+            Actualiza los datos necesarios:
+        </div>
+    </div><br>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-success">Guardar cambios</button>
+        <a href="{% url 'perfilcursolista' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

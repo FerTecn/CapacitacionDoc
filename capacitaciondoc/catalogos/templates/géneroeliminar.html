@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Género a borrar{% endblock %}
+
+{% block content %}
+<div class="card text-center">
+    <div class="card-header">
+      Mensaje de eliminación
+    </div>
+    <div class="card-body">
+      <h1 class="card-title">Eliminar género</h1>
+      <p class="card-text">¿Estás seguro de que deseas eliminar el género correspondiente <strong>{{ genero.clave }}</strong>?</p>
+      
+      <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Eliminar</button>
+        <a href="{% url 'génerolista' %}" class="btn btn-secondary">Cancelar</a>
+     </form>
+    </div>
+  </div>
+{% endblock %}

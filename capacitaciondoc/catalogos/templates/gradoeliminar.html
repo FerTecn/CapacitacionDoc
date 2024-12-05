@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Grado académico a borrar{% endblock %}
+
+{% block content %}
+<div class="card text-center">
+    <div class="card-header">
+      Mensaje de eliminación
+    </div>
+    <div class="card-body">
+      <h1 class="card-title">Eliminar grado académico</h1>
+      <p class="mb-4">¿Estás seguro de que deseas eliminar el grado académico <strong>{{ grado.grado }}</strong>?</p>
+      
+      <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Eliminar</button>
+        <a href="{% url 'gradolista' %}" class="btn btn-secondary">Cancelar</a>
+     </form>
+    </div>
+  </div>
+{% endblock %}

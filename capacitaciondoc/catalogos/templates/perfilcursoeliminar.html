@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Perfil de curso a borrar{% endblock %}
+
+{% block content %}
+<div class="card text-center">
+    <div class="card-header">
+      Mensaje de eliminación
+    </div>
+    <div class="card-body">
+      <h1 class="card-title">Eliminar perfil de curso</h1>
+      <p class="mb-4">¿Estás seguro de que deseas eliminar el perfil de curso correspondiente <strong>{{ perfilCurso.perfilCurso }}</strong>?</p>
+      
+      <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Eliminar</button>
+        <a href="{% url 'perfilcursolista' %}" class="btn btn-secondary">Cancelar</a>
+     </form>
+    </div>
+  </div>
+{% endblock %}

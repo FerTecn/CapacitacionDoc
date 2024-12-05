@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Añadir Perfil Curso {% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="h3 mb-2 text-gray-800">Añadir Perfil de Curso</h1>
+    <div class="card">
+        <div class="card-body">
+            Rellena el siguiente formulario para añadir un nuevo perfil de curso.
+        </div>
+    </div><br>
+    
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Añadir</button>
+        <a href="{% url 'perfilcursolista' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

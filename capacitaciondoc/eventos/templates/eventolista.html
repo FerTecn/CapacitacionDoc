@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Registro de Eventos{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Page Heading -->
+    <h1 class="h3 mb-2 text-gray-800">Registro de los Eventos </h1>
+    <div class="card">
+        <div class="card-body">
+            Se muestran los cursos que fueron aceptados 
+        </div>
+    </div><br>
+
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+            <h4 class="m-0 font-weight-bold text-primary">Lista de Eventos </h4>
+        </div>
+        <div class="card-body">
+            {% if eventos %}
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Periodo</th>
+                            <th>Horas</th>
+                            <th>Instructor</th>
+                            <th>Opciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for evento in eventos%}
+                        <tr>
+                            <td>{{ evento.curso.nombre }}</td>
+                            <td>{{ evento.curso.periodo }}</td>
+                            <td>{{ evento.curso.horas }}</td>
+                            <td>{{ evento.curso.instructor }}</td>
+                            <td>
+                                <!-- Opciones -->
+                                <a href="{% url 'crearevento' evento.id %}" class="btn btn-primary btn-sm">Crear evento</a>
+                                <a href="{% url 'eventover' evento.id %}" class="btn btn-success btn-sm">Ver</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p>No hay cursos registrados.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<!-- Page level plugins -->
+<script src="{% static 'vendor/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
+
+<!-- Page level custom scripts -->
+<script src="{% static 'js/demo/datatables-demo.js' %}"></script>
+{% endblock %}

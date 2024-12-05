@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Añadir Curso Propuesto{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="h3 mb-2 text-gray-800">Añadir Curso</h1>
+    <div class="card">
+        <div class="card-body">
+            Rellena el siguiente formulario para añadir un nuevo curso.
+        </div>
+    </div><br>
+    
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Añadir Curso</button>
+        <a href="{% url 'registrolista' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

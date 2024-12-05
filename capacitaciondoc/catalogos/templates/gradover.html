@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Ver grado académico{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Datos</h1>
+    <p><strong>Clave:</strong> {{ grado.clave }}</p>
+    <p><strong>Grado académico:</strong> {{ grado.grado }}</p>
+
+    <div class="text-center">
+        <a href="{% url 'gradolista' %}" class="btn btn-primary">Regresar</a> 
+    </div>
+</div>
+{% endblock %}

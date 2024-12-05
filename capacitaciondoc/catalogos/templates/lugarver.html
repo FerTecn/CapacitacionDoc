@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Ver Lugar{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Datos</h1>
+    <p><strong>Clave:</strong> {{ lugar.clave }}</p>
+    <p><strong>Edificio:</strong> {{ lugar.nombreEdificio }}</p>
+    <p><strong>Ubicación:</strong> {{ lugar.ubicacion }}</p>
+
+    <div class="text-center">
+        <a href="{% url 'lugarlista' %}" class="btn btn-primary">Regresar</a> 
+    </div>
+</div>
+{% endblock %}
