@@ -1,0 +1,17 @@
+# Entorno virtual
+enCap/
+
+# Archivos de compilación de Python
+__pycache__/
+*.pyc
+
+# Archivos de configuración local
+*.db
+*.sqlite3
+
+# Archivos de Django
+*.log
+
+# Archivos del sistema operativo
+.DS_Store
+Thumbs.db
