@@ -16,6 +16,9 @@ def crearevento(request, evento_id):
     evento = get_object_or_404(Evento, id=evento_id)  # Obtener el evento
     lugares = Lugar.objects.all()  # Obtener todos los lugares disponibles
 
+    # Guardar el ID del evento en la sesión para redirección
+    request.session['evento_id'] = evento_id
+    
     # Verificar si hay un lugar recién creado
     nuevo_lugar_id = request.session.pop('nuevo_lugar_id', None)
     lugar_seleccionado = None

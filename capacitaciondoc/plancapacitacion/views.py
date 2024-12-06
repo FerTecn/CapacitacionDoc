@@ -1,4 +1,4 @@
-from django.shortcuts import render, render, get_object_or_404
+from django.shortcuts import render, render, get_object_or_404, redirect
 from .models import registroCurso, validarCurso
 from .forms import EditarCursoForm, AñadirCursoForm
 from django.http import HttpResponseRedirect
