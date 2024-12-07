@@ -17,8 +17,10 @@
             <label for="ubicacion">Ubicación:</label>
             <input type="text" name="ubicacion" id="ubicacion" class="form-control" maxlength="40" required>
         </div>
+        <div class='text-center'>
         <button type="submit" class="btn btn-primary">Guardar</button>
         <a href="{% url 'crearevento' request.session.evento_id %}" class="btn btn-secondary">Cancelar</a>
+        </div>
 
     </form>
 </div>

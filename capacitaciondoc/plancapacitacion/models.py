@@ -19,7 +19,6 @@ class registroCurso(models.Model):
     dirigido=models.ForeignKey(Dirigido, on_delete=models.CASCADE)
     perfilCurso=models.ForeignKey(PerfilCurso, on_delete=models.CASCADE)
     aceptado=models.BooleanField (default=False)
-    #estatus=models.ForeignKey(EstatusCurso, on_delete=models.CASCADE, null=True ,default=1)
     
     def __str__(self):
         return f"{self.nombre} {self.periodo} {self.horas} {self.instructor} {self.aceptado}"

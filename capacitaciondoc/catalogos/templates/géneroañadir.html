@@ -15,8 +15,10 @@
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
+        <div class='text-center'>
         <button type="submit" class="btn btn-primary">Añadir</button>
         <a href="{% url 'génerolista' %}" class="btn btn-secondary">Cancelar</a>
+        </div>
     </form>
 </div>
 {% endblock %}
