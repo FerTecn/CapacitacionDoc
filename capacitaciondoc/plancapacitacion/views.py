@@ -66,3 +66,15 @@ def aceptar_curso(request, curso_id):
     
     # Redirigir de vuelta a la lista de cursos
     return HttpResponseRedirect(reverse('validarcursolista'))
+
+def invalidar_curso(request, curso_id):
+    curso = get_object_or_404(registroCurso, id=curso_id)
+    
+    # Cambiar el estado del curso a rechazado
+    curso.aceptado = False
+    curso.save()
+    
+    # Eliminar el evento
+    Evento.objects.filter(curso=curso).delete()
+
+    return HttpResponseRedirect(reverse('validarcursolista'))

@@ -45,6 +45,7 @@
                                 {% else %}
                                     <a href="{% url 'aceptar_curso' validar.id %}" class="btn btn-primary btn-sm">Aceptar</a>
                                 {% endif %}
+                                <a href="{% url 'invalidar_curso' validar.curso.id %}" class="btn btn-warning btn-sm">Invalidar</a>
                             </td>
                         </tr>
                         {% endfor %}

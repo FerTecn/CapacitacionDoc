@@ -13,5 +13,6 @@ urlpatterns = [
     path('validarcursolista/', views.validarcursolista, name='validarcursolista'),
     path('validarver/<int:validar_id>/', views.validarver, name='validarver'),
     path('curso/aceptar/<int:curso_id>/', views.aceptar_curso, name='aceptar_curso'),
+    path('curso/invalidar/<int:curso_id>/', views.invalidar_curso, name='invalidar_curso'),
 
 ]
