@@ -114,13 +114,20 @@ class AñadirDocenteForm(forms.ModelForm):
         fields = '__all__'
         labels={'apPaterno': 'Apellido paterno',
                 'apMaterno': 'Apellido materno',
+                'fechaNac': 'Fecha de nacimiento',
                 'genero': 'Género',
                 'departamento': 'Departamento',}
         
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        for field in iter(self.fields):
-            self.fields[field].widget.attrs.update({'class': 'form-control'})  
+        placeholders = {
+            'fechaNac': 'dd/mm/aa',}
+        
+        for field in self.fields:
+            self.fields[field].widget.attrs.update({
+                'class': 'form-control',
+                'placeholder': placeholders.get(field, ''), 
+         }) 
 
 class ActualizarDocenteForm(forms.ModelForm):
     class Meta:
@@ -128,13 +135,15 @@ class ActualizarDocenteForm(forms.ModelForm):
         fields = '__all__'
         labels={'apPaterno': 'Apellido paterno',
                 'apMaterno': 'Apellido materno',
+                'fechaNac':'Fecha de nacimiento',
                 'genero': 'Género',
                 'departamento': 'Departamento',}
         
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for field in iter(self.fields):
-            self.fields[field].widget.attrs.update({'class': 'form-control'})  
+            self.fields[field].widget.attrs.update({'class': 'form-control'})
+            
 
 
 #DEPARTAMENTOS
@@ -228,8 +237,8 @@ class AñadirPeriodoForm(forms.ModelForm):
     class Meta:
         model= Periodo
         fields = '__all__'
-        labels={'inicioPeriodo': 'Inicio de perido', 
-                'finPeriodo': 'Fin de perido',}
+        labels={'inicioPeriodo': 'Inicio de periodo', 
+                'finPeriodo': 'Fin de periodo',}
         
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -247,8 +256,8 @@ class ActualizarPeriodoForm(forms.ModelForm):
     class Meta:
         model= Periodo
         fields = '__all__'
-        labels={'inicioPeriodo': 'Inicio de perido', 
-                'finPeriodo': 'Fin de perido',}
+        labels={'inicioPeriodo': 'Inicio de periodo', 
+                'finPeriodo': 'Fin de periodo',}
         
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

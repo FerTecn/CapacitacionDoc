@@ -73,6 +73,7 @@ class Docente(models.Model):
     nombre=models.CharField(max_length=40)
     apPaterno=models.CharField(max_length=40)
     apMaterno=models.CharField(max_length=40)
+    fechaNac=models.DateField(null=True, blank=True)
     genero = models.ForeignKey('Genero', on_delete=models.CASCADE) 
     CURP=models.CharField(max_length=18)
     RFC=models.CharField(max_length=13)
