@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Añadir un nuevo Horario{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="h3 mb-2 text-gray-800">Añadir Nueva Cantidad de Horas</h1>
+    <form method="post">
+        {% csrf_token %}
+        
+        <!-- Campo para ingresar las horas -->
+        <div class="form-group">
+            <label for="horas">Cantidad de Horas:</label>
+            <input type="number" name="horas" id="horas" class="form-control" min="1" max="100" required>
+        </div>
+
+        <div class='text-center'>
+            <!-- Botón para guardar la cantidad de horas -->
+            <button type="submit" class="btn btn-primary">Guardar</button>
+            <!-- Botón para cancelar -->
+            <a href="{% url 'crearevento' request.session.evento_id %}" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

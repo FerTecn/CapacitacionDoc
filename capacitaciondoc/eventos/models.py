@@ -2,6 +2,7 @@ from django.db import models
 from catalogos.models import Lugar
 from plancapacitacion.models import registroCurso
 
+
 # Create your models here.
 class Evento(models.Model):
     curso= models.ForeignKey(registroCurso, on_delete=models.CASCADE, null=True)
@@ -66,3 +67,5 @@ class calificacion(models.Model):
     class Meta:
         verbose_name_plural = 'Calificaciones'
     #FALTA UNA PESTAÑA DONDE SE MUESTRAN LOS DOCENTES INSCRITOS PARA ASINGAR CALIFICACION
+
+

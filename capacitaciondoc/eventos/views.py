@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Evento
 from catalogos.models import Lugar 
+from catalogos.models import Horas
+
 
 # Create your views here.
 def eventolista(request):
@@ -59,3 +61,24 @@ def añadirlugar(request):
             return redirect('crearevento', evento_id=request.session.get('evento_id'))
 
     return render(request, 'añadirlugar.html')
+
+
+def añadirhoras(request):
+    if request.method == 'POST':
+        cantidad = request.POST.get('cantidad')
+        descripcion = request.POST.get('descripcion')
+
+        if cantidad:  # Verifica que al menos la cantidad esté presente
+            # Crear el nuevo horario
+            nuevo_horario = Horas.objects.create(
+                cantidad=cantidad,
+                descripcion=descripcion or ""  # Si descripción está vacía, usa un string vacío
+            )
+
+            # Guardar el ID del nuevo horario en la sesión (opcional, si lo necesitas)
+            request.session['nuevo_horario_id'] = nuevo_horario.id
+
+            # Redirigir a la página de crear evento
+            return redirect('crearevento', evento_id=request.session.get('evento_id'))
+
+    return render(request, 'añadirhoras.html')

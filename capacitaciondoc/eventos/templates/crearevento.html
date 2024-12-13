@@ -40,4 +40,43 @@
         </div> 
     </form>
 </div>
+         
+
+        <p><strong>Horas:</strong></p>
+        <div class="d-flex align-items-center">
+            <select name="horas" class="form-control" required style="max-width: 70%;">
+                <option value="">Seleccione un hora </option>
+                {% for hora in horas %}
+                    <option value="{{ hora.id }}" 
+                            {% if hora_seleccionada and hora.id == hora_seleccionada.id %}selected{% endif %}>
+                        {{ hora.cantidad }} {{ horas }}
+                    </option>
+                {% endfor %}
+            </select>
+            <button type="button" class="btn btn-success ml-2" onclick="window.location.href='{% url 'añadirhoras' %}'">Añadir nuevo horario</button>
+        </div>
+        
+
+        <br>
+        <div class='text-center'>
+        <button type="submit" class="btn btn-primary">Guardar</button>
+        <a href="{% url 'eventolista' %}" class="btn btn-secondary">Cancelar</a>
+        </div> 
+    </form>
+</div>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
 {% endblock %}
