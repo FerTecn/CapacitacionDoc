@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lista de Horas</title>
+</head>
+<body>
+    <h1>Lista de Horas</h1>
+    <ul>
+        {% for hora in horas %}
+            <li>
+                <a href="{% url 'horaver' hora.id %}">{{ hora.hora_inicio }} - {{ hora.hora_fin }}</a>
+                <a href="{% url 'editarhora' hora.id %}">Editar</a>
+            </li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'crearhora' %}">Agregar nueva hora</a>
+</body>
+</html>

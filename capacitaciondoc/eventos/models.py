@@ -68,4 +68,9 @@ class calificacion(models.Model):
         verbose_name_plural = 'Calificaciones'
     #FALTA UNA PESTAÑA DONDE SE MUESTRAN LOS DOCENTES INSCRITOS PARA ASINGAR CALIFICACION
 
+class Hora(models.Model):
+    hora_inicio = models.TimeField()
+    hora_fin = models.TimeField()
 
+    def __str__(self):
+        return f"{self.hora_inicio} - {self.hora_fin}"

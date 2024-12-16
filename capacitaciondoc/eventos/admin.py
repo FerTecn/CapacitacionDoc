@@ -11,6 +11,8 @@ class EventoAdmin(admin.ModelAdmin):
     
 admin.site.register(Evento, EventoAdmin)
 
+
+
 class asistenciaAdmin(admin.ModelAdmin):
     list_display = ('nombre', 'periodo', 'lugar', 'horas', 'instructor')
 admin.site.register(asistencia, asistenciaAdmin)
@@ -26,3 +28,4 @@ admin.site.register(inscripcion, inscripcionAdmin)
 class calificacionAdmin(admin.ModelAdmin):
     list_display = ('nombre', 'periodo', 'lugar', 'horas')
 admin.site.register(calificacion, calificacionAdmin)
+

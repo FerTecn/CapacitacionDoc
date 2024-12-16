@@ -146,3 +146,10 @@ class EstatusCurso(models.Model):
     
     class Meta:
         verbose_name_plural = ' Estatus de Curso '
+
+
+class Horas(models.Model):
+    cantidad = models.TimeField()  # Representa una hora específica (e.g., 14:30)
+    
+    def __str__(self):
+        return self.cantidad.strftime('%H:%M')

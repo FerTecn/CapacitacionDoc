@@ -61,3 +61,8 @@ admin.site.register(Lugar, LugarAdmin)
 class PeriodoAdmin(admin.ModelAdmin):
     list_display=('inicioPeriodo', 'finPeriodo')
 admin.site.register(Periodo, PeriodoAdmin)
+
+
+class HoraAdmin(admin.ModelAdmin):
+    list_display = ('cantidad',)
+    search_fields = ('cantidad',)

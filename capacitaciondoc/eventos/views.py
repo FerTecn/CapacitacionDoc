@@ -5,6 +5,8 @@ from catalogos.models import Lugar
 from catalogos.models import Horas
 
 
+
+
 # Create your views here.
 def eventolista(request):
     eventos = Evento.objects.all()
@@ -13,6 +15,15 @@ def eventolista(request):
 def eventover(request, evento_id):
     evento = get_object_or_404(Evento, id=evento_id)  
     return render(request, 'eventover.html', {'evento': evento})
+
+#Inscripcion
+def inscripcionlista(request):
+    eventos = Evento.objects.all()
+    return render(request, 'inscripcionlista.html', {'eventos': eventos})
+
+def inscripcionver(request, evento_id):
+    evento = get_object_or_404(Evento, id=evento_id)  
+    return render(request, 'inscripcionver.html', {'evento': evento})
 
 def crearevento(request, evento_id):
     evento = get_object_or_404(Evento, id=evento_id)  # Obtener el evento
@@ -42,6 +53,7 @@ def crearevento(request, evento_id):
         'lugar_seleccionado': lugar_seleccionado,
     })
 
+
 def añadirlugar(request):
     if request.method == 'POST':
         nombre_edificio = request.POST.get('nombreEdificio')
@@ -61,6 +73,37 @@ def añadirlugar(request):
             return redirect('crearevento', evento_id=request.session.get('evento_id'))
 
     return render(request, 'añadirlugar.html')
+
+
+def horaslista(request):
+
+    horas = Hora.objects.all()
+    return render(request, 'horaslista.html', {'horas': horas})
+
+def horaver(request, hora_id):
+   
+    hora = get_object_or_404(Hora, id=hora_id)
+    return render(request, 'horaver.html', {'hora': hora})
+
+def crearhora(request, hora_id=None):
+    hora = None
+    if hora_id:
+        hora = get_object_or_404(Hora, id=hora_id)  # Obtener la hora existente si el ID es válido
+
+    if request.method == 'POST':
+        hora_inicio = request.POST.get('hora_inicio')
+        hora_fin = request.POST.get('hora_fin')
+        if hora:
+            # Editar la hora existente
+            hora.hora_inicio = hora_inicio
+            hora.hora_fin = hora_fin
+            hora.save()
+        else:
+            # Crear una nueva hora
+            Hora.objects.create(hora_inicio=hora_inicio, hora_fin=hora_fin)
+        return redirect('horaslista')
+
+    return render(request, 'crearhora.html', {'hora': hora})
 
 
 def añadirhoras(request):
