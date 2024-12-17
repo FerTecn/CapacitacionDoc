@@ -13,8 +13,20 @@
         <p><strong>Objetivo:</strong> {{ evento.curso.objetivo }}</p>
         <p><strong>Periodo:</strong> {{ evento.curso.periodo }}</p>
         <p><strong>Sede:</strong> {{ evento.curso.sede }}</p>
-        <p><strong>Horas:</strong> {{ evento.curso.horas }}</p>
-        <p><strong>Instructor:</strong> {{ evento.curso.instructor }}</p>
+
+        <!-- Horas -->
+        <p>
+            <label for="id_horas"><strong>Horas:</strong></label>
+            <input type="number" id="id_horas" name="horas" class="form-control" 
+                   value="{{ evento.curso.horas }}" min="1" required>
+        </p>
+
+        <!-- Mostrar instructor y botón para cambiar -->
+        <div class="d-flex justify-content-between">
+            <p><strong>Instructor:</strong> {{ evento.curso.instructor }}</p>
+            <a href="{% url 'cambiarinstructor' evento_id=evento.id %}" class="btn btn-warning">Cambiar Instructor</a>
+        </div>
+
         <p><strong>Dirigido a:</strong> {{ evento.curso.dirigido }}</p>
         <p><strong>Perfil de Curso:</strong> {{ evento.curso.perfilCurso }}</p>
 
@@ -32,51 +44,12 @@
             <button type="button" class="btn btn-success ml-2" onclick="window.location.href='{% url 'añadirlugar' %}'">Añadir nuevo lugar</button>
         </div>
         
-
         <br>
         <div class='text-center'>
-        <button type="submit" class="btn btn-primary">Guardar</button>
-        <a href="{% url 'eventolista' %}" class="btn btn-secondary">Cancelar</a>
+            <button type="submit" class="btn btn-primary">Guardar</button>
+            <a href="{% url 'eventolista' %}" class="btn btn-secondary">Cancelar</a>
         </div> 
     </form>
 </div>
-         
-
-        <p><strong>Horas:</strong></p>
-        <div class="d-flex align-items-center">
-            <select name="horas" class="form-control" required style="max-width: 70%;">
-                <option value="">Seleccione un hora </option>
-                {% for hora in horas %}
-                    <option value="{{ hora.id }}" 
-                            {% if hora_seleccionada and hora.id == hora_seleccionada.id %}selected{% endif %}>
-                        {{ hora.cantidad }} {{ horas }}
-                    </option>
-                {% endfor %}
-            </select>
-            <button type="button" class="btn btn-success ml-2" onclick="window.location.href='{% url 'añadirhoras' %}'">Añadir nuevo horario</button>
-        </div>
-        
-
-        <br>
-        <div class='text-center'>
-        <button type="submit" class="btn btn-primary">Guardar</button>
-        <a href="{% url 'eventolista' %}" class="btn btn-secondary">Cancelar</a>
-        </div> 
-    </form>
-</div>
-
-
-  
-
-
-
-
-
-
-
-
-
-
-
 
 {% endblock %}

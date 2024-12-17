@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Añadir un nuevo Instructor{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="h3 mb-2 text-gray-800">Añadir Nuevo Instrcutor</h1>
+    <form method="post">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="clave">Clave:</label>
+            <input type="text" name="clave" id="clave" class="form-control" maxlength="10" required>
+        </div>
+        <div class="form-group">
+            <label for="nombre">Nombre:</label>
+            <input type="text" name="nombre" id="nombre" class="form-control" maxlength="40" required>
+        </div>
+        <div class="form-group">
+            <label for="apPaterno">Apellido paterno:</label>
+            <input type="text" name="apPaterno" id="apPaterno" class="form-control" maxlength="40" required>
+        </div>
+        <div class="form-group">
+            <label for="apMaterno">Apellido materno:</label>
+            <input type="text" name="apMaterno" id="apMaterno" class="form-control" maxlength="40" required>
+        </div>
+        <div class="form-group">
+            <label for="fechaNac">Fecha de nacimiento:</label>
+            <input type="date" name="fechaNac" id="fechaNac" class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="CURP">CURP:</label>
+            <input type="text" name="CURP" id="CURP" class="form-control" maxlength="18">
+        </div>
+        <div class="form-group">
+            <label for="RFC">RFC:</label>
+            <input type="text" name="RFC" id="RFC" class="form-control" maxlength="13">
+        </div>
+        <div class="form-group">
+            <label for="telefono">Teléfono:</label>
+            <input type="text" name="telefono" id="telefono" class="form-control" maxlength="10">
+        </div>
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" name="email" id="email" class="form-control" maxlength="50">
+        </div>
+        <div class="form-group">
+            <label for="institucion">Institución académica:</label>
+            <input type="text" name="institucion" id="institucion" class="form-control" maxlength="40">
+        </div>
+        <div class="form-group">
+            <label for="grado">Grado académico:</label>
+            <select name="grado" id="grado" class="form-control" required>
+                <option value="">Seleccione un grado</option>
+                {% for grado in grados %}
+                    <option value="{{ grado.id }}">{{ grado.grado }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="cedulaProf">Cédula Profesional:</label>
+            <input type="text" name="cedulaProf" id="cedulaProf" class="form-control" maxlength="8">
+        </div>
+        <div class="form-group">
+            <label for="puesto">Puesto:</label>
+            <input type="text" name="puesto" id="puesto" class="form-control" maxlength="50">
+        </div>
+        <div class="form-group">
+            <label for="empresa">Empresa:</label>
+            <input type="text" name="empresa" id="empresa" class="form-control" maxlength="50">
+        </div>
+        <div class="form-group">
+            <label for="materia">Materia:</label>
+            <input type="text" name="materia" id="materia" class="form-control" maxlength="50">
+        </div>
+        <div class="form-group">
+            <label for="periodo">Periodo:</label>
+            <input type="date" name="periodo" id="periodo" class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="curso">Nombre del curso:</label>
+            <input type="text" name="curso" id="curso" class="form-control" maxlength="50">
+        </div>
+        <div class="form-group">
+            <label for="empresa">Nombre de la empresa y/o institución:</label>
+            <input type="text" name="empresa" id="empresa" class="form-control" maxlength="50">
+        </div>
+        <div class="form-group">
+            <label for="horas">Duración de horas:</label>
+            <input type="text" name="horas" id="materia" class="form-control" maxlength="50">
+        </div>
+        <div class="form-group">
+            <label for="fecha">Fecha de participación del curso:</label>
+            <input type="date" name="fecha" id="fecha" class="form-control">
+        </div>
+        <br>
+        <div class='text-center'>
+            <button type="submit" class="btn btn-primary">Guardar</button>
+            <a href="{% url 'crearevento' request.session.evento_id %}" class="btn btn-secondary">Cancelar</a>
+        </div> 
+
+    </form>
+</div>
+{% endblock %}

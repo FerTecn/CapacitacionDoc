@@ -1,25 +1,25 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Docentes Inscritos{% endblock %}
+{% block title %}Inscripciones{% endblock %}
 
 {% block content %}
 <div class="container-fluid">
-    <!-- Page Heading -->
-    <h1 class="h3 mb-2 text-gray-800">Registro de Docentes Inscritos</h1>
+    <!-- Encabezado de página -->
+    <h1 class="h3 mb-2 text-gray-800">Inscripciones</h1>
     <div class="card">
         <div class="card-body">
-            Se muestran los docentes que están inscritos en los cursos.
+            Se muestra la lista de los cursos abiertos.
         </div>
     </div><br>
 
-    <!-- DataTales Example -->
+    <!-- Tabla de cursos abiertos -->
     <div class="card shadow mb-4">
         <div class="card-header py-3 d-flex justify-content-between align-items-center">
-            <h4 class="m-0 font-weight-bold text-primary">Lista de Docentes Inscritos</h4>
+            <h4 class="m-0 font-weight-bold text-primary">Lista de cursos abiertos</h4>
         </div>
         <div class="card-body">
-            {% if docentes %}
+            {% if evento_guardado %}
             <div class="table-responsive">
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                     <thead>
@@ -28,30 +28,33 @@
                             <th>Periodo</th>
                             <th>Horas</th>
                             <th>Instructor</th>
-                            <th>Curso Inscrito</th>
+                            <th>Lugar</th>
                             <th>Opciones</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for docente in docentes %}
                         <tr>
-                            <td>{{ docente.nombre }}</td>
-                            <td>{{ docente.periodo }}</td>
-                            <td>{{ docente.horas }}</td>
-                            <td>{{ docente.instructor }}</td>
-                            <td>{{ docente.curso.nombre }}</td>
+                            <td>{{ evento_guardado.nombre }}</td>
+                            <td>{{ evento_guardado.periodo }}</td>
+                            <td>{{ evento_guardado.horas }}</td>
+                            <td>{{ evento_guardado.instructor }}</td>
+                            <td>{{ evento_guardado.lugar }}</td>
                             <td>
-                                <!-- Opciones -->
-                                <a href="{% url 'verdocente' docente.id %}" class="btn btn-success btn-sm">Ver</a>
-                                <a href="{% url 'editardocente' docente.id %}" class="btn btn-primary btn-sm">Editar</a>
+                                <a href="" class="btn btn-success btn-sm">Ver</a>
+                                <!-- Al dar clic en Aceptar se vuelve true y cambia a aceptado, asi mismo se bloquea el botón-->
+                                {% if validar.curso.aceptado %}
+                                    <button class="btn btn-secondary btn-sm" disabled>Aceptado</button>
+                                {% else %}
+                                    <a href="" class="btn btn-primary btn-sm">Aceptar</a>
+                                {% endif %}
+                                <a href="" class="btn btn-warning btn-sm">Invalidar</a>
                             </td>
                         </tr>
-                        {% endfor %}
                     </tbody>
                 </table>
             </div>
             {% else %}
-            <p>No hay docentes inscritos.</p>
+            <p class="text-center">No se han guardado eventos recientemente.</p>
             {% endif %}
         </div>
     </div>
@@ -59,10 +62,10 @@
 {% endblock %}
 
 {% block scripts %}
-<!-- Page level plugins -->
+<!-- Plugins de DataTables -->
 <script src="{% static 'vendor/datatables/jquery.dataTables.min.js' %}"></script>
 <script src="{% static 'vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
 
-<!-- Page level custom scripts -->
+<!-- Script de inicialización para DataTables -->
 <script src="{% static 'js/demo/datatables-demo.js' %}"></script>
 {% endblock %}

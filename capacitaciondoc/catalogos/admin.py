@@ -9,7 +9,6 @@ from .models import Periodo
 from .models import Sede
 from .models import Dirigido
 from .models import PerfilCurso
-from .models import EstatusCurso
 
 # Register your models here.
 admin.site.register(Genero)
@@ -18,7 +17,6 @@ admin.site.register(GradoAcademico)
 admin.site.register(Sede)
 admin.site.register(Dirigido)
 admin.site.register(PerfilCurso)
-admin.site.register(EstatusCurso)
 
 class InstructorAdmin(admin.ModelAdmin):
     list_display = ('nombre', 'apPaterno', 'apMaterno', 'grado')

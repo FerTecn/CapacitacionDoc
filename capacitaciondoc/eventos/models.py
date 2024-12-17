@@ -1,16 +1,18 @@
 from django.db import models
-from catalogos.models import Lugar
+from catalogos.models import Lugar, Instructor
 from plancapacitacion.models import registroCurso
 
 
 # Create your models here.
 class Evento(models.Model):
     curso= models.ForeignKey(registroCurso, on_delete=models.CASCADE, null=True)
+    instructor=models.ForeignKey(Instructor,on_delete=models.SET_NULL, null=True, blank=True )
     lugar=models.ForeignKey(Lugar,on_delete=models.SET_NULL, null=True )
+    fecha = models.DateField(null=True, blank=True)
     
     
     def __str__(self):
-        return f"{self.curso} - {self.lugar}"
+        return f"{self.curso} - {self.fecha}"
     class Meta:
         verbose_name_plural = 'Eventos'
     

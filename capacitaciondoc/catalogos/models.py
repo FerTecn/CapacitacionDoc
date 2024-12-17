@@ -28,7 +28,7 @@ class Instructor(models.Model):
     #Participacion como instructor
     curso=models.CharField(max_length=40, null=True, blank=True)
     nombreEmpresa=models.CharField(max_length=40, null=True, blank=True)
-    duracionHoras=models.CharField(max_length=40, null=True, blank=True)
+    duracionHoras=models.IntegerField(max_length=40, null=True, blank=True)
     fechaParticipacion=models.DateField(null=True, blank=True)
     
     def __str__(self):
@@ -108,7 +108,7 @@ class Departamento(models.Model):
         verbose_name_plural = 'Departamentos'
 
 class Periodo(models.Model):
-    clave=models.CharField(max_length=10)
+    clave=models.CharField(max_length=50)
     inicioPeriodo=models.DateField()
     finPeriodo=models.DateField()
     
@@ -137,19 +137,3 @@ class PerfilCurso(models.Model):
     
     class Meta:
         verbose_name_plural = 'Perfiles de Curso'
-        
-class EstatusCurso(models.Model):
-    descripcion=models.CharField(max_length=40)
-    
-    def __str__(self):
-        return self.descripcion
-    
-    class Meta:
-        verbose_name_plural = ' Estatus de Curso '
-
-
-class Horas(models.Model):
-    cantidad = models.TimeField()  # Representa una hora específica (e.g., 14:30)
-    
-    def __str__(self):
-        return self.cantidad.strftime('%H:%M')

@@ -14,7 +14,7 @@ class registroCurso(models.Model):
     objetivo=models.TextField(max_length=200)
     periodo=models.ForeignKey(Periodo, on_delete=models.CASCADE)
     sede=models.ForeignKey(Sede, on_delete=models.CASCADE)
-    horas=models.CharField(max_length=40)
+    horas=models.IntegerField()
     instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE)
     dirigido=models.ForeignKey(Dirigido, on_delete=models.CASCADE)
     perfilCurso=models.ForeignKey(PerfilCurso, on_delete=models.CASCADE)

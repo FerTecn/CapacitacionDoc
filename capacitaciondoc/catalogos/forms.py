@@ -76,17 +76,26 @@ class AñadirInstructorForm(forms.ModelForm):
         labels={'apPaterno': 'Apellido paterno',
                 'apMaterno': 'Apellido materno',
                 'fechaNac': 'Fecha de nacimiento',
+                'telefono': 'Teléfono',
+                'institucion': 'Institución académica',
                 'grado': 'Grado académico',
-                'cedulaProf': 'Cedula profesional',
+                'cedulaProf': 'Cédula profesional',
                 'curso': 'Nombre del curso',
                 'nombreEmpresa': 'Nombre de la empresa y/o Institución',
                 'duracionHoras': 'Duración de horas',
-                'fechaParticipacion': 'Fecha que participo en el curso',}
-        
+                'fechaParticipacion': 'Fecha de participación del curso',}
+            
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        for field in iter(self.fields):
-            self.fields[field].widget.attrs.update({'class': 'form-control'})  
+        placeholders = {
+            'fechaParticipacion': 'dd/mm/aa',
+            'fechaNac': 'dd/mm/aa',}
+        
+        for field in self.fields:
+            self.fields[field].widget.attrs.update({
+                'class': 'form-control',
+                'placeholder': placeholders.get(field, ''), 
+         })
 
 class ActualizarInstructorForm(forms.ModelForm):
     class Meta:
@@ -104,9 +113,16 @@ class ActualizarInstructorForm(forms.ModelForm):
         
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        for field in iter(self.fields):
-            self.fields[field].widget.attrs.update({'class': 'form-control'})  
+        placeholders = {
+            'fechaParticipacion': 'dd/mm/aa',
+            'fechaNac': 'dd/mm/aa',}
         
+        for field in self.fields:
+            self.fields[field].widget.attrs.update({
+                'class': 'form-control',
+                'placeholder': placeholders.get(field, ''), 
+         })
+            
 #DOCENTES
 class AñadirDocenteForm(forms.ModelForm):
     class Meta:
