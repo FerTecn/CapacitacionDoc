@@ -19,7 +19,6 @@
             <h4 class="m-0 font-weight-bold text-primary">Lista de cursos abiertos</h4>
         </div>
         <div class="card-body">
-            {% if evento_guardado %}
             <div class="table-responsive">
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                     <thead>
@@ -33,12 +32,13 @@
                         </tr>
                     </thead>
                     <tbody>
+                        {% for evento in eventos %}
                         <tr>
-                            <td>{{ evento_guardado.nombre }}</td>
-                            <td>{{ evento_guardado.periodo }}</td>
-                            <td>{{ evento_guardado.horas }}</td>
-                            <td>{{ evento_guardado.instructor }}</td>
-                            <td>{{ evento_guardado.lugar }}</td>
+                            <td>{{ evento.nombre }}</td>
+                            <td>{{ evento.periodo }}</td>
+                            <td>{{ evento.horas }}</td>
+                            <td>{{ evento.instructor }}</td>
+                            <td>{{ evento.lugar }}</td>
                             <td>
                                 <a href="" class="btn btn-success btn-sm">Ver</a>
                                 <!-- Al dar clic en Aceptar se vuelve true y cambia a aceptado, asi mismo se bloquea el botón-->
@@ -50,12 +50,10 @@
                                 <a href="" class="btn btn-warning btn-sm">Invalidar</a>
                             </td>
                         </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>
-            {% else %}
-            <p class="text-center">No se han guardado eventos recientemente.</p>
-            {% endif %}
         </div>
     </div>
 </div>

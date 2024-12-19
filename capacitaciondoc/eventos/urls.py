@@ -12,4 +12,5 @@ urlpatterns = [
     
     #Inscripcion
     path('inscripcionlista/', views.inscripcionlista, name='inscripcionlista'),
+    #path('vercurso/<int:evento_id>/', views.vercurso, name='vercurso'),
 ]

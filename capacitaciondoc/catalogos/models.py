@@ -28,7 +28,7 @@ class Instructor(models.Model):
     #Participacion como instructor
     curso=models.CharField(max_length=40, null=True, blank=True)
     nombreEmpresa=models.CharField(max_length=40, null=True, blank=True)
-    duracionHoras=models.IntegerField(max_length=40, null=True, blank=True)
+    duracionHoras=models.IntegerField(null=True, blank=True)
     fechaParticipacion=models.DateField(null=True, blank=True)
     
     def __str__(self):

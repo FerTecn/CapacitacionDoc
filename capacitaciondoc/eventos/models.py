@@ -15,6 +15,13 @@ class Evento(models.Model):
         return f"{self.curso} - {self.fecha}"
     class Meta:
         verbose_name_plural = 'Eventos'
+
+class Inscripcion(models.Model):
+    evento = models.ForeignKey(Evento, on_delete=models.CASCADE, null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.evento}"
+
     
 class asistencia(models.Model):
     clave = models.CharField(max_length=10)
@@ -42,17 +49,6 @@ class oficioComision(models.Model):
     
     class Meta:
         verbose_name_plural = 'Oficios de comisión'
-        
-class inscripcion(models.Model):
-    clave = models.CharField(max_length=10)
-    nombre=models.CharField(max_length=40)
-    instructor=models.CharField(max_length=40)
-    horas=models.CharField(max_length=40)
-    
-    def __str__(self):
-        return f"{self.nombre} {self.instructor} {self.horas} "
-    
-    #FALTA LA PANTALLA QUE CUANDO SELECCIONA UN CURSO AL QUE SE INCRIBIO ABAJO MUESTRE EL CURSO INSCRITO
 
     class Meta:
         verbose_name_plural = 'Inscripciones'

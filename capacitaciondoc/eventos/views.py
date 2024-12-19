@@ -1,6 +1,6 @@
-from django.shortcuts import render, redirect
-from django.shortcuts import render, get_object_or_404, redirect
-from .models import Evento
+from django.shortcuts import render, redirect, reverse
+from django.shortcuts import get_object_or_404, redirect
+from .models import Evento, Inscripcion
 from catalogos.models import Lugar, Instructor, GradoAcademico, Periodo
 
 # Create your views here.
@@ -16,7 +16,7 @@ def eventover(request, evento_id):
 def crearevento(request, evento_id):
     evento = get_object_or_404(Evento, id=evento_id)
     lugares = Lugar.objects.all()
-    instructores = Instructor.objects.all()  # Traer todos los instructores disponibles
+    instructores = Instructor.objects.all()
 
     # Guardar el ID del evento en la sesión para redirección
     request.session['evento_id'] = evento_id
@@ -50,17 +50,13 @@ def crearevento(request, evento_id):
 
         evento.save()
         
-        # Almacenar los datos en la sesión para ser utilizados en inscripcionlista
-        request.session['evento_guardado'] = {
-            'nombre': evento.curso.nombre,
-            'periodo': evento.curso.periodo.id,
-            'horas': evento.curso.horas,
-            'instructor': evento.curso.instructor.id,
-            'lugar': evento.lugar.id if evento.lugar else None,
-        }
+        # Crear la inscripción para este evento
+        Inscripcion.objects.create(evento=evento)
 
-        return redirect('eventolista')
-
+        # Redirigir a la lista de inscripciones
+        return redirect(reverse('eventolista'))
+        
+    # Renderizar el formulario si no es una solicitud POST
     return render(request, 'crearevento.html', {
         'evento': evento,
         'lugares': lugares,
@@ -183,29 +179,17 @@ def añadirinstructor(request, evento_id):
     
 #INSCRIPCION
 def inscripcionlista(request):
-    # Recuperar los datos de la sesión si están disponibles
-    evento_data = request.session.pop('evento_guardado', None)
+    inscripciones = Inscripcion.objects.all()  # Obtener todas las inscripciones
+    eventos = []
 
-    if evento_data:
-        # Recuperar los objetos completos a partir de los IDs guardados
-        periodo = get_object_or_404(Periodo, id=evento_data['periodo'])
-        instructor = get_object_or_404(Instructor, id=evento_data['instructor'])
-        lugar = get_object_or_404(Lugar, id=evento_data['lugar']) if evento_data['lugar'] else None
+    for inscripcion in inscripciones:
+        evento = inscripcion.evento  # Obtener el evento asociado a cada inscripción
+        eventos.append({
+            'nombre': evento.curso.nombre,
+            'periodo': evento.curso.periodo,
+            'horas': evento.curso.horas,
+            'instructor': evento.curso.instructor,
+            'lugar': evento.lugar,
+        })
 
-        # Crear un objeto de evento con los datos recuperados
-        evento_guardado = {
-            'nombre': evento_data['nombre'],
-            'periodo': periodo,
-            'horas': evento_data['horas'],
-            'instructor': instructor,
-            'lugar': lugar,
-        }
-    else:
-        evento_guardado = None
-
-    return render(request, 'inscripcionlista.html', {
-        'evento_guardado': evento_guardado
-    })
-
-from django.shortcuts import render
-
+    return render(request, 'inscripcionlista.html', {'eventos': eventos})

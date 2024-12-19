@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Ver Curso{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Detalles del Curso: </h1>
+    <p><strong>Clave:</strong> {{ evento.curso.clave }}</p>
+    <p><strong>Nombre:</strong> {{ evento.curso.nombre }}</p>
+    <p><strong>Objetivo:</strong> {{ evento.curso.objetivo }}</p>
+    <p><strong>Periodo:</strong> {{ evento.curso.periodo }}</p>
+    <p><strong>Sede:</strong> {{ evento.curso.sede }}</p>
+    <p><strong>Horas:</strong> {{ evento.curso.horas }}</p>
+    <p><strong>Instructor:</strong> {{ evento.curso.instructor }}</p>
+    <p><strong>Dirigido a:</strong> {{ evento.curso.dirigido }}</p>
+    <p><strong>Perfil de Curso:</strong> {{ evento.curso.perfilCurso }}</p>
+    <p><strong>Lugar:</strong> {{ evento.lugar.nombreEdificio }} - {{ evento.lugar.ubicacion }}</p>
+
+    <div class="text-center">
+        <a href="{% url 'inscripcionlista' %}" class="btn btn-primary">Regresar</a>
+    </div>
+</div>
+
+{% endblock %}
