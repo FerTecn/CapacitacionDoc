@@ -10,7 +10,8 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>{% block title %}SB Admin 2 - Dashboard{% endblock %}</title>
+    <title>CAPACITATEC {% block titulo %} {% endblock %}
+    </title>
 
     <!-- Custom fonts for this template-->
     <link href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
@@ -20,7 +21,26 @@
 
     <!-- Custom styles for this template-->
     <link href="{% static 'css/sb-admin-2.min.css' %}" rel="stylesheet">
-    {% block head %}{% endblock %}
+
+    
+    {% block extraCSS %}
+    
+    {% endblock %}
+    <style>
+        .bgImage{
+            background-image: url('{% static "img/bgFondoMenu.jpg" %}');
+            background-size: cover;
+            background-position: center center;
+        }
+        .blur{
+            backdrop-filter: blur(30px);
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        .blurInput{
+            backdrop-filter: blur(30px);
+            background-color: rgba(255, 255, 255, 0);
+        }
+    </style>
 </head>
 
 <body id="page-top">
@@ -33,7 +53,7 @@
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{% url 'index' %}">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{% url 'inicio' %}">
                 <div class="sidebar-brand-text mx-3">Instituto Tecnológico de Apizaco</div>
             </a>
 
@@ -42,8 +62,8 @@
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item active">
-                <a class="nav-link" href="{% url 'index' %}">
-                    <i class="fas fa-fw fa-tachometer-alt"></i>
+                <a class="nav-link" href="{% url 'inicio' %}">
+                    <i class="fas fa-fw fa-home"></i>
                     <span>Inicio</span></a>
             </li>
 

@@ -1,7 +1,16 @@
 from django.urls import path
 from . import views
+from catalogos import views
+
+
 
 urlpatterns = [
+    
+    #path('homeCatalogos', views.homeCatalogos, name='homeCatalogos'),
+    
+   
+
+
     #GRADO ACADEMICO
     path('gradolista/', views.gradolista, name='gradolista'),
     path('gradoañadir/', views.gradoañadir, name='gradoañadir'),

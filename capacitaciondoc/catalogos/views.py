@@ -6,6 +6,9 @@ from .forms import AñadirInstructorForm, ActualizarInstructorForm, AñadirDocen
 
 # Create your views here.
 
+
+
+
 #GRADO ACADEMICO
 def gradolista(request):
     gradoac = GradoAcademico.objects.all()

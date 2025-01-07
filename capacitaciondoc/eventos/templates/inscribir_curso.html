@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1>Inscripción de Cursos para Docentes</h1>
+    <p><strong>Docente:</strong> {{ docente.nombre }}</p>
+
+    <!-- Formulario -->
+    <form method="post" class="mb-4">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Inscribirse</button>
+    </form>
+
+    <!-- Detalles del curso seleccionado -->
+    {% if curso_seleccionado %}
+    <div class="card mt-4">
+        <div class="card-header">
+            <h3>Curso Inscrito</h3>
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">{{ curso_seleccionado.nombre }}</h5>
+            <p class="card-text">{{ curso_seleccionado.descripcion }}</p>
+            <p><strong>Horas:</strong> {{ curso_seleccionado.horas }}</p>
+            <p><strong>Instructor:</strong> {{ curso_seleccionado.instructor }}</p>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
