@@ -10,8 +10,10 @@ class AñadirGradoAcForm(forms.ModelForm):
         
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        for field in iter(self.fields):
-            self.fields[field].widget.attrs.update({'class': 'form-control'})
+        for field in self.fields.values():
+            field.widget.attrs.update({
+                'class': 'form-control'
+            })
 
 class ActualizarGradoAcForm(forms.ModelForm):
     class Meta:
@@ -82,14 +84,15 @@ class AñadirInstructorForm(forms.ModelForm):
                 'cedulaProf': 'Cédula profesional',
                 'curso': 'Nombre del curso',
                 'nombreEmpresa': 'Nombre de la empresa y/o Institución',
-                'duracionHoras': 'Duración de horas',
-                'fechaParticipacion': 'Fecha de participación del curso',}
+                'duracionHoras': 'Duración de horas',}
             
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         placeholders = {
             'fechaParticipacion': 'dd/mm/aa',
-            'fechaNac': 'dd/mm/aa',}
+            'fechaNac': 'dd/mm/aa',
+            'periodo': 'Ejemplo: Enero 2022 - Junio 2022',
+            'fechaParticipacion':'Ejemplo: Enero 2022 - Junio 2022',}
         
         for field in self.fields:
             self.fields[field].widget.attrs.update({
@@ -114,8 +117,11 @@ class ActualizarInstructorForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         placeholders = {
+            
             'fechaParticipacion': 'dd/mm/aa',
-            'fechaNac': 'dd/mm/aa',}
+            'fechaNac': 'dd/mm/aa',
+            'periodo': 'Ejemplo: Enero 2022 - Junio 2022',
+            'fechaParticipacion':'Ejemplo: Enero 2022 - Junio 2022',}
         
         for field in self.fields:
             self.fields[field].widget.attrs.update({
@@ -160,8 +166,6 @@ class ActualizarDocenteForm(forms.ModelForm):
         for field in iter(self.fields):
             self.fields[field].widget.attrs.update({'class': 'form-control'})
             
-
-
 #DEPARTAMENTOS
 class AñadirDepartamentoForm(forms.ModelForm):
     class Meta:
@@ -259,6 +263,7 @@ class AñadirPeriodoForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         placeholders = {
+            'clave':'Ejemplo: mm/aa - mm/aa',
             'inicioPeriodo': 'dd/mm/aa',
             'finPeriodo': 'dd/mm/aa', 
         }
@@ -278,6 +283,7 @@ class ActualizarPeriodoForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         placeholders = {
+            'clave': 'Ejemplo: mm/aa - mm/aa',
             'inicioPeriodo': 'dd/mm/aa',
             'finPeriodo': 'dd/mm/aa', 
         }

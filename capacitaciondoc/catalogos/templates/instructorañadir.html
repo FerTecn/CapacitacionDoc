@@ -14,7 +14,162 @@
     
     <form method="post">
         {% csrf_token %}
-        {{ form.as_p }}
+        <!-- Datos personales -->
+        <div class="card text-center bg-primary text-white">
+            <div class="card-body">
+                <b>"DATOS PERSONALES"</b>
+            </div>
+        </div><br>
+
+        <div class="form-row">
+            <div class="form-group col-md-3 align-items-center">
+                <label for="{{ form.clave.id_for_label }}">Clave</label>
+                {{ form.clave }}  
+            </div>
+            <div class="form-group col-md-5 align-items-center">
+                <label for="{{ form.nombre.id_for_label }}">Nombre</label>
+                {{ form.nombre }}  
+            </div>
+            <div class="form-group col-md-4 align-items-center">
+                <label for="{{ form.apPaterno.id_for_label }}">Apellido Paterno</label>
+                {{ form.apPaterno }}  
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-4 align-items-center">
+                <label for="{{ form.apMaterno.id_for_label }}">Apellido Materno</label>
+                {{ form.apMaterno }}  
+            </div>
+            <div class="form-group col-md-4 align-items-center">
+                <label for="{{ form.fechaNac.id_for_label }}">Fecha de nacimiento</label>
+                {{ form.fechaNac }}  
+            </div>
+            <div class="form-group col-md-4 align-items-center">
+                <label for="{{ form.CURP.id_for_label }}">CURP</label>
+                {{ form.CURP }}  
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-4 align-items-center">
+                <label for="{{ form.RFC.id_for_label }}">RFC</label>
+                {{ form.RFC }}  
+            </div>
+            <div class="form-group col-md-4 align-items-center">
+                <label for="{{ form.telefono.id_for_label }}">Teléfono</label>
+                {{ form.telefono }}  
+            </div>
+            <div class="form-group col-md-4 align-items-center">
+                <label for="{{ form.email.id_for_label }}">Email</label>
+                {{ form.email }}  
+            </div>
+        </div>
+
+        <!-- Formación académica -->
+        <div class="card text-center bg-primary text-white">
+            <div class="card-body">
+                <b>"FORMACIÓN ACADÉMICA"</b>
+            </div>
+        </div>
+        <div class="card text-center">
+            <div class="card-body">
+                <b>Aporte los datos referentes a la formación acádemica.</b>
+            </div>
+        </div><br>
+
+        <div class="form-group col-md-12 align-items-center">
+            <label for="{{ form.institucion.id_for_label }}">Institución académica</label>
+            {{ form.institucion }}  
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-6 align-items-center">
+                <label for="{{ form.grado.id_for_label }}">Grado académico</label>
+                {{ form.grado }}  
+            </div>
+            <div class="form-group col-md-6 align-items-center">
+                <label for="{{ form.cedulaProf.id_for_label }}">Cédula Profesional</label>
+                {{ form.cedulaProf }}  
+            </div>
+        </div>
+
+        <!-- Experiencia laboral -->
+        <div class="card text-center bg-primary text-white">
+            <div class="card-body">
+                <b>"EXPERIENCIA LABORAL"</b>
+            </div>
+        </div>
+        <div class="card text-center">
+            <div class="card-body">
+                <b>Indique la experiencia laboral más actual, en caso de no tener dejar en blanco.</b>
+            </div>
+        </div><br>
+
+        <div class="form-row">
+            <div class="form-group col-md-6 align-items-center">
+                <label for="{{ form.puesto.id_for_label }}" style="white-space: nowrap;">Puesto laboral</label>
+                {{ form.puesto }}  
+            </div>
+            <div class="form-group col-md-6 align-items-center">
+                <label for="{{ form.empresa.id_for_label }}" style="white-space: nowrap;">Nombre de la Empresa / Institución</label>
+                {{ form.empresa }}  
+            </div>
+        </div>
+
+        <!-- Experiencia docente -->
+        <div class="card text-center bg-primary text-white">
+            <div class="card-body">
+                <b>"EXPERIENCIA DOCENTE"</b>
+            </div>
+        </div>
+        <div class="card text-center">
+            <div class="card-body">
+                <b>Indique la experiencia docente más actual, en caso de no tener dejar en blanco.</b>
+            </div>
+        </div><br>
+
+        <div class="form-row">
+            <div class="form-group col-md-6 align-items-center">
+                <label for="{{ form.materia.id_for_label }}" style="white-space: nowrap;">Materia</label>
+                {{ form.materia }}  
+            </div>
+            <div class="form-group col-md-6 align-items-center">
+                <label for="{{ form.periodo.id_for_label }}" style="white-space: nowrap;">Período en que llevó la materia</label>
+                {{ form.periodo }}  
+            </div>
+        </div>
+
+        <!-- Participación como instructor -->
+        <div class="card text-center bg-primary text-white">
+            <div class="card-body">
+                <b>"PARTICIPACIÓN COMO INSTRUCTOR"</b>
+            </div>
+        </div>
+        <div class="card text-center">
+            <div class="card-body">
+                <b>Denote su participación como instructor mas actual, en caso de no tener dejar en blanco.</b>
+            </div>
+        </div><br>
+
+        <div class="form-row">
+            <div class="form-group col-md-6 align-items-center">
+                <label for="{{ form.curso.id_for_label }}" style="white-space: nowrap;">Nombre del curso</label>
+                {{ form.curso }}  
+            </div>
+            <div class="form-group col-md-6 align-items-center">
+                <label for="{{ form.nombreEmpresa.id_for_label }}" style="white-space: nowrap;">Nombre de la Empresa / Institución</label>
+                {{ form.nombreEmpresa }}  
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-6 align-items-center">
+                <label for="{{ form.duracionHoras.id_for_label }}" style="white-space: nowrap;">Duración de horas</label>
+                {{ form.duracionHoras }}  
+            </div>
+            <div class="form-group col-md-6 align-items-center">
+                <label for="{{ form.fechaParticipacion.id_for_label }}" style="white-space: nowrap;">Período en el que participo en el curso</label>
+                {{ form.fechaParticipacion }}  
+            </div>
+        </div><br>
+
         <div class='text-center'>
         <button type="submit" class="btn btn-primary">Añadir</button>
         <a href="{% url 'instructorlista' %}" class="btn btn-secondary">Cancelar</a>

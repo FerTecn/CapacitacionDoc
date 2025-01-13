@@ -14,7 +14,17 @@
     
     <form method="post">
         {% csrf_token %}
-        {{ form.as_p }}
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="{{ form.nombreEdificio.id_for_label }}">Nombre del edificio</label>
+                {{ form.nombreEdificio }}  
+            </div>
+            <div class="form-group col-md-6">
+                <label for="{{ form.ubicacion.id_for_label }}">Ubicacion</label>
+                {{ form.ubicacion }}  
+            </div>
+        </div><br>
+
         <div class='text-center'>
         <button type="submit" class="btn btn-primary">Añadir</button>
         <a href="{% url 'lugarlista' %}" class="btn btn-secondary">Cancelar</a>

@@ -5,96 +5,176 @@
 
 {% block content %}
 <div class="container">
-    <h1 class="h3 mb-2 text-gray-800">Añadir Nuevo Instrcutor</h1>
+    <h1 class="h3 mb-2 text-gray-800">Añadir instructor</h1>
+    <div class="card">
+        <div class="card-body">
+            Rellena el siguiente formulario para añadir un nuevo instructor.
+        </div>
+    </div><br>
+
     <form method="post">
         {% csrf_token %}
-        
-        <div class="form-group">
-            <label for="clave">Clave:</label>
-            <input type="text" name="clave" id="clave" class="form-control" maxlength="10" required>
+        <!-- Datos personales -->
+        <div class="card text-center bg-primary text-white">
+            <div class="card-body">
+                <b>"DATOS PERSONALES"</b>
+            </div>
+        </div><br>
+
+        <div class="form-row">
+            <div class="form-group col-md-3 align-items-center">
+                <label for="clave">Clave</label>
+                <input type="text" name="clave" id="clave" class="form-control" maxlength="10" required>
+            </div>
+            <div class="form-group col-md-5 align-items-center">
+                <label for="nombre">Nombre</label>
+                <input type="text" name="nombre" id="nombre" class="form-control" maxlength="40" required>
+            </div>
+            <div class="form-group col-md-4 align-items-center">
+                <label for="apPaterno">Apellido Paterno</label>
+                <input type="text" name="apPaterno" id="apPaterno" class="form-control" maxlength="40" required>
+            </div>
         </div>
-        <div class="form-group">
-            <label for="nombre">Nombre:</label>
-            <input type="text" name="nombre" id="nombre" class="form-control" maxlength="40" required>
+        <div class="form-row">
+            <div class="form-group col-md-4 align-items-center">
+                <label for="apMaterno">Apellido Materno</label>
+                <input type="text" name="apMaterno" id="apMaterno" class="form-control" maxlength="40" required>
+            </div>
+            <div class="form-group col-md-4 align-items-center">
+                <label for="fechaNac">Fecha de nacimiento</label>
+                <input type="date" name="fechaNac" id="fechaNac" class="form-control">
+            </div>
+            <div class="form-group col-md-4 align-items-center">
+                <label for="CURP">CURP</label>
+                <input type="text" name="CURP" id="CURP" class="form-control" maxlength="18">
+            </div>
         </div>
-        <div class="form-group">
-            <label for="apPaterno">Apellido paterno:</label>
-            <input type="text" name="apPaterno" id="apPaterno" class="form-control" maxlength="40" required>
+        <div class="form-row">
+            <div class="form-group col-md-4 align-items-center">
+                <label for="RFC">RFC</label>
+                <input type="text" name="RFC" id="RFC" class="form-control" maxlength="13">
+            </div>
+            <div class="form-group col-md-4 align-items-center">
+                <label for="telefono">Teléfono</label>
+                <input type="text" name="telefono" id="telefono" class="form-control" maxlength="10">
+            </div>
+            <div class="form-group col-md-4 align-items-center">
+                <label for="email">Email</label>
+                <input type="email" name="email" id="email" class="form-control" maxlength="50">
+            </div>
         </div>
-        <div class="form-group">
-            <label for="apMaterno">Apellido materno:</label>
-            <input type="text" name="apMaterno" id="apMaterno" class="form-control" maxlength="40" required>
+
+        <!-- Formación académica -->
+        <div class="card text-center bg-primary text-white">
+            <div class="card-body">
+                <b>"FORMACIÓN ACADÉMICA"</b>
+            </div>
         </div>
-        <div class="form-group">
-            <label for="fechaNac">Fecha de nacimiento:</label>
-            <input type="date" name="fechaNac" id="fechaNac" class="form-control">
-        </div>
-        <div class="form-group">
-            <label for="CURP">CURP:</label>
-            <input type="text" name="CURP" id="CURP" class="form-control" maxlength="18">
-        </div>
-        <div class="form-group">
-            <label for="RFC">RFC:</label>
-            <input type="text" name="RFC" id="RFC" class="form-control" maxlength="13">
-        </div>
-        <div class="form-group">
-            <label for="telefono">Teléfono:</label>
-            <input type="text" name="telefono" id="telefono" class="form-control" maxlength="10">
-        </div>
-        <div class="form-group">
-            <label for="email">Email:</label>
-            <input type="email" name="email" id="email" class="form-control" maxlength="50">
-        </div>
-        <div class="form-group">
-            <label for="institucion">Institución académica:</label>
+        <div class="card text-center">
+            <div class="card-body">
+                <b>Aporte los datos referentes a la formación acádemica.</b>
+            </div>
+        </div><br>
+
+        <div class="form-group col-md-12 align-items-center">
+            <label for="institucion">Institución académica</label>
             <input type="text" name="institucion" id="institucion" class="form-control" maxlength="40">
         </div>
-        <div class="form-group">
-            <label for="grado">Grado académico:</label>
-            <select name="grado" id="grado" class="form-control" required>
-                <option value="">Seleccione un grado</option>
-                {% for grado in grados %}
-                    <option value="{{ grado.id }}">{{ grado.grado }}</option>
-                {% endfor %}
-            </select>
+        <div class="form-row">
+            <div class="form-group col-md-6 align-items-center">
+                <label for="grado">Grado académico</label>
+                <select name="grado" id="grado" class="form-control" required>
+                    <option value="">Seleccione un grado</option>
+                    {% for grado in grados %}
+                        <option value="{{ grado.id }}">{{ grado.grado }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group col-md-6 align-items-center">
+                <label for="cedulaProf">Cédula Profesional</label>
+                <input type="text" name="cedulaProf" id="cedulaProf" class="form-control" maxlength="8">
+            </div>
         </div>
-        <div class="form-group">
-            <label for="cedulaProf">Cédula Profesional:</label>
-            <input type="text" name="cedulaProf" id="cedulaProf" class="form-control" maxlength="8">
+
+        <!-- Experiencia laboral -->
+        <div class="card text-center bg-primary text-white">
+            <div class="card-body">
+                <b>"EXPERIENCIA LABORAL"</b>
+            </div>
         </div>
-        <div class="form-group">
-            <label for="puesto">Puesto:</label>
-            <input type="text" name="puesto" id="puesto" class="form-control" maxlength="50">
+        <div class="card text-center">
+            <div class="card-body">
+                <b>Indique la experiencia laboral más actual, en caso de no tener dejar en blanco.</b>
+            </div>
+        </div><br>
+
+        <div class="form-row">
+            <div class="form-group col-md-6 align-items-center">
+                <label for="puesto">Puesto laboral</label>
+                <input type="text" name="puesto" id="puesto" class="form-control" maxlength="50">
+            </div>
+            <div class="form-group col-md-6 align-items-center">
+                <label for="empresa">Nombre de la Empresa / Institución</label>
+                <input type="text" name="empresa" id="empresa" class="form-control" maxlength="50">
+            </div>
         </div>
-        <div class="form-group">
-            <label for="empresa">Empresa:</label>
-            <input type="text" name="empresa" id="empresa" class="form-control" maxlength="50">
+
+        <!-- Experiencia docente -->
+        <div class="card text-center bg-primary text-white">
+            <div class="card-body">
+                <b>"EXPERIENCIA DOCENTE"</b>
+            </div>
         </div>
-        <div class="form-group">
-            <label for="materia">Materia:</label>
-            <input type="text" name="materia" id="materia" class="form-control" maxlength="50">
+        <div class="card text-center">
+            <div class="card-body">
+                <b>Indique la experiencia docente más actual, en caso de no tener dejar en blanco.</b>
+            </div>
+        </div><br>
+
+        <div class="form-row">
+            <div class="form-group col-md-6 align-items-center">
+                <label for="materia">Materia</label>
+                <input type="text" name="materia" id="materia" class="form-control" maxlength="50">
+            </div>
+            <div class="form-group col-md-6 align-items-center">
+                <label for="periodo">Período en que llevó la materia</label>
+                <input type="text" name="periodo" id="periodo" class="form-control" placeholder="Ejemplo: Enero 2022 - Junio 2022">
+            </div>
         </div>
-        <div class="form-group">
-            <label for="periodo">Periodo:</label>
-            <input type="date" name="periodo" id="periodo" class="form-control">
+
+        <!-- Participación como instructor -->
+        <div class="card text-center bg-primary text-white">
+            <div class="card-body">
+                <b>"PARTICIPACIÓN COMO INSTRUCTOR"</b>
+            </div>
         </div>
-        <div class="form-group">
-            <label for="curso">Nombre del curso:</label>
-            <input type="text" name="curso" id="curso" class="form-control" maxlength="50">
+        <div class="card text-center">
+            <div class="card-body">
+                <b>Denote su participación como instructor mas actual, en caso de no tener dejar en blanco.</b>
+            </div>
+        </div><br>
+
+        <div class="form-row">
+            <div class="form-group col-md-6 align-items-center">
+                <label for="curso">Nombre del curso</label>
+                <input type="text" name="curso" id="curso" class="form-control" maxlength="50">
+            </div>
+            <div class="form-group col-md-6 align-items-center">
+                <label for="nombreEmpresa">Nombre de la Empresa / Institución</label>
+                <input type="text" name="nombreEmpresa" id="nombreEmpresa" class="form-control" maxlength="50">
+            </div>
         </div>
-        <div class="form-group">
-            <label for="empresa">Nombre de la empresa y/o institución:</label>
-            <input type="text" name="empresa" id="empresa" class="form-control" maxlength="50">
-        </div>
-        <div class="form-group">
-            <label for="horas">Duración de horas:</label>
-            <input type="text" name="horas" id="materia" class="form-control" maxlength="50">
-        </div>
-        <div class="form-group">
-            <label for="fecha">Fecha de participación del curso:</label>
-            <input type="date" name="fecha" id="fecha" class="form-control">
-        </div>
-        <br>
+        <div class="form-row">
+            <div class="form-group col-md-6 align-items-center">
+                <label for="duracionHoras">Duración de horas</label>
+                <input type="number" name="duracionHoras" id="duracionHoras" class="form-control" maxlength="50">
+            </div>
+            <div class="form-group col-md-6 align-items-center">
+                <label for="fechaParticipacion">Período en el que participo en el curso</label>
+                <input type="text" name="fechaParticipacion" id="fechaParticipacion" class="form-control" placeholder="Ejemplo: Enero 2022 - Junio 2022">
+            </div>
+        </div><br>
+
         <div class='text-center'>
             <button type="submit" class="btn btn-primary">Guardar</button>
             <a href="{% url 'crearevento' request.session.evento_id %}" class="btn btn-secondary">Cancelar</a>

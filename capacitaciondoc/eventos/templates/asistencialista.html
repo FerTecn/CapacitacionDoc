@@ -1,22 +1,17 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Inscripciones{% endblock %}
+{% block title %}Asistencia{% endblock %}
 
 {% block content %}
 <div class="container-fluid">
     <!-- Encabezado de página -->
-    <h1 class="h3 mb-2 text-gray-800">Inscripciones</h1>
-    <div class="card">
-        <div class="card-body">
-            Se muestra la lista de los cursos abiertos.
-        </div>
-    </div><br>
+    <h1 class="h3 mb-2 text-gray-800">Cursos</h1>
 
     <!-- Tabla de cursos abiertos -->
     <div class="card shadow mb-4">
         <div class="card-header py-3 d-flex justify-content-between align-items-center">
-            <h4 class="m-0 font-weight-bold text-primary">Lista de cursos abiertos</h4>
+            <h4 class="m-0 font-weight-bold text-primary">Cursos</h4>
         </div>
         <div class="card-body">
             <div class="table-responsive">
@@ -32,25 +27,16 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for evento in eventos %}
                         <tr>
-                            <td>{{ evento.nombre }}</td>
-                            <td>{{ evento.periodo }}</td>
-                            <td>{{ evento.horas }}</td>
-                            <td>{{ evento.instructor }}</td>
-                            <td>{{ evento.lugar }}</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
                             <td>
-                                <a href="{% url 'vercurso' evento.id %}" class="btn btn-success btn-sm">Ver</a>
-                                <!-- Al dar clic en inscribirse se vuelve true y cambia a inscrito, asi mismo se bloquea el botón-->
-                                {% if evento.aceptado %}
-                                    <button class="btn btn-secondary btn-sm" disabled>Inscrito</button>
-                                    <a href="{% url 'invalidarinscripcion' evento.id %}" class="btn btn-warning btn-sm">Invalidar</a>
-                                {% else %}
-                                    <a href="{% url 'aceptarinscripcion' evento.id %}" class="btn btn-primary btn-sm">Incribirse</a>
-                                {% endif %}
+                                <a href="" class="btn btn-success btn-sm">Asistencia</a>
                             </td>
                         </tr>
-                        {% endfor %}
                     </tbody>
                 </table>
             </div>

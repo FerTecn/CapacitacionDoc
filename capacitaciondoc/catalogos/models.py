@@ -19,7 +19,7 @@ class Instructor(models.Model):
     
     #Experiencia laboral
     puesto=models.CharField(max_length=40, null=True, blank=True)
-    empresa=models.CharField(max_length=40, null=True, blank=True)
+    empresa=models.CharField(max_length=60, null=True, blank=True)
     
     #Experiencia docente
     materia=models.CharField(max_length=40, null=True, blank=True)
@@ -38,7 +38,7 @@ class Instructor(models.Model):
         verbose_name_plural = 'Instructores'
         
 class GradoAcademico(models.Model):
-    clave = models.CharField(max_length=10)
+    #clave = models.CharField(max_length=10)
     grado = models.CharField(max_length=40) 
  
     def __str__(self):
@@ -48,7 +48,7 @@ class GradoAcademico(models.Model):
         verbose_name_plural = 'Grado académico'
 
 class Lugar(models.Model):
-    clave = models.CharField(max_length=10)
+    #clave = models.CharField(max_length=10)
     nombreEdificio = models.CharField(max_length=40)
     ubicacion = models.CharField(max_length=40)
  
@@ -88,7 +88,7 @@ class Docente(models.Model):
         verbose_name_plural = 'Docentes'
     
 class Genero(models.Model):
-    clave = models.CharField(max_length=10)
+    #clave = models.CharField(max_length=10)
     genero=models.CharField(max_length=20)
 
     def __str__(self):
@@ -98,7 +98,7 @@ class Genero(models.Model):
         verbose_name_plural = 'Genero'
 
 class Departamento(models.Model):
-    clave = models.CharField(max_length=10)
+    #clave = models.CharField(max_length=10)
     departamento=models.CharField(max_length=40)
 
     def __str__(self):
@@ -108,18 +108,18 @@ class Departamento(models.Model):
         verbose_name_plural = 'Departamentos'
 
 class Periodo(models.Model):
-    clave=models.CharField(max_length=50)
+    clave=models.TextField(max_length=50)
     inicioPeriodo=models.DateField()
     finPeriodo=models.DateField()
     
     def __str__(self):
-        return f"{self.inicioPeriodo} {self.finPeriodo}"
+        return f"{self.clave}"
     
     class Meta:
         verbose_name_plural = 'Periodos'
     
 class Dirigido(models.Model):
-    clave = models.CharField(max_length=10)
+    #clave = models.CharField(max_length=10)
     dirigido=models.CharField(max_length=20)
 
     def __str__(self):
@@ -129,7 +129,7 @@ class Dirigido(models.Model):
         verbose_name_plural = 'Dirigido a'
     
 class PerfilCurso(models.Model):
-    clave = models.CharField(max_length=10)
+    #clave = models.CharField(max_length=10)
     perfilCurso=models.CharField(max_length=40)
     
     def __str__(self):

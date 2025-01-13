@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Mensaje de gracias{% endblock %}
+
+{% block content %}
+<div class="card text-center">
+    <div class="card-header">
+      Mensaje de respuesta
+    </div>
+    <div class="card-body">
+      <h1 class="card-title">¡Gracias por completar la encuesta!</h1>
+      <p class="card-text">Sus respuestas han sido registradas con éxito.</p>
+      
+      <form method="post">
+        {% csrf_token %}
+        <div class="text-center">
+            <a href="" class="btn btn-primary">Regresar</a> 
+        </div>
+     </form>
+    </div>
+  </div>
+
+{% endblock %}

@@ -12,5 +12,7 @@ urlpatterns = [
     
     #Inscripcion
     path('inscripcionlista/', views.inscripcionlista, name='inscripcionlista'),
-    #path('vercurso/<int:evento_id>/', views.vercurso, name='vercurso'),
+    path('vercurso/<int:evento_id>/', views.vercurso, name='vercurso'),
+    path('aceptar/<int:inscripcion_id>/', views.aceptarinscripcion, name='aceptarinscripcion'),
+    path('invalidar/<int:inscripcion_id>/', views.invalidarinscripcion, name='invalidarinscripcion'),
 ]

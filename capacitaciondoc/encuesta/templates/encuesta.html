@@ -1,0 +1,209 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Encuesta{% endblock %}
+
+{% block content %}
+
+<h3 class="h3 mb-2 text-gray-800"><center><b>ENCUESTA DE OPINIÓN</b></center></h3>
+<center><b>Cursos de Capacitación Presencial</b></center><br>
+
+<p><strong>Nombre del curso:</strong> </p>
+<p><strong>Nombre de Institución:</strong> </p>
+<p><strong>Nombre del facilitador:</strong> </p>
+<p><strong>Fecha de realización:</strong> </p>
+
+
+<div class="card">
+    <div class="card-body">
+        <center>La presente encuesta tiene como finalidad conocer su opinión sobre el curso de capacitación en el que participó, 
+        las respuestas nos servirán para mejorarlo.</center>
+    </div>
+</div><br>
+
+<div class="card">
+    <div class="card-body">
+       <b>INSTRUCCIÓN:</b> Solicitamos exprese su opinión sobre los siguientes aspectos seleccionando el número 
+       correspondiente en el recuadro de la derecha según la siguiente escala:
+    </div>
+    
+    <div class="card-body d-flex justify-content-around align-items-center">
+        <div class="text-center">
+            <div class="border border-dark fw-bold fixed-size">5</div>
+            <small>Totalmente de acuerdo</small>
+        </div>
+        <div class="text-center">
+            <div class="border border-dark fw-bold fixed-size">4</div>
+            <small>Parcialmente de acuerdo</small>
+        </div>
+        <div class="text-center">
+            <div class="border border-dark fw-bold fixed-size">3</div>
+            <small>Indiferente</small>
+        </div>
+        <div class="text-center">
+            <div class="border border-dark fw-bold fixed-size">2</div>
+            <small>Parcialmente en desacuerdo</small>
+        </div>
+        <div class="text-center">
+            <div class="border border-dark fw-bold fixed-size">1</div>
+            <small>En desacuerdo</small>
+        </div>
+    </div>
+</div><br>
+
+<form method="POST" action="{% url 'encuesta' %}">
+    {% csrf_token %}
+
+<div class="row">
+
+    <div class="col-lg-6">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary"><center>INSTRUCTOR</center></h6>
+            </div>
+            <div class="card-body">
+                <label><b>1. Expuso el objetivo y temario del curso:</b></label><br>
+                {% for i in "12345" %}
+                    <input type="radio" name="instructor1" value="{{ i }}" required> {{ i }}
+                {% endfor %}<br>
+                
+                <label><b>2. Mostró dominio del contenido abordado:</b></label><br>
+                {% for i in "12345" %}
+                    <input type="radio" name="instructor2" value="{{ i }}" required> {{ i }}
+                {% endfor %}<br>
+        
+                <label><b>3. Fomentó la participación del grupo:</b></label><br>
+                {% for i in "12345" %}
+                    <input type="radio" name="instructor3" value="{{ i }}" required> {{ i }}
+                {% endfor %}<br>
+
+                <label><b>4. Aclaró las dudas que se presentaron:</b></label><br>
+                {% for i in "12345" %}
+                    <input type="radio" name="instructor4" value="{{ i }}" required> {{ i }}
+                {% endfor %}<br>
+
+                <label><b>5. Dio retroalimentación a los ejercicios realizados:</b></label><br>
+                {% for i in "12345" %}
+                    <input type="radio" name="instructor5" value="{{ i }}" required> {{ i }}
+                {% endfor %}<br>
+
+                <label><b>6. Aplicó una evaluación final relacionada con los contenidos del curso:</b></label><br>
+                {% for i in "12345" %}
+                    <input type="radio" name="instructor6" value="{{ i }}" required> {{ i }}
+                {% endfor %}<br>
+
+                <label><b>7. Inició y concluyó puntualmente las sesiones:</b></label><br>
+                {% for i in "12345" %}
+                    <input type="radio" name="instructor7" value="{{ i }}" required> {{ i }}
+                {% endfor %}<br><br>
+            </div>
+        </div>
+
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary"><center>MATERIAL</center></h6>
+            </div>
+            <div class="card-body">
+                <label><b>8. El material didáctico fue útil a lo largo del curso:</b></label><br>
+                {% for i in "12345" %}
+                    <input type="radio" name="material1" value="{{ i }}" required> {{ i }}
+                {% endfor %}<br>
+                
+                <label><b>9. La impresión del material didáctico fue legible:</b></label><br>
+                {% for i in "12345" %}
+                    <input type="radio" name="material2" value="{{ i }}" required> {{ i }}
+                {% endfor %}<br>
+        
+                <label><b>10. La variedad del material didáctico fue suficiente para apoyar su aprendizaje:</b></label><br>
+                {% for i in "12345" %}
+                    <input type="radio" name="material3" value="{{ i }}" required> {{ i }}
+                {% endfor %}<br><br>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary"><center>CURSO</center></h6>
+            </div>
+            <div class="card-body">
+                <label><b>11. La distribución del tiempo fue adecuada para cubrir el contenido:</b></label><br>
+                {% for i in "12345" %}
+                    <input type="radio" name="curso1" value="{{ i }}" required> {{ i }}
+                {% endfor %}<br>
+                
+                <label><b>12. Los temas fueron suficientes para alcanzar el objetivo del curso:</b></label><br>
+                {% for i in "12345" %}
+                    <input type="radio" name="curso2" value="{{ i }}" required> {{ i }}
+                {% endfor %}<br>
+        
+                <label><b>13. El curso comprendió ejercicios de práctica relacionados con el contenido:</b></label><br>
+                {% for i in "12345" %}
+                    <input type="radio" name="curso3" value="{{ i }}" required> {{ i }}
+                {% endfor %}<br>
+
+                <label><b>14. El curso cubrió sus expectativas:</b></label><br>
+                {% for i in "12345" %}
+                    <input type="radio" name="curso4" value="{{ i }}" required> {{ i }}
+                {% endfor %}<br><br>
+
+            </div>
+        </div>
+
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary"><center>INFRAESTRUCTURA</center></h6>
+            </div>
+            <div class="card-body">
+                <label><b>15. La iluminación del aula fue adecuada:</b></label><br>
+                {% for i in "12345" %}
+                    <input type="radio" name="insfraestructura1" value="{{ i }}" required> {{ i }}
+                {% endfor %}<br>
+
+                <label><b>16. La ventilación del aula fue adecuada:</b></label><br>
+                {% for i in "12345" %}
+                    <input type="radio" name="insfraestructura2" value="{{ i }}" required> {{ i }}
+                {% endfor %}<br>
+
+                <label><b>17. El aseo del aula fue adecuado:</b></label><br>
+                {% for i in "12345" %}
+                    <input type="radio" name="insfraestructura3" value="{{ i }}" required> {{ i }}
+                {% endfor %}<br>
+
+                <label><b>18. El servicio de los sanitarios fue adecuado (limpieza, abasto de papel, toallas, jabón, etc.):</b></label><br>
+                {% for i in "12345" %}
+                    <input type="radio" name="insfraestructura4" value="{{ i }}" required> {{ i }}
+                {% endfor %}<br>
+
+                <label><b>19. El servicio de café fue adecuado:</b></label><br>
+                {% for i in "12345" %}
+                    <input type="radio" name="insfraestructura5" value="{{ i }}" required> {{ i }}
+                {% endfor %}<br>
+
+                <label><b>20. Recibió apoyo del personal que coordinó el curso:</b></label><br>
+                {% for i in "12345" %}
+                    <input type="radio" name="insfraestructura6" value="{{ i }}" required> {{ i }}
+                {% endfor %}<br><br>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-12">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary"><center>COMENTARIOS O SUGERENCIAS</center></h6>
+            </div><br>
+            <div class="form-floating">
+                <center><textarea name="comentarios" rows="4" cols="50"></textarea></center><br>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <div class='text-center'>
+        <button type="submit" class="btn btn-primary">Enviar</button>
+    </div>
+</form>
+{% endblock %}

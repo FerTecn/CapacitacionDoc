@@ -39,13 +39,13 @@
                             <td>{{ validar.curso.instructor }}</td>
                             <td>
                                 <a href="{% url 'validarver' validar.id %}" class="btn btn-success btn-sm">Ver</a>
-                                <!-- Al dar clic en Aceptar se vuelve true y cambia a acepatdo, asi mismo se bloquea el botón-->
+                                <!-- Al dar clic en Aceptar se vuelve true y cambia a aceptado, asi mismo se bloquea el botón-->
                                 {% if validar.curso.aceptado %}
                                     <button class="btn btn-secondary btn-sm" disabled>Aceptado</button>
+                                    <a href="{% url 'invalidar_curso' validar.curso.id %}" class="btn btn-warning btn-sm">Invalidar</a>
                                 {% else %}
                                     <a href="{% url 'aceptar_curso' validar.id %}" class="btn btn-primary btn-sm">Aceptar</a>
                                 {% endif %}
-                                <a href="{% url 'invalidar_curso' validar.curso.id %}" class="btn btn-warning btn-sm">Invalidar</a>
                             </td>
                         </tr>
                         {% endfor %}

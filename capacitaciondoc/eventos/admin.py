@@ -11,19 +11,14 @@ class EventoAdmin(admin.ModelAdmin):
     
 admin.site.register(Evento, EventoAdmin)
 
-
-
-class asistenciaAdmin(admin.ModelAdmin):
-    list_display = ('nombre', 'periodo', 'lugar', 'horas', 'instructor')
-admin.site.register(asistencia, asistenciaAdmin)
-
-class oficioComisionAdmin(admin.ModelAdmin):
-    list_display = ('fecha', 'nombre', 'lugar', 'horas')
-admin.site.register(oficioComision, oficioComisionAdmin)
-
 class InscripcionAdmin(admin.ModelAdmin):
     list_display = ('evento__curso__nombre', 'evento__curso__instructor', 'evento__curso__horas')
 admin.site.register(Inscripcion, InscripcionAdmin)
+
+admin.site.register(asistencia)
+class oficioComisionAdmin(admin.ModelAdmin):
+    list_display = ('fecha', 'nombre', 'lugar', 'horas')
+admin.site.register(oficioComision, oficioComisionAdmin)
 
 class calificacionAdmin(admin.ModelAdmin):
     list_display = ('nombre', 'periodo', 'lugar', 'horas')

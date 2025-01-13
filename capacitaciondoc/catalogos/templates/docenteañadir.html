@@ -14,7 +14,59 @@
     
     <form method="post">
         {% csrf_token %}
-        {{ form.as_p }}
+        <div class="form-row">
+            <div class="form-group col-md-5 align-items-center">
+                <label for="{{ form.clave.id_for_label }}">Clave</label>
+                {{ form.clave }}  
+            </div>
+            <div class="form-group col-md-7 align-items-center">
+                <label for="{{ form.nombre.id_for_label }}">Nombre</label>
+                {{ form.nombre }}  
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-4 align-items-center">
+                <label for="{{ form.apPaterno.id_for_label }}">Apellido Paterno</label>
+                {{ form.apPaterno }}  
+            </div>
+            <div class="form-group col-md-4 align-items-center">
+                <label for="{{ form.apMaterno.id_for_label }}">Apellido Materno</label>
+                {{ form.apMaterno }}  
+            </div>
+            <div class="form-group col-md-4 align-items-center">
+                <label for="{{ form.fechaNac.id_for_label }}">Fecha de nacimiento</label>
+                {{ form.fechaNac }}  
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-4 align-items-center">
+                <label for="{{ form.genero.id_for_label }}">Género</label>
+                {{ form.genero }}  
+            </div>
+            <div class="form-group col-md-4 align-items-center">
+                <label for="{{ form.CURP.id_for_label }}">CURP</label>
+                {{ form.CURP }}  
+            </div>
+            <div class="form-group col-md-4 align-items-center">
+                <label for="{{ form.RFC.id_for_label }}">RFC</label>
+                {{ form.RFC }}  
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-3 align-items-center">
+                <label for="{{ form.telefono.id_for_label }}">Teléfono</label>
+                {{ form.telefono }}  
+            </div>
+            <div class="form-group col-md-5 align-items-center">
+                <label for="{{ form.email.id_for_label }}">Email</label>
+                {{ form.email }}  
+            </div>
+            <div class="form-group col-md-4 align-items-center">
+                <label for="{{ form.departamento.id_for_label }}">Departamento</label>
+                {{ form.departamento }}  
+            </div>
+        </div><br>
+
         <div class='text-center'>
         <button type="submit" class="btn btn-primary">Añadir</button>
         <a href="{% url 'docentelista' %}" class="btn btn-secondary">Cancelar</a>

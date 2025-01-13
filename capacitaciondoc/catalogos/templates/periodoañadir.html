@@ -5,16 +5,32 @@
 
 {% block content %}
 <div class="container">
-    <h1 class="h3 mb-2 text-gray-800">Añadir Periodo</h1>
+    <h1 class="h3 mb-2 text-gray-800">Añadir Período</h1>
     <div class="card">
         <div class="card-body">
-            Rellena el siguiente formulario para añadir un nuevo periodo.
+            Rellena el siguiente formulario para añadir un nuevo período.
         </div>
     </div><br>
     
     <form method="post">
         {% csrf_token %}
-        {{ form.as_p }}
+        <div class="form-row justify-content-center">
+            <div class="form-group col-md-8">
+                <label for="{{ form.clave.id_for_label }}">Clave</label>
+                {{ form.clave }}  
+            </div>
+        </div>
+        <div class="form-row justify-content-center">
+            <div class="form-group col-md-4">
+                <label for="{{ form.inicioPeriodo.id_for_label }}">Inicio de Período</label>
+                {{ form.inicioPeriodo }}  
+            </div>
+            <div class="form-group col-md-4">
+                <label for="{{ form.finPeriodo.id_for_label }}">Fin de Período</label>
+                {{ form.finPeriodo }}  
+            </div>
+        </div><br>
+
         <div class='text-center'>
         <button type="submit" class="btn btn-primary">Añadir</button>
         <a href="{% url 'periodolista' %}" class="btn btn-secondary">Cancelar</a>

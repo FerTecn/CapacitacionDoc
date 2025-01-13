@@ -17,7 +17,7 @@
         <!-- Horas -->
         <p>
             <label for="id_horas"><strong>Horas:</strong></label>
-            <input type="number" id="id_horas" name="horas" class="form-control" 
+            <input type="number" id="id_horas" name="horas" class="form-control" style="max-width: 80%;"
                    value="{{ evento.curso.horas }}" min="1" required>
         </p>
 
@@ -32,7 +32,7 @@
 
         <p><strong>Lugar:</strong></p>
         <div class="d-flex align-items-center">
-            <select name="lugar" class="form-control" required style="max-width: 70%;">
+            <select name="lugar" class="form-control" required style="max-width: 80%;">
                 <option value="">Seleccione un lugar</option>
                 {% for lugar in lugares %}
                     <option value="{{ lugar.id }}" 

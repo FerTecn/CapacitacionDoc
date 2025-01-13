@@ -18,22 +18,20 @@ class Evento(models.Model):
 
 class Inscripcion(models.Model):
     evento = models.ForeignKey(Evento, on_delete=models.CASCADE, null=True, blank=True)
+    aceptado = models.BooleanField(default=False)  # Campo para rastrear estado de aceptación
 
     def __str__(self):
         return f"{self.evento}"
-
+    
+    class Meta:
+        verbose_name_plural = 'Inscripcion'
     
 class asistencia(models.Model):
-    clave = models.CharField(max_length=10)
-    nombre=models.CharField(max_length=40)
-    periodo=models.CharField(max_length=40)
-    lugar=models.CharField(max_length=40)
-    horas=models.CharField(max_length=40)
-    instructor=models.CharField(max_length=40)
+    evento = models.ForeignKey(Evento, on_delete=models.CASCADE, null=True, blank=True)
+    #Docentes
     
     def __str__(self):
-        return f"{self.nombre} {self.periodo} {self.lugar} {self.horas} {self.instructor} "
-    #FALTA UNA PESTAÑA DONDE SE MUESTRAN LOS DOCENTES INSCRITOS PARA PONER ASISTENCIA
+        return f"{self.evento}"
 
     class Meta:
         verbose_name_plural = 'Asistencia'
@@ -64,11 +62,3 @@ class calificacion(models.Model):
     
     class Meta:
         verbose_name_plural = 'Calificaciones'
-    #FALTA UNA PESTAÑA DONDE SE MUESTRAN LOS DOCENTES INSCRITOS PARA ASINGAR CALIFICACION
-
-class Hora(models.Model):
-    hora_inicio = models.TimeField()
-    hora_fin = models.TimeField()
-
-    def __str__(self):
-        return f"{self.hora_inicio} - {self.hora_fin}"

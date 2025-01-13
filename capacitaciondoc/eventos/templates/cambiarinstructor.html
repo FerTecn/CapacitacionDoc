@@ -4,22 +4,28 @@
 
 {% block content %}
 <div class="container">
-    <h1>Cambiar Instructor</h1><br>
+    <h1 class="h3 mb-2 text-gray-800">Cambiar instructor</h1>
+    <div class="card">
+        <div class="card-body">
+            Seleecione en nuevo intructor, en caso no estar añada uno nuevo
+        </div>
+    </div><br>
         
     <form method="post">
         {% csrf_token %}
-        <div class="form-group d-flex align-items-center">
-            <label for="nuevo_instructor" class="mr-3">Selecciona un instructor:</label>
-            <select name="nuevo_instructor" id="nuevo_instructor" class="form-control" required style="max-width: 70%;">
-                {% for instructor in instructores %}
-                    <option value="{{ instructor.id }}">{{ instructor.nombre }} {{ instructor.apPaterno }} {{ instructor.apMaterno }}</option>
-                {% endfor %}
-            </select>
-            <!-- Botón para agregar un nuevo instructor al lado del select -->
-            <a href="{% url 'añadirinstructor' evento_id=evento.id %}" class="btn btn-success ml-2">Agregar Nuevo Instructor</a>
-        </div>
+        <div class="form-group justify-content-center">
+            <label class="form-group" for="nuevo_instructor">Selecciona un instructor</label>
+            <div class="form-group d-flex justify-content-center">
+                <select name="nuevo_instructor" id="nuevo_instructor" class="form-control" required style="max-width: 70%;">
+                    {% for instructor in instructores %}
+                        <option value="{{ instructor.id }}">{{ instructor.nombre }} {{ instructor.apPaterno }} {{ instructor.apMaterno }}</option>
+                    {% endfor %}
+                </select>
+                <!-- Botón para agregar un nuevo instructor -->
+                <a href="{% url 'añadirinstructor' evento_id=evento.id %}" class="btn btn-success ml-2">Agregar Nuevo Instructor</a>
+            </div>
+        </div><br>
 
-        <br>
         <div class='text-center'>
             <button type="submit" class="btn btn-primary">Guardar</button>
             <a href="{% url 'crearevento' evento_id=evento.id %}" class="btn btn-secondary">Cancelar</a>

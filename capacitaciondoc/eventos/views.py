@@ -185,11 +185,29 @@ def inscripcionlista(request):
     for inscripcion in inscripciones:
         evento = inscripcion.evento  # Obtener el evento asociado a cada inscripción
         eventos.append({
+            'id': evento.id,  # Agrega el ID del evento aquí
             'nombre': evento.curso.nombre,
             'periodo': evento.curso.periodo,
             'horas': evento.curso.horas,
             'instructor': evento.curso.instructor,
             'lugar': evento.lugar,
+            'aceptado': inscripcion.aceptado, #Estado para que cambien los botones
         })
 
     return render(request, 'inscripcionlista.html', {'eventos': eventos})
+
+def vercurso(request, evento_id):
+    evento = get_object_or_404(Evento, id=evento_id)
+    return render(request, 'vercurso.html', {'evento': evento})
+
+def aceptarinscripcion(request, inscripcion_id):
+    inscripcion = get_object_or_404(Inscripcion, id=inscripcion_id)
+    inscripcion.aceptado = True
+    inscripcion.save()
+    return redirect('inscripcionlista')  
+
+def invalidarinscripcion(request, inscripcion_id):
+    inscripcion = get_object_or_404(Inscripcion, id=inscripcion_id)
+    inscripcion.aceptado = False
+    inscripcion.save()
+    return redirect('inscripcionlista')  
