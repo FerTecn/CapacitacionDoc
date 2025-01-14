@@ -32,7 +32,7 @@ class Instructor(models.Model):
     fechaParticipacion=models.DateField(null=True, blank=True)
     
     def __str__(self):
-        return f"{self.nombre} {self.apPaterno} {self.apMaterno} {self.grado}"
+        return f"{self.nombre} {self.apPaterno} {self.apMaterno} - {self.grado}"
     
     class Meta:
         verbose_name_plural = 'Instructores'

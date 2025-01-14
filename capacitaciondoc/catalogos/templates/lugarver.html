@@ -5,9 +5,16 @@
 
 {% block content %}
 <div class="container">
-    <h1>Datos</h1>
-    <p><strong>Edificio:</strong> {{ lugar.nombreEdificio }}</p>
-    <p><strong>Ubicación:</strong> {{ lugar.ubicacion }}</p>
+    <h1 class="h3 mb-2 text-gray-800">Información de Ubicación</h1><br>
+
+    <div class="form-row">
+        <div class="form-group col-md-6 align-items-center">
+            <p><strong style="display: block;">Nombre del edificio:</strong> {{ lugar.nombreEdificio }}</p>
+        </div>
+        <div class="form-group col-md-6 align-items-center">
+            <p><strong style="display: block;">Ubicación:</strong>{{ lugar.nombreEdificio }}</p>
+        </div>
+    </div><br>
 
     <div class="text-center">
         <a href="{% url 'lugarlista' %}" class="btn btn-primary">Regresar</a> 

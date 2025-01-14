@@ -5,46 +5,67 @@
 
 {% block content %}
 <div class="container">
-    <h1>Datos del Evento</h1>
+    <h1 class="h3 mb-2 text-gray-800">Datos del Evento</h1>
     <form method="post">
         {% csrf_token %}
-        <p><strong>Clave:</strong> {{ evento.curso.clave }}</p>
-        <p><strong>Nombre:</strong> {{ evento.curso.nombre }}</p>
-        <p><strong>Objetivo:</strong> {{ evento.curso.objetivo }}</p>
-        <p><strong>Periodo:</strong> {{ evento.curso.periodo }}</p>
-        <p><strong>Sede:</strong> {{ evento.curso.sede }}</p>
-
-        <!-- Horas -->
-        <p>
-            <label for="id_horas"><strong>Horas:</strong></label>
-            <input type="number" id="id_horas" name="horas" class="form-control" style="max-width: 80%;"
-                   value="{{ evento.curso.horas }}" min="1" required>
-        </p>
-
-        <!-- Mostrar instructor y botón para cambiar -->
-        <div class="d-flex justify-content-between">
-            <p><strong>Instructor:</strong> {{ evento.curso.instructor }}</p>
-            <a href="{% url 'cambiarinstructor' evento_id=evento.id %}" class="btn btn-warning">Cambiar Instructor</a>
-        </div>
-
-        <p><strong>Dirigido a:</strong> {{ evento.curso.dirigido }}</p>
-        <p><strong>Perfil de Curso:</strong> {{ evento.curso.perfilCurso }}</p>
-
-        <p><strong>Lugar:</strong></p>
-        <div class="d-flex align-items-center">
-            <select name="lugar" class="form-control" required style="max-width: 80%;">
-                <option value="">Seleccione un lugar</option>
-                {% for lugar in lugares %}
-                    <option value="{{ lugar.id }}" 
-                            {% if lugar_seleccionado and lugar.id == lugar_seleccionado.id %}selected{% endif %}>
-                        {{ lugar.nombreEdificio }} - {{ lugar.ubicacion }}
-                    </option>
-                {% endfor %}
-            </select>
-            <button type="button" class="btn btn-success ml-2" onclick="window.location.href='{% url 'añadirlugar' %}'">Añadir nuevo lugar</button>
-        </div>
         
-        <br>
+        <div class="form-row">
+            <div class="form-group col-md-4 align-items-center">
+                <p><strong style="display: block;">Clave</strong> {{ evento.curso.clave }}</p>
+            </div>
+            <div class="form-group col-md-8 align-items-center">
+                <p><strong style="display: block;">Nombre del curso</strong> {{ evento.curso.nombre }}</p>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-12 align-items-center">
+                <p><strong style="display: block;">Objetivo</strong> {{ evento.curso.objetivo }}</p>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-4 align-items-center">
+                <p><strong style="display: block;">Período del curso</strong> {{ evento.curso.periodo }}</p>
+            </div>
+            <div class="form-group col-md-6 align-items-center">
+                <p><strong style="display: block;">Sede</strong> {{ evento.curso.sede }}</p>
+            </div>
+            <div class="form-group col-md-2 align-items-center">
+                <!-- Horas -->
+                <p>
+                    <label for="id_horas"><strong style="display: block;">Horas</strong></label>
+                    <input type="number" id="id_horas" name="horas" class="form-control" style="max-width: 80%;"
+                            value="{{ evento.curso.horas }}" min="1" required>
+                </p>
+            </div>
+        </div>
+        <div class="form-row">
+            <!-- Mostrar instructor y botón para cambiar -->
+            <div class="form-group col-md-4">
+                <p><strong>Instructor</strong> {{ evento.curso.instructor }}</p>
+                <a href="{% url 'cambiarinstructor' evento_id=evento.id %}" class="btn btn-warning">Cambiar Instructor</a>
+            </div>
+            <div class="form-group col-md-2">
+                <p><strong style="display: block;">Dirigido a</strong> {{ evento.curso.dirigido }}</p>
+            </div>
+            <div class="form-group col-md-3">
+                <p><strong style="display: block;">Perfil de Curso</strong> {{ evento.curso.perfilCurso }}</p>
+            </div>
+            <div class="form-group col-md-3">
+                <p><strong>Lugar</strong></p>
+                <select name="lugar" class="form-control" required>
+                    <option value="">Seleccione un lugar</option>
+                    {% for lugar in lugares %}
+                        <option value="{{ lugar.id }}" 
+                                {% if lugar_seleccionado and lugar.id == lugar_seleccionado.id %}selected{% endif %}>
+                            {{ lugar.nombreEdificio }} - {{ lugar.ubicacion }}
+                        </option>
+                    {% endfor %}
+                </select>
+                <!-- Botón debajo del select -->
+                <a href="{% url 'añadirlugar' %}" class="btn btn-success mt-2">Añadir nuevo lugar</a>
+            </div>
+        </div><br>
+    
         <div class='text-center'>
             <button type="submit" class="btn btn-primary">Guardar</button>
             <a href="{% url 'eventolista' %}" class="btn btn-secondary">Cancelar</a>

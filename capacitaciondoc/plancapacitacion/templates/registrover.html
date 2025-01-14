@@ -5,23 +5,51 @@
 
 {% block content %}
 <div class="container">
-    <h1>Datos</h1>
-    <p><strong>Clave:</strong> {{ curso.clave }}</p>
-    <p><strong>Curso:</strong> {{ curso.nombre}}</p>
-    <p><strong>Objetivo:</strong> {{ curso.objetivo }}</p>
-    <p><strong>Periodo:</strong> {{ curso.periodo }}</p>
-    <p><strong>Sede:</strong> {{ curso.sede }}</p>
-    <p><strong>Horas:</strong> {{ curso.horas }}</p>
-    <p><strong>Instructor:</strong> {{ curso.instructor }}</p>
-    <p><strong>Dirigido a:</strong> {{ curso.dirigido }}</p>
-    <p><strong>Perfil de Curso:</strong> {{ curso.perfilCurso }}</p>
-    <p><strong>Estatus:</strong> 
+    <h1 class="h3 mb-2 text-gray-800">Datos del Curso</h1><br>
+
+    <div class="form-row">
+        <div class="form-group col-md-4 align-items-center">
+            <p><strong style="display: block;">Clave</strong> {{ curso.clave }}</p>
+        </div>
+        <div class="form-group col-md-8 align-items-center">
+            <p><strong style="display: block;">Nombre del curso</strong> {{ curso.nombre}}</p>
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-12 align-items-center">
+            <p><strong style="display: block;">Objetivo</strong> {{ curso.objetivo }}</p>
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-4 align-items-center">
+            <p><strong style="display: block;">Período del curso</strong> {{ curso.periodo }}</p>
+        </div>
+        <div class="form-group col-md-6 align-items-center">
+            <p><strong style="display: block;">Sede</strong> {{ curso.sede }}</p>
+        </div>
+        <div class="form-group col-md-2 align-items-center">
+            <p><strong style="display: block;">Horas</strong> {{ curso.horas }}</p>
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-4 align-items-center">
+            <p><strong style="display: block;">Instructor</strong> {{ curso.instructor }}</p>
+        </div>
+        <div class="form-group col-md-4 align-items-center">
+            <p><strong style="display: block;">Dirigido a</strong> {{ curso.dirigido }}</p>
+        </div>
+        <div class="form-group col-md-4 align-items-center">
+            <p><strong style="display: block;">Perfil de Curso</strong> {{ curso.perfilCurso }}</p>
+        </div>
+    </div><br>
+
+    <!--<p><strong>Estatus:</strong> 
         {% if curso.aceptado %}
             Aceptado
         {% else %}
             Rechazado
         {% endif %}
-    </p>
+    </p>-->
 
     <div class='text-center'>
     <a href="{% url 'registrolista' %}" class="btn btn-primary">Regresar</a> 

@@ -5,8 +5,13 @@
 
 {% block content %}
 <div class="container">
-    <h1>Datos</h1>
-    <p><strong>Genero:</strong> {{ perfilCurso.perfilCurso }}</p>
+    <h1 class="h3 mb-2 text-gray-800">Información del Perfil de Curso</h1><br>
+
+    <div class="form-row">
+        <div class="form-group col-md-12 align-items-center">
+            <p><strong>Perfil de Curso:</strong> {{ perfilCurso.perfilCurso }}</p>
+        </div>
+    </div><br>
     
     <div class="text-center">
         <a href="{% url 'perfilcursolista' %}" class="btn btn-primary">Regresar</a> 
