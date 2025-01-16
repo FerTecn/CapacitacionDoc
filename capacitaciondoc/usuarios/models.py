@@ -34,6 +34,7 @@ class CustomUser(AbstractUser):
         choices=[('Docente', 'Docente'), ('Instructor', 'Instructor')],
         verbose_name="Rol"
     )
+    email = models.EmailField(unique=True, verbose_name="Correo electrónico")
 
     USERNAME_FIELD = 'curp'  #Agregado: Define al CURP como el identificador inicial para permitir el Login con CURP
     objects = CustomUserManager()  # Asigna el nuevo UserManager
@@ -43,5 +44,5 @@ class CustomUser(AbstractUser):
         self.username = self.curp
         super().save(*args, **kwargs)  # Llamar al método save del modelo base
 
-    def _str_(self):
-        return f"{self.first_name} {self.last_name_paterno} {self.last_name_materno} - {self.rol}"
+    def __str__(self):
+        return f"{self.first_name} {self.last_name_paterno} {self.last_name_materno} - {self.rol}"

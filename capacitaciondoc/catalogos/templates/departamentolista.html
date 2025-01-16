@@ -22,15 +22,20 @@
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                     <thead>
                         <tr>
+                            <th>Nomenclatura</th>
+                            <th>Número de departamento</th>
                             <th>Departamento</th>
+                            <th>Jefe de departamento</th>
                             <th>Opciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for departamento in departamentos %}
                         <tr id="departamento-{{ departamento.id }}">
+                            <td>{{departamento.nomenclatura}}</td>
+                            <td>{{departamento.numerodepartamento}}</td>
                             <td>{{departamento.departamento}}</td>
-                           
+                            <td>{{departamento.nombreJefe}}</td>
                             <td>
                                 <!-- Opciones -->
                                 <a href="{% url 'departamentover' departamento.id %}" class="btn btn-success btn-sm">Ver</a>

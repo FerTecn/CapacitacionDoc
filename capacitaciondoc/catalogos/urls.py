@@ -73,4 +73,11 @@ urlpatterns = [
     path('periodover/<int:periodo_id>/', views.periodover, name='periodover'),
     path('periodoactualizar/<int:periodo_id>/', views.periodoactualizar, name='periodoactualizar'),
     path('periodoeliminar/<int:periodo_id>/', views.periodoeliminar, name='periodoeliminar'),
+    
+    #DIRECTOR
+    path('directorlista/', views.directorlista, name='directorlista'),
+    path('directoragregar/', views.directoragregar, name='directoragregar'),
+    path('directorver/<int:director_id>/', views.directorver, name='directorver'),
+    path('directoractualizar/<int:director_id>/', views.directoractualizar, name='directoractualizar'),
+    path('directoreliminar/<int:director_id>/', views.directoreliminar, name='directoreliminar'),
 ]

@@ -1,5 +1,5 @@
 from django import forms
-from .models import GradoAcademico, Lugar, Sede, Instructor, Docente,Departamento,Dirigido,Genero,PerfilCurso,Periodo
+from .models import GradoAcademico, Lugar, Sede, Instructor, Docente,Departamento,Dirigido,Genero,PerfilCurso,Periodo, Director
 
 #GRADO ACADEMICO
 class AñadirGradoAcForm(forms.ModelForm):
@@ -341,3 +341,26 @@ class ActualizarPeriodoForm(forms.ModelForm):
                 'type': 'date',
                 'class': 'form-control',
             })
+
+#DIRECTOR
+class AgregarDirectorForm(forms.ModelForm):
+    class Meta:
+        model = Director
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs.update({
+                'class': 'form-control',
+            })
+
+class ActualizarDirectorForm(forms.ModelForm):
+    class Meta:
+        model= Director
+        fields = '__all__'
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in iter(self.fields):
+            self.fields[field].widget.attrs.update({'class': 'form-control'}) 

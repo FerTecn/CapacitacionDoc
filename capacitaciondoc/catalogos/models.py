@@ -98,8 +98,15 @@ class Genero(models.Model):
         verbose_name_plural = 'Genero'
 
 class Departamento(models.Model):
-    #clave = models.CharField(max_length=10)
+    nomenclatura = models.CharField(max_length=10, null=True, blank=True)
+    numerodepartamento=models.CharField(max_length=54, null=True, blank=True)
     departamento=models.CharField(max_length=40)
+    nombreJefe=models.CharField(max_length=54, null=True, blank=True)
+    apParternoJefe=models.CharField(max_length=40, null=True, blank=True)
+    apMaternoJefe=models.CharField(max_length=40, null=True, blank=True)
+    telefono=models.CharField(max_length=40, null=True, blank=True)
+    email=models.CharField(max_length=60, null=True, blank=True)
+    paginaWeb=models.CharField(max_length=100, null=True, blank=True)
 
     def __str__(self):
         return self.departamento
@@ -137,3 +144,9 @@ class PerfilCurso(models.Model):
     
     class Meta:
         verbose_name_plural = 'Perfiles de Curso'
+
+class Director(models.Model):
+    nombre=models.CharField(max_length=40)
+    apPaterno=models.CharField(max_length=40)
+    apMaterno=models.CharField(max_length=40)
+    puesto=models.CharField(max_length=40)

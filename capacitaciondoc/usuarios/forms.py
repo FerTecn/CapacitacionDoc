@@ -5,15 +5,16 @@ from .models import CustomUser
 class SignupForm(UserCreationForm):
     class Meta:
         model = CustomUser
-        fields = ['first_name', 'last_name_paterno', 'last_name_materno', 'curp', 'rol', 'password1', 'password2']
+        fields = ['first_name', 'last_name_paterno', 'last_name_materno', 'curp', 'rol', 'email', 'password1', 'password2']
         widgets = {
-            'first_name': forms.TextInput(attrs={'class': 'form-control'}),
-            'last_name_paterno': forms.TextInput(attrs={'class': 'form-control'}),
-            'last_name_materno': forms.TextInput(attrs={'class': 'form-control'}),
-            'curp': forms.TextInput(attrs={'class': 'form-control','maxlength': '18'}),
-            'rol': forms.Select(attrs={'class': 'form-control'}),
+            'first_name': forms.TextInput(attrs={'class': 'form-control '}),
+            'last_name_paterno': forms.TextInput(attrs={'class': 'form-control '}),
+            'last_name_materno': forms.TextInput(attrs={'class': 'form-control '}),
+            'curp': forms.TextInput(attrs={'class': 'form-control ','maxlength': '18'}),
+            'rol': forms.Select(attrs={'class': 'form-control '}),
+            'email': forms.EmailInput(attrs={'class': 'form-control '}),
             'password1': forms.PasswordInput(attrs={'class': 'form-control'}),
-            'password2': forms.PasswordInput(attrs={'class': 'form-control'}),
+            'password2': forms.PasswordInput(attrs={'class': 'form-control '}),
         }
         
 class SigninForm(AuthenticationForm):
