@@ -1,0 +1,98 @@
+
+/* Ajusta el contenedor del carrusel */
+.carousel {
+    position: relative;
+}
+
+/* Flecha izquierda (anterior) */
+.carousel-control-prev {
+    position: absolute;
+    top: 50%;
+    left: -50px; /* Ajusta la distancia fuera del carrusel */
+    transform: translateY(-50%);
+    z-index: 100;
+}
+
+/* Flecha derecha (siguiente) */
+.carousel-control-next {
+    position: absolute;
+    top: 50%;
+    right: -50px; /* Ajusta la distancia fuera del carrusel */
+    transform: translateY(-50%);
+    z-index: 100;
+}
+
+/* Estilo adicional para las flechas */
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo semitransparente */
+    border-radius: 50%; /* Hacer las flechas circulares */
+    width: 40px; /* Tamaño personalizado */
+    height: 40px;
+}
+
+.illustration-section {
+    margin-top: 30px; /* Ajusta el valor según el espacio que necesites */
+}
+#Integracion de estilos
+.separator {
+    height: 30px; /* Ajusta según el espacio que necesites */
+    background-color: transparent; /* Opcional */
+}
+
+.illustration-section {
+    margin-top: 30px; /* Espaciado superior para separar la sección */
+}
+#Pie de página
+footer {
+    background-color: #405a78; /* Azul oscuro */
+    color: white;
+    padding: 20px 0;
+}
+
+.footer h5 {
+    font-size: 18px;
+    margin-bottom: 15px;
+    font-weight: bold;
+}
+
+.footer p {
+    font-size: 14px;
+    margin: 0;
+}
+
+.footer a {
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.footer a:hover {
+    text-decoration: underline;
+}
+
+.footer iframe {
+    border-radius: 8px;
+    overflow: hidden;
+    margin-top: 20px;
+}
+
+.footer {
+    background-color: #004085; /* Azul oscuro */
+    color: white;
+    padding: 20px 0;
+    border-top: 2px solid #003366; /* Línea superior para detalle */
+}
+.footer h5 {
+    font-size: 18px;
+    margin-bottom: 15px;
+    font-weight: bold;
+}
+.footer p, .footer a {
+    font-size: 14px;
+    color: #f0f0f0;
+}
+.footer a:hover {
+    color: #d1e7ff; /* Azul claro al pasar el cursor */
+}
+<link rel="stylesheet" href="{% static 'css/Carrusel.css' %}">
+

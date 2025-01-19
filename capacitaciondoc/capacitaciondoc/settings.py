@@ -134,3 +134,9 @@ AUTH_USER_MODEL = 'usuarios.CustomUser'
  
 #correo en la terminal en lugar de enviarlo
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    BASE_DIR / "static",  # Reemplaza "BASE_DIR" por tu directorio base si es necesario
+]
+STATIC_ROOT = BASE_DIR / 'staticfiles_collected'

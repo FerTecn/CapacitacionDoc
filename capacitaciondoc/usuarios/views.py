@@ -95,4 +95,7 @@ def home(request):
         return render(request, 'base.html')  
     else:
         return HttpResponseForbidden("No tienes permiso para acceder a esta página.")
+    
+def home(request):
+    return render(request, 'index.html')
  
