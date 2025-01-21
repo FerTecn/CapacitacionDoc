@@ -11,65 +11,72 @@
             Actualiza los datos necesarios:
         </div>
     </div><br>
+    <div class="card text-center bg-primary text-white">
+        <div class="card-body">
+            <b>"DATOS PERSONALES"</b>
+        </div>
+    </div>
 
-    <form method="post">
+    <form class="card p-4" method="post" novalidate>
         {% csrf_token %}
+
         <div class="form-row">
             <div class="form-group col-md-5 align-items-center">
-                <label for="{{ form.clave.id_for_label }}">Clave</label>
-                {{ form.clave }}  
+                <label for="{{ form.clave.id_for_label }}">{{ form.clave.label_tag}}</label>
+                {{ form.clave }}
             </div>
             <div class="form-group col-md-7 align-items-center">
-                <label for="{{ form.nombre.id_for_label }}">Nombre(s)</label>
-                {{ form.nombre }}  
+                <label for="{{ form.first_name.id_for_label }}">{{ form.first_name.label_tag}}</label>
+                {{ form.first_name }}
             </div>
         </div>
+
         <div class="form-row">
             <div class="form-group col-md-4 align-items-center">
-                <label for="{{ form.apPaterno.id_for_label }}">Apellido Paterno</label>
-                {{ form.apPaterno }}  
+                <label for="{{ form.last_name_paterno.id_for_label }}">{{ form.last_name_paterno.label_tag}}</label>
+                {{ form.last_name_paterno }}  
             </div>
             <div class="form-group col-md-4 align-items-center">
-                <label for="{{ form.apMaterno.id_for_label }}">Apellido Materno</label>
-                {{ form.apMaterno }}  
+                <label for="{{ form.last_name_materno.id_for_label }}">{{ form.last_name_materno.label_tag}}</label>
+                {{ form.last_name_materno }}  
             </div>
             <div class="form-group col-md-4 align-items-center">
-                <label for="{{ form.fechaNac.id_for_label }}">Fecha de nacimiento</label>
+                <label for="{{ form.fechaNac.id_for_label }}">{{ form.fechaNac.label_tag}}</label>
                 {{ form.fechaNac }}  
             </div>
         </div>
         <div class="form-row">
             <div class="form-group col-md-4 align-items-center">
-                <label for="{{ form.genero.id_for_label }}">Género</label>
+                <label for="{{ form.genero.id_for_label }}">{{ form.genero.label_tag}}</label>
                 {{ form.genero }}  
             </div>
             <div class="form-group col-md-4 align-items-center">
-                <label for="{{ form.CURP.id_for_label }}">CURP</label>
-                {{ form.CURP }}  
+                <label for="{{ form.curp.id_for_label }}">{{ form.curp.label_tag}}</label>
+                {{ form.curp }}  
             </div>
             <div class="form-group col-md-4 align-items-center">
-                <label for="{{ form.RFC.id_for_label }}">RFC</label>
+                <label for="{{ form.RFC.id_for_label }}">{{ form.RFC.label_tag}}</label>
                 {{ form.RFC }}  
             </div>
         </div>
         <div class="form-row">
             <div class="form-group col-md-3 align-items-center">
-                <label for="{{ form.telefono.id_for_label }}">Teléfono</label>
+                <label for="{{ form.telefono.id_for_label }}">{{ form.telefono.label_tag}}</label>
                 {{ form.telefono }}  
             </div>
             <div class="form-group col-md-5 align-items-center">
-                <label for="{{ form.email.id_for_label }}">Email</label>
+                <label for="{{ form.email.id_for_label }}">{{ form.email.label_tag}}</label>
                 {{ form.email }}  
             </div>
             <div class="form-group col-md-4 align-items-center">
-                <label for="{{ form.departamento.id_for_label }}">Departamento</label>
+                <label for="{{ form.departamento.id_for_label }}">{{ form.departamento.label_tag}}</label>
                 {{ form.departamento }}  
             </div>
         </div><br>
         
         <div class='text-center'>
-        <button type="submit" class="btn btn-success">Guardar cambios</button>
-        <a href="{% url 'docentelista' %}" class="btn btn-secondary">Cancelar</a>
+            <button type="submit" class="btn btn-success">Guardar cambios</button>
+            <a href="{% url 'docentelista' %}" class="btn btn-secondary">Cancelar</a>
         </div>
     </form>
 </div>

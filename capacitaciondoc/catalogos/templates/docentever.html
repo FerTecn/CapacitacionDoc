@@ -1,61 +1,62 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Ver Docente{% endblock %}
+{% block title %}- Ver Docente{% endblock %}
 
 {% block content %}
 <div class="container">
     <h1 class="h3 mb-2 text-gray-800">Información del Docente</h1><br>
-
+    
     <div class="card text-center bg-primary text-white">
         <div class="card-body">
             <b>"DATOS PERSONALES"</b>
         </div>
-    </div><br>
+    </div>
 
-    <div class="form-row">
-        <div class="form-group col-md-4 align-items-center">
-            <p><strong style="display: block;">Clave</strong> {{ docente.clave }}</p>
+    <div class="card p-4">
+        <div class="form-row" >
+            <div class="form-group col-md-4 align-items-center">
+                <p><strong style="display: block;">Clave</strong> {{ docente.clave }}</p>
+            </div>
+            <div class="form-group col-md-4 align-items-center">
+                <p><strong style="display: block;">Nombre(s)</strong> {{ docente.user.first_name }}</p>
+            </div>
+            <div class="form-group col-md-4 align-items-center">
+                <p><strong style="display: block;">Apellido Paterno</strong> {{ docente.user.last_name_paterno }}</p>
+            </div>
         </div>
-        <div class="form-group col-md-4 align-items-center">
-            <p><strong style="display: block;">Nombre(s)</strong> {{ docente.nombre }}</p>
+        <div class="form-row">
+            <div class="form-group col-md-4 align-items-center">
+                <p><strong style="display: block;">Apellido Materno</strong> {{ docente.user.last_name_materno }}</p>
+            </div>
+            <div class="form-group col-md-4 align-items-center">
+                <p><strong style="display: block;">Fecha de nacimiento</strong>{{ docente.fechaNac}}</p>
+            </div>
+            <div class="form-group col-md-4 align-items-center">
+                <p><strong style="display: block;">Genéro</strong>{{ docente.genero.genero}}</p>
+            </div>
         </div>
-        <div class="form-group col-md-4 align-items-center">
-            <p><strong style="display: block;">Apellido Paterno</strong> {{ docente.apPaterno }}</p>
+        <div class="form-row">
+            <div class="form-group col-md-4 align-items-center">
+                <p><strong style="display: block;">CURP</strong>{{ docente.user.curp}}</p>
+            </div>
+            <div class="form-group col-md-4 align-items-center">
+                <p><strong style="display: block;">RFC</strong>{{ docente.RFC}}</p>
+            </div>
+            <div class="form-group col-md-4 align-items-center">
+                <p><strong style="display: block;">Teléfono</strong>{{ docente.telefono}}</p>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-6 align-items-center">
+                <p><strong style="display: block;">Email</strong>{{ docente.user.email}}</p>
+            </div>
+            <div class="form-group col-md-6 align-items-center">
+                <p><strong style="display: block;">Departamento al que corresponde</strong>{{ docente.departamento.departamento}}</p>
+            </div>
         </div>
     </div>
-    <div class="form-row">
-        <div class="form-group col-md-4 align-items-center">
-            <p><strong style="display: block;">Apellido Materno</strong> {{ docente.apMaterno }}</p>
-        </div>
-        <div class="form-group col-md-4 align-items-center">
-            <p><strong style="display: block;">Fecha de nacimiento</strong>{{ docente.fechaNac}}</p>
-        </div>
-        <div class="form-group col-md-4 align-items-center">
-            <p><strong style="display: block;">Genéro</strong>{{ docente.genero}}</p>
-        </div>
-    </div>
-    <div class="form-row">
-        <div class="form-group col-md-4 align-items-center">
-            <p><strong style="display: block;">CURP</strong>{{ docente.CURP}}</p>
-        </div>
-        <div class="form-group col-md-4 align-items-center">
-            <p><strong style="display: block;">RFC</strong>{{ docente.RFC}}</p>
-        </div>
-        <div class="form-group col-md-4 align-items-center">
-            <p><strong style="display: block;">Teléfono</strong>{{ docente.telefono}}</p>
-        </div>
-    </div>
-    <div class="form-row">
-        <div class="form-group col-md-6 align-items-center">
-            <p><strong style="display: block;">Email</strong>{{ docente.email}}</p>
-        </div>
-        <div class="form-group col-md-6 align-items-center">
-            <p><strong style="display: block;">Departamento al que corresponde</strong>{{ docente.departamento}}</p>
-        </div>
-    </div><br>
-
-    <div class="text-center">
+    <div class="m-2 text-center">
         <a href="{% url 'docentelista' %}" class="btn btn-primary">Regresar</a> 
     </div> 
 </div>

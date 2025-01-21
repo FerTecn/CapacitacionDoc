@@ -1,15 +1,19 @@
+from django.http import HttpResponseForbidden
 from django.shortcuts import render
 from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .models import GradoAcademico, Lugar, Sede, Instructor, Docente,Departamento,Dirigido,Genero,PerfilCurso,Periodo, Director
+from django.contrib import messages
+from .models import ExperienciaDocente, ExperienciaLaboral, FormacionAcademica, GradoAcademico, Lugar, ParticipacionInstructor, Sede, Instructor, Docente,Departamento,Dirigido,Genero,PerfilCurso,Periodo, Director
 from .forms import AñadirGradoAcForm, ActualizarGradoAcForm, AñadirLugarForm, ActualizarLugarForm, AñadirSedeForm, ActualizarSedeForm, ActualizarDirectorForm, AgregarDirectorForm
-from .forms import AñadirInstructorForm, ActualizarInstructorForm, AñadirDocenteForm, ActualizarDocenteForm, AñadirDepartamentoForm, ActualizarDepartamentoForm,AñadirDirigidoForm,ActualizarDirigidoForm,AñadirGéneroForm,ActualizarGéneroForm,ActualizarPerfilcursoForm,AñadirPerfilcursoForm,ActualizarPeriodoForm,AñadirPeriodoForm
-
+from .forms import AñadirInstructorForm, AgregarDocenteForm, ActualizarDocenteForm, AñadirDepartamentoForm, ActualizarDepartamentoForm,AñadirDirigidoForm,ActualizarDirigidoForm,AñadirGéneroForm,ActualizarGéneroForm,ActualizarPerfilcursoForm,AñadirPerfilcursoForm,ActualizarPeriodoForm,AñadirPeriodoForm
+from .forms import (
+    ActualizarInstructorForm, FormacionAcademicaForm,
+    ExperienciaLaboralForm, ExperienciaDocenteForm,
+    ParticipacionInstructorForm
+)
 # Create your views here.
 
-
 #GRADO ACADEMICO
-
 @login_required(login_url='signin')
 def gradolista(request):
     gradoac = GradoAcademico.objects.all()
@@ -141,7 +145,14 @@ def sedeeliminar(request, sede_id):
 @login_required(login_url='signin')
 @login_required(login_url='signin')
 def instructorlista(request):
-    instructores = Instructor.objects.all()
+    if request.user.rol == 'Instructor': #Si eres Instructor, ves tu registro
+        try:
+            instructores = Instructor.objects.filter(user=request.user).select_related('user')
+        except Instructor.DoesNotExist:
+            return HttpResponseForbidden("No tienes un perfil de instructor asociado.")
+    else:
+        instructores = Instructor.objects.select_related('user')
+    
     return render(request, 'instructorlista.html', {'instructores': instructores})
 
 @login_required(login_url='signin')
@@ -157,21 +168,135 @@ def instructorañadir(request):
     return render(request, 'instructorañadir.html', {'form': form})
 
 @login_required(login_url='signin')
-def instructorver(request, instructor_id):
+def instructorver(request, instructor_id=None):
     instructor = get_object_or_404(Instructor, id=instructor_id)
     return render(request, 'instructorver.html', {'instructor': instructor})
 
 @login_required(login_url='signin')
-def instructoractualizar(request, instructor_id):
-    instructor = get_object_or_404(Instructor, id=instructor_id)
-    if request.method == 'POST':
-        form = ActualizarInstructorForm(request.POST, instance=instructor)
-        if form.is_valid():
-            form.save()
-            return redirect('instructorlista') 
+def instructoractualizar(request, instructor_id=None):
+    if request.user.rol == 'Instructor':
+        # Si es un instructor, solo puede editar su propio registro
+        instructor = get_object_or_404(Instructor, user=request.user)
     else:
-        form = ActualizarInstructorForm(instance=instructor)
-    return render(request, 'instructoractualizar.html', {'form': form, 'instructor': instructor})
+        # Si es otro rol, puede editar cualquier registro si tienes el permiso
+        if instructor_id is None:
+            return HttpResponseForbidden("No se especificó un instructor para editar.")
+        instructor = get_object_or_404(Instructor, id=instructor_id)
+
+    if request.method == 'POST':
+        form = ActualizarInstructorForm(request.POST, instance=instructor, user_instance=instructor.user)
+        formacion_form = FormacionAcademicaForm()
+        experiencia_laboral_form = ExperienciaLaboralForm()
+        experiencia_docente_form = ExperienciaDocenteForm()
+        participacion_form = ParticipacionInstructorForm()
+
+        if 'instructor' in request.POST:
+            # Actualizar datos del instructor
+            form = ActualizarInstructorForm(request.POST, instance=instructor, user_instance=instructor.user)
+            if form.is_valid():
+                form.save()
+                messages.success(request, "Datos del instructor actualizados correctamente.", extra_tags="datos-personales")
+                return redirect('instructoractualizar', instructor_id=instructor.id)
+            else:
+                print(form.errors)
+                messages.error(request, "Corrige los errores en el formulario.")
+
+        elif 'formacion_academica' in request.POST:
+            # Agregar una formación académica
+            formacion_form = FormacionAcademicaForm(request.POST)
+            if formacion_form.is_valid():
+                nueva_formacion = formacion_form.save(commit=False)
+                nueva_formacion.instructor = instructor
+                nueva_formacion.save()
+                messages.success(request, "Formación académica agregada correctamente.", extra_tags="formacion-academica")
+                return redirect(f'{request.path}#formacion-academica')
+
+        elif 'experiencia_laboral' in request.POST:
+            # Agregar una experiencia laboral
+            experiencia_laboral_form = ExperienciaLaboralForm(request.POST)
+            if experiencia_laboral_form.is_valid():
+                nueva_experiencia = experiencia_laboral_form.save(commit=False)
+                nueva_experiencia.instructor = instructor
+                nueva_experiencia.save()
+                messages.success(request, "Experiencia laboral agregada correctamente.", extra_tags="experiencia-laboral")
+                return redirect(f'{request.path}#experiencia-laboral')
+
+        elif 'experiencia_docente' in request.POST:
+            # Agregar una experiencia docente
+            experiencia_docente_form = ExperienciaDocenteForm(request.POST)
+            if experiencia_docente_form.is_valid():
+                nueva_experiencia_docente = experiencia_docente_form.save(commit=False)
+                nueva_experiencia_docente.instructor = instructor
+                nueva_experiencia_docente.save()
+                messages.success(request, "Experiencia docente agregada correctamente.", extra_tags="experiencia-docente")
+                return redirect(f'{request.path}#experiencia-docente')
+
+        elif 'participacion_instructor' in request.POST:
+            # Agregar una participación como instructor
+            participacion_form = ParticipacionInstructorForm(request.POST)
+            if participacion_form.is_valid():
+                nueva_participacion = participacion_form.save(commit=False)
+                nueva_participacion.instructor = instructor
+                nueva_participacion.save()
+                messages.success(request, "Participación como instructor agregada correctamente.", extra_tags="participacion-instructor")
+                return redirect(f'{request.path}#participacion-instructor')
+
+    else:
+        # Formularios iniciales para GET
+        form = ActualizarInstructorForm(instance=instructor, user_instance=instructor.user)
+        formacion_form = FormacionAcademicaForm()
+        experiencia_laboral_form = ExperienciaLaboralForm()
+        experiencia_docente_form = ExperienciaDocenteForm()
+        participacion_form = ParticipacionInstructorForm()
+    
+    # Manejar la eliminación
+    if 'delete_formacion' in request.GET:
+        formacion_id = request.GET.get('delete_formacion')
+        formacion = get_object_or_404(FormacionAcademica, id=formacion_id)
+        formacion.delete()
+        messages.success(request, "Formación académica eliminada correctamente.", extra_tags="formacion-academica")
+        return redirect(f'{request.path}#formacion-academica')
+
+    if 'delete_experiencia' in request.GET:
+        experiencia_id = request.GET.get('delete_experiencia')
+        experiencia = get_object_or_404(ExperienciaLaboral, id=experiencia_id)
+        experiencia.delete()
+        messages.success(request, "Experiencia laboral eliminada correctamente.", extra_tags="experiencia-laboral")
+        return redirect(f'{request.path}#experiencia-laboral')
+
+    if 'delete_experiencia_docente' in request.GET:
+        experiencia_docente_id = request.GET.get('delete_experiencia_docente')
+        experiencia_docente = get_object_or_404(ExperienciaDocente, id=experiencia_docente_id)
+        experiencia_docente.delete()
+        messages.success(request, "Experiencia docente eliminada correctamente.", extra_tags="experiencia-docente")
+        return redirect(f'{request.path}#experiencia-docente')
+
+    if 'delete_participacion' in request.GET:
+        participacion_id = request.GET.get('delete_participacion')
+        participacion = get_object_or_404(ParticipacionInstructor, id=participacion_id)
+        participacion.delete()
+        messages.success(request, "Participación como instructor eliminada correctamente.", extra_tags="participacion-instructor")
+        return redirect(f'{request.path}#participacion-instructor')
+    
+    # Obtener datos relacionados para mostrar en las tablas
+    formaciones = instructor.formaciones_academicas.all()
+    experiencias_laborales = instructor.experiencias_laborales.all()
+    experiencias_docentes = instructor.experiencias_docentes.all()
+    participaciones = instructor.participaciones_instructor.all()
+
+    return render(request, 'instructoractualizar.html', {
+        'form': form,
+        'formacion_form': formacion_form,
+        'experiencia_laboral_form': experiencia_laboral_form,
+        'experiencia_docente_form': experiencia_docente_form,
+        'participacion_form': participacion_form,
+        'instructor': instructor,
+        'formaciones': formaciones,
+        'experiencias_laborales': experiencias_laborales,
+        'experiencias_docentes': experiencias_docentes,
+        'participaciones': participaciones,
+    })
+
 
 @login_required(login_url='signin')
 def instructoreliminar(request, instructor_id):
@@ -184,18 +309,25 @@ def instructoreliminar(request, instructor_id):
 #DOCENTES
 @login_required(login_url='signin')
 def docentelista(request):
-    docentes = Docente.objects.all()
+    if request.user.rol == 'Docente':  #Si eres docente solo modificas tu registro
+        try:
+            docentes = Docente.objects.filter(user=request.user).select_related('user')
+        except Docente.DoesNotExist:
+            return HttpResponseForbidden("No tienes un perfil de docente asociado.")
+    else: #Si eres otro rol con permisos de ver puedes ver todos los docentes de la BD
+        docentes = Docente.objects.select_related('user')
+    
     return render(request, 'docentelista.html', {'docentes': docentes})
 
 @login_required(login_url='signin')
 def docenteañadir(request):
     if request.method == 'POST':
-        form = AñadirDocenteForm(request.POST)
+        form = AgregarDocenteForm(request.POST)
         if form.is_valid():
             form.save()
             return redirect('docentelista') 
     else:
-        form = AñadirDocenteForm()
+        form = AgregarDocenteForm()
 
     return render(request, 'docenteañadir.html', {'form': form})
 
@@ -205,15 +337,23 @@ def docentever(request, docente_id):
     return render(request, 'docentever.html', {'docente': docente})
 
 @login_required(login_url='signin')
-def docenteactualizar(request, docente_id):
-    docente = get_object_or_404(Docente, id=docente_id)
+def docenteactualizar(request, docente_id=None):
+    if request.user.rol == 'Docente':
+        # Si es un docente, solo puede editar su propio registro
+        docente = get_object_or_404(Docente, user=request.user)
+    else:
+        # Si es otro rol puede editar cualquier registro si tienes el permiso
+        if docente_id is None:
+            return HttpResponseForbidden("No se especificó un docente para editar.")
+        docente = get_object_or_404(Docente, id=docente_id)
+
     if request.method == 'POST':
-        form = ActualizarDocenteForm(request.POST, instance=docente)
+        form = ActualizarDocenteForm(request.POST, instance=docente, user_instance=docente.user)
         if form.is_valid():
             form.save()
             return redirect('docentelista') 
     else:
-        form = ActualizarDocenteForm(instance=docente)
+        form = ActualizarDocenteForm(instance=docente,  user_instance=docente.user)
     return render(request, 'docenteactualizar.html', {'form': form, 'docente': docente})
 
 @login_required(login_url='signin')

@@ -15,7 +15,3 @@ class CustomUserAdmin(UserAdmin):
     list_display = ('username', 'first_name', 'last_name_paterno', 'last_name_materno', 'curp', 'rol', 'email')
     search_fields = ('username', 'first_name', 'last_name_paterno', 'last_name_materno', 'curp', 'email')
     list_filter = ('rol',)
- 
- 
- 
- 

@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Ver Autoridad{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="h3 mb-2 text-gray-800">Información del/la director(a)</h1><br>
+
+    <div class="form-row">
+        <div class="form-group col-md-6 align-items-center">
+            <p><strong style="display: block;">Nombre(s)</strong> {{ director.nombre }}</p>
+        </div>
+        <div class="form-group col-md-6 align-items-center">
+            <p><strong style="display: block;">Apellido Paterno</strong> {{ director.apPaterno }}</p>
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-6 align-items-center">
+            <p><strong style="display: block;">Apellido Materno</strong> {{ director.apMaterno }}</p>
+        </div>
+        <div class="form-group col-md-6 align-items-center">
+            <p><strong style="display: block;">Cargo</strong>{{ director.puesto}}</p>
+        </div>
+    </div><br>
+
+    <div class="text-center">
+        <a href="{% url 'directorlista' %}" class="btn btn-primary">Regresar</a> 
+    </div> 
+</div>
+{% endblock %}

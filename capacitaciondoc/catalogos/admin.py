@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Instructor
+from .models import ExperienciaDocente, ExperienciaLaboral, FormacionAcademica, Instructor, ParticipacionInstructor
 from .models import Docente
 from .models import Genero
 from .models import Departamento
@@ -19,35 +19,58 @@ admin.site.register(Sede)
 admin.site.register(Dirigido)
 admin.site.register(PerfilCurso)
 admin.site.register(Director)
-
+admin.site.register(FormacionAcademica)
+admin.site.register(ExperienciaLaboral)
+admin.site.register(ExperienciaDocente)
+admin.site.register(ParticipacionInstructor)
+    
 class InstructorAdmin(admin.ModelAdmin):
-    list_display = ('nombre', 'apPaterno', 'apMaterno', 'grado')
-    list_filter = ('grado',)
+    list_display = ('user', 'clave', 'fechaNac', 'genero', 'RFC', 'telefono')
+    
+    search_fields = ('user__curp', 'user__first_name', 'user__last_name_paterno', 'user__last_name_materno')  # Búsqueda por CURP y nombre
+    ordering = ('user__curp',)
 
-#Para dividir los campos con un texto
-    fieldsets = (
-        ('Datos personales', { 
-            'fields': ('clave', 'nombre', 'apPaterno', 'apMaterno', 'fechaNac', 'CURP', 'RFC', 'telefono', 'email'),
-        }),
-        ('Formación Académica', { 
-            'fields': ('institucion', 'grado', 'cedulaProf'),
-        }),
-        ('Experiencia laboral', {
-            'fields': ('puesto', 'empresa'),
-        }),
-        ('Participación como instructor', {
-            'fields': ('curso', 'nombreEmpresa', 'duracionHoras', 'fechaParticipacion'),
-        }),
-    )
+    # Campos de solo lectura (para proteger ciertos datos)
+    readonly_fields = ('user',)
+
+    # Personalización de cómo se muestra la información de un Docente
+    def get_user_full_name(self, obj):
+        return f"{obj.user.first_name} {obj.user.last_name_paterno} {obj.user.last_name_materno}"
+    get_user_full_name.short_description = 'Nombre completo'
+
+    # Mostrar el nombre completo del docente en lugar de los nombres individuales en la lista
+    list_display = ('get_user_full_name', 'clave', 'fechaNac', 'RFC', 'telefono')
+
+    # Campos de solo lectura (para proteger ciertos datos)
+    readonly_fields = ('user',)
+
+    # Personalización de cómo se muestra la información de un Docente
+    def get_user_full_name(self, obj):
+        return f"{obj.user.first_name} {obj.user.last_name_paterno} {obj.user.last_name_materno}"
+    get_user_full_name.short_description = 'Nombre completo'
+
+    # Mostrar el nombre completo del docente en lugar de los nombres individuales en la lista
+    list_display = ('get_user_full_name', 'clave', 'fechaNac', 'RFC', 'telefono')
+
 
 admin.site.register(Instructor, InstructorAdmin)
 
 class DocenteAdmin(admin.ModelAdmin):
-    # Lo que quiero se muestre en el admin, como tipo tabla
-    list_display = ('nombre', 'apPaterno', 'apMaterno', 'departamento')
+    list_display = ('user', 'clave', 'fechaNac', 'genero', 'RFC', 'telefono', 'departamento')
+    list_filter = ('genero','departamento')  # Filtros para la lista
+    search_fields = ('user_curp', 'userfirst_name', 'userlast_name_paterno', 'user_last_name_materno')  # Búsqueda por CURP y nombre
+    ordering = ('user__curp',)
 
-    # Filtro de buscar 
-    list_filter = ('departamento',)
+    # Campos de solo lectura (para proteger ciertos datos)
+    readonly_fields = ('user',)
+
+    # Personalización de cómo se muestra la información de un Docente
+    def get_user_full_name(self, obj):
+        return f"{obj.user.first_name} {obj.user.last_name_paterno} {obj.user.last_name_materno}"
+    get_user_full_name.short_description = 'Nombre completo'
+
+    # Mostrar el nombre completo del docente en lugar de los nombres individuales en la lista
+    list_display = ('get_user_full_name', 'clave', 'fechaNac', 'genero', 'RFC', 'telefono', 'departamento')
 
 admin.site.register(Docente, DocenteAdmin)
 

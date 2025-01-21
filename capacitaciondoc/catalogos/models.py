@@ -1,46 +1,63 @@
 from django.db import models
 
+from usuarios.models import CustomUser
+
 # Create your models here.
 class Instructor(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     clave = models.CharField(max_length=10)
-    nombre=models.CharField(max_length=40)
-    apPaterno=models.CharField(max_length=40)
-    apMaterno=models.CharField(max_length=40)
     fechaNac=models.DateField(null=True, blank=True)
-    CURP = models.CharField(max_length=18, null=True)
     RFC = models.CharField(max_length=13, null=True)
-    telefono=models.CharField(max_length=10, null=True)
-    email=models.CharField(max_length=50, null=True)
-
-    #Formación academica
-    institucion=models.CharField(max_length=40, null=True, blank=True)
-    grado = models.ForeignKey('GradoAcademico', on_delete=models.CASCADE, null=True)
-    cedulaProf=models.CharField(max_length=8, null=True)
-    
-    #Experiencia laboral
-    puesto=models.CharField(max_length=40, null=True, blank=True)
-    empresa=models.CharField(max_length=60, null=True, blank=True)
-    
-    #Experiencia docente
-    materia=models.CharField(max_length=40, null=True, blank=True)
-    periodo=models.CharField(max_length=40, null=True, blank=True)
-    
-    #Participacion como instructor
-    curso=models.CharField(max_length=40, null=True, blank=True)
-    nombreEmpresa=models.CharField(max_length=40, null=True, blank=True)
-    duracionHoras=models.IntegerField(null=True, blank=True)
-    fechaParticipacion=models.DateField(null=True, blank=True)
+    telefono=models.CharField(max_length=10, null=True)    
     
     def __str__(self):
-        return f"{self.nombre} {self.apPaterno} {self.apMaterno} - {self.grado}"
+        return f"{self.user.first_name} {self.user.last_name_paterno} {self.user.last_name_materno}"
     
     class Meta:
         verbose_name_plural = 'Instructores'
-        
+
+class FormacionAcademica(models.Model):
+    instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE, related_name='formaciones_academicas')
+    institucion = models.CharField(max_length=40)
+    grado = models.CharField(max_length=40)
+    cedulaProf = models.CharField(max_length=8, null=True)
+
+    def __str__(self):
+        return f"{self.institucion} - {self.cedulaProf}"
+    
+class ExperienciaLaboral(models.Model):
+    instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE, related_name='experiencias_laborales')
+    puesto = models.CharField(max_length=40)
+    empresa = models.CharField(max_length=60)
+    fecha_inicio = models.DateField(null=True, blank=True)
+    fecha_fin = models.DateField(null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.puesto} en {self.empresa}"
+    
+class ExperienciaDocente(models.Model):
+    instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE, related_name='experiencias_docentes')
+    materia = models.CharField(max_length=40)
+    periodo = models.CharField(max_length=40)
+
+    def __str__(self):
+        return f"{self.materia} - {self.periodo}"
+
+class ParticipacionInstructor(models.Model):
+    instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE, related_name='participaciones_instructor')
+    curso = models.CharField(max_length=40)
+    nombreEmpresa = models.CharField(max_length=40)
+    duracionHoras = models.IntegerField()
+    periodoInicio = models.DateField(null=True, blank=True)
+    periodoFin = models.DateField(null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.curso} en {self.nombreEmpresa}"
+
 class GradoAcademico(models.Model):
     #clave = models.CharField(max_length=10)
     grado = models.CharField(max_length=40) 
- 
+
     def __str__(self):
         return self.grado
     
@@ -69,26 +86,22 @@ class Sede(models.Model):
         verbose_name_plural = 'Sedes'
     
 class Docente(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     clave = models.CharField(max_length=10)
-    nombre=models.CharField(max_length=40)
-    apPaterno=models.CharField(max_length=40)
-    apMaterno=models.CharField(max_length=40)
     fechaNac=models.DateField(null=True, blank=True)
-    genero = models.ForeignKey('Genero', on_delete=models.CASCADE) 
-    CURP=models.CharField(max_length=18)
-    RFC=models.CharField(max_length=13)
-    telefono=models.CharField(max_length=10)
-    email=models.CharField(max_length=50)
-    departamento = models.ForeignKey('Departamento', on_delete=models.CASCADE)
+    genero = models.ForeignKey('Genero', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Género")
+    RFC=models.CharField(max_length=13, null= True)
+    telefono=models.CharField(max_length=10, null=True)
+    departamento = models.ForeignKey('Departamento', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Departamento")
         
     def __str__(self):
-        return f"{self.nombre} {self.apPaterno} {self.apMaterno} {self.departamento}"
+        return f"{self.user.first_name} {self.user.last_name_paterno} {self.user.last_name_materno} {self.departamento}"
     
     class Meta:
         verbose_name_plural = 'Docentes'
+
     
 class Genero(models.Model):
-    #clave = models.CharField(max_length=10)
     genero=models.CharField(max_length=20)
 
     def __str__(self):

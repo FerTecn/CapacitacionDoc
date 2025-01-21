@@ -1,7 +1,12 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Lista de Grado Académico{% endblock %}
+{% block title %}- Lista de Grado Académico{% endblock %}
+
+{% block styles %}
+<!-- Custom styles for this page -->
+<link href="../../static/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+{% endblock %}
 
 {% block content %}
 <div class="container-fluid">
@@ -24,22 +29,17 @@
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                     <thead>
                         <tr>
-                            <th>Nombre</th>
-                            <th>Apellido Paterno</th>
-                            <th>Apellido Materno</th>
+                            <th>Nombre completo</th>
                             <th>CURP</th>
-                            <th>Grado académico</th>
                             <th>Opciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for instructor in instructores %}
                         <tr id="instructor-{{ instructor.id }}">
-                            <td>{{instructor.nombre}}</td>
-                            <td>{{instructor.apPaterno}}</td>
-                            <td>{{instructor.apMaterno}}</td>
-                            <td>{{instructor.CURP}}</td>
-                            <td>{{instructor.grado}}</td>
+                            <td>{{instructor.user.first_name}} {{instructor.user.last_name_paterno}} {{instructor.user.last_name_materno}}</td>
+                            <td>{{instructor.user.curp}}</td>
+                            {% comment %} <td>{{instructor.grado}}</td> {% endcomment %}
                             <td>
                                 <!-- Opciones -->
                                 <a href="{% url 'instructorver' instructor.id %}" class="btn btn-success btn-sm">Ver</a>

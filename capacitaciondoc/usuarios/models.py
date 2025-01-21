@@ -31,7 +31,13 @@ class CustomUser(AbstractUser):
     curp = models.CharField(max_length=18, unique=True, verbose_name="CURP")
     rol = models.CharField(
         max_length=50,
-        choices=[('Docente', 'Docente'), ('Instructor', 'Instructor')],
+        choices=[
+            ('Docente', 'Docente'), 
+            ('Instructor', 'Instructor'), 
+            ('Jefe de Capacitación', 'Jefe de Capacitación'),
+            ('Jefe Académico', 'Jefe Académico'),
+            ('Subdirección', 'Subdirección')
+        ],
         verbose_name="Rol"
     )
     email = models.EmailField(unique=True, verbose_name="Correo electrónico")

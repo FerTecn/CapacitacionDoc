@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Editar Autoridades{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="h3 mb-2 text-gray-800">Editar director(a)</h1>
+    <div class="card">
+        <div class="card-body">
+            Actualiza los datos necesarios:
+        </div>
+    </div><br>
+    
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-row">
+            <div class="form-group col-md-6 align-items-center">
+                <label for="{{ form.nombre.id_for_label }}">Nombre(s)</label>
+                {{ form.nombre }}  
+            </div>
+            <div class="form-group col-md-6 align-items-center">
+                <label for="{{ form.apPaterno.id_for_label }}">Apellido Paterno</label>
+                {{ form.apPaterno }}  
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-6 align-items-center">
+                <label for="{{ form.apMaterno.id_for_label }}">Apellido Materno</label>
+                {{ form.apMaterno }}  
+            </div>
+            <div class="form-group col-md-6 align-items-center">
+                <label for="{{ form.puesto.id_for_label }}">Cargo</label>
+                {{ form.puesto }}  
+            </div>
+        </div><br>
+    
+        <div class="text-center">
+        <button type="submit" class="btn btn-success">Guardar cambios</button>
+        <a href="{% url 'directorlista' %}" class="btn btn-secondary">Cancelar</a>
+        </div>
+        </form>
+    </div>
+{% endblock %}

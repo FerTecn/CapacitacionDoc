@@ -1,20 +1,89 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Inicio{% endblock %}
+{% block title %}- Inicio{% endblock %}
+
 {% block content %}
-
-
 <!-- Content Row -->
+<div class="row">
+
     <!-- Earnings (Monthly) Card Example -->
-<div class="col-xl-12 col-md-6 mb-4">
-    <div class="card custom-card shadow h-100 py-2">
-        <div class="card-body">
-            <div class="row no-gutters align-items-center text-center">
-                <div class="col">
-                    <div class="text-xs font-weight-bold text-uppercase">
-                        BIENVENIDO 
-                     <p>   CAPACITATEC</p>   
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Earnings (Monthly)</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">$40,000</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Earnings (Monthly) Card Example -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                            Earnings (Annual)</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">$215,000</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Earnings (Monthly) Card Example -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-info shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Tasks
+                        </div>
+                        <div class="row no-gutters align-items-center">
+                            <div class="col-auto">
+                                <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">50%</div>
+                            </div>
+                            <div class="col">
+                                <div class="progress progress-sm mr-2">
+                                    <div class="progress-bar bg-info" role="progressbar"
+                                        style="width: 50%" aria-valuenow="50" aria-valuemin="0"
+                                        aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pending Requests Card Example -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-warning shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                            Pending Requests</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">18</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-comments fa-2x text-gray-300"></i>
                     </div>
                 </div>
             </div>
@@ -23,260 +92,89 @@
 </div>
 
 <!-- Content Row -->
-
 <div class="row">
 
     <!-- Area Chart -->
-    <div class="col-xl-10 offset-xl-1 col-lg-12">
+    <div class="col-xl-8 col-lg-7">
         <div class="card shadow mb-4">
             <!-- Card Header - Dropdown -->
             <div
                 class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                
+                <h6 class="m-0 font-weight-bold text-primary">Earnings Overview</h6>
                 <div class="dropdown no-arrow">
-                    
-                    
+                    <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
+                        aria-labelledby="dropdownMenuLink">
+                        <div class="dropdown-header">Dropdown Header:</div>
+                        <a class="dropdown-item" href="#">Action</a>
+                        <a class="dropdown-item" href="#">Another action</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="#">Something else here</a>
                     </div>
                 </div>
             </div>
-            <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CAPACITATEC</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Estilos personalizados -->
-    <link href="{% static 'css/Carrusel.css' %}" rel="stylesheet">
-</head>
-<body>
-    <!-- Carrusel -->
-    <div class="slider-container">
-        <!-- Encabezado Fijo -->
-        <div class="header-bar">
-            <img src="{% static 'img/Logo.png' %}" alt="Encabezado con logos" class="img-fluid">
-        </div>
-    
-        <!-- Carrusel -->
-        <div id="mainCarousel" class="carousel slide" data-bs-ride="carousel">
-            <div class="carousel-inner">
-                <!-- Slide 1 -->
-                <div class="carousel-item active">
-                    <img src="{% static 'img/IMG1.jpg' %}" class="d-block w-100" alt="Slide 1">
-                    <div class="carousel-caption">
-                        
-                        
-                        
-                    </div>
-                </div>
-                <!-- Slide 2 -->
-                <div class="carousel-item">
-                    <img src="{% static 'img/IMG2.png' %}" class="d-block w-100" alt="Slide 2">
-                    <div class="carousel-caption">
-                        
-                        
-                    </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <div class="chart-area">
+                    <canvas id="myAreaChart"></canvas>
                 </div>
             </div>
-            <!-- Controles del Carrusel -->
-            <button class="carousel-control-prev" type="button" data-bs-target="#mainCarousel" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Anterior</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#mainCarousel" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Siguiente</span>
-            </button>
         </div>
     </div>
 
-<div></div>
- <!-- Bootstrap JS -->
-   <!-- Illustrations -->
-   <div class="card shadow mb-4">
-    <div class="card-header py-3">
-        
-    </div>
-    <div class="card-body">
-        <div class="text-center">
-            <img class="img-fluid px-3 px-sm-4 mt-3 mb-4" style="width: 25rem;"
-                src="img/" alt="">
-        </div>
-        
-    </div>
-</div>
-
-<!-- Sección de Comunicación -->
-<div class="container my-4">
-    <h2 class="text-center mb-4">Comunicación</h2>
-    <div class="row">
-        <!-- Tarjeta 1 -->
-        <div class="col-lg-4 col-md-6 mb-4">
-            <div class="card shadow">
-                <img class="card-img-top" src="{% static 'img/C1.jpg' %}" alt="Evento 1">
-                <div class="card-body">
-                    <div class="tags mb-2">
-                        <span class="tag">NOTITECS 24</span>
-                        <span class="tag">PORTADA</span>
+    <!-- Pie Chart -->
+    <div class="col-xl-4 col-lg-5">
+        <div class="card shadow mb-4">
+            <!-- Card Header - Dropdown -->
+            <div
+                class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Revenue Sources</h6>
+                <div class="dropdown no-arrow">
+                    <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
+                        aria-labelledby="dropdownMenuLink">
+                        <div class="dropdown-header">Dropdown Header:</div>
+                        <a class="dropdown-item" href="#">Action</a>
+                        <a class="dropdown-item" href="#">Another action</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="#">Something else here</a>
                     </div>
-                    <h5 class="card-title">EL TEC APIZACO INICIA ACTIVIDADES PARA CAPACITACIÓN DOCENTE</h5>
-                    <p class="card-text">
-                        Fortalecer la calidad de la enseñanza y reforzar las competencias docentes fue el objetivo del programa de cursos intersemestrales
-                        realizado del 7 al 17 de Enero 2025, en el que participaron un total de 253 maestros comprometidos con la excelencia académica a fin de
-                        mantenerse a la vanguardia en diversos temas de sus respectivos perfiles profesionales. 
-
-                    </p>
-                    <a href="#" class="btn btn-outline-primary">Read More</a>
                 </div>
             </div>
-        </div>
-        <!-- Tarjeta 2 -->
-        <div class="col-lg-4 col-md-6 mb-4">
-            <div class="card shadow">
-                <img class="card-img-top" src="{% static 'img/C2.png' %}" alt="Evento 2">
-                <div class="card-body">
-                    <div class="tags mb-2">
-                        <span class="tag">APIZACO</span>
-                        <span class="tag">PORTADA</span>
-                    </div>
-                    <h5 class="card-title">MANUAL DE LINEAMIENTOS TecNM</h5>
-                    <p class="card-text">
-                        Comunidad del TecNM los invitamos a consultar el Manual de Lineamientos Académico-Administrativos del Tecnológico Nacional de México,
-                        para los planes de estudio para la formación y desarrollo de competencias profesionales.
-                    </p>
-                    <a href="#" class="btn btn-outline-primary">Read More</a>
+            <!-- Card Body -->
+            <div class="card-body">
+                <div class="chart-pie pt-4 pb-2">
+                    <canvas id="myPieChart"></canvas>
                 </div>
-            </div>
-        </div>
-        <!-- Tarjeta 3 -->
-        <div class="col-lg-4 col-md-6 mb-4">
-            <div class="card shadow">
-                <img class="card-img-top" src="{% static 'img/C3.jpg' %}" alt="Evento 3">
-                <div class="card-body">
-                    <div class="tags mb-2">
-                        <span class="tag">APIZACO</span>
-                        <span class="tag">PORTADA</span>
-                    </div>
-                    <h5 class="card-title">INSTITUTO TECNOLÓGICO DE APIZACO, LÍDER CERTIFICADO DE LA TRANSFORMACIÓN DIGITAL</h5>
-                    <p class="card-text">
-                         El Instituto Tecnológico de Apizaco ha sido reconocido y acreditado como Centro de Formación Especializada en Tecnologías
-                         de Transformación Digital Industrial; meta alcanzada gracias al trabajo colaborativo de los docentes investigadores del
-                         departamento de Metalmecánica. Este importante logro, posiciona a nuestra institución como un referente en la formación 
-                        de profesionales altamente capacitados en el manejo de herramientas avanzadas de software 3D de carácter internacional.
-                    </p>
-                    <a href="#" class="btn btn-outline-primary">Read More</a>
+                <div class="mt-4 text-center small">
+                    <span class="mr-2">
+                        <i class="fas fa-circle text-primary"></i> Direct
+                    </span>
+                    <span class="mr-2">
+                        <i class="fas fa-circle text-success"></i> Social
+                    </span>
+                    <span class="mr-2">
+                        <i class="fas fa-circle text-info"></i> Referral
+                    </span>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Pie de página -->
-<footer class="footer">
-    <div class="container">
-        <div class="row">
-            
-            <!-- Dirección -->
-            <div class="col-md-4 mb-3">
-                <h5 class="font-weight-bold">Dirección</h5>
-                <p>
-                    Av. Instituto Tecnológico No. 418, San Andrés Ahuashuatepec, 
-                    Municipio de Tzompantepec, Tlaxcala, Méx. C.P. 90491.
-                </p>
-            </div>
-            <!-- Contacto -->
-            <div class="col-md-4 mb-3">
-                <h5 class="font-weight-bold">Contacto</h5>
-                <p>
-                    Conmutador:<br>
-                    <a href="tel:+52414172010" class="text-white">2414172010</a><br>
-                    <a href="tel:+52414180321" class="text-white">2414180321</a>
-                </p>
-            </div>
-            <!-- Enlaces -->
-            <div class="col-md-4 mb-3">
-                <h5 class="font-weight-bold">Enlaces</h5>
-                <p>
-                    <a href="https://www.gob.mx/transparencia" target="_blank" class="text-white">Portal de Obligaciones de Transparencia</a><br>
-                    <a href="https://home.inai.org.mx/" target="_blank" class="text-white">INAI</a>
-                </p>
-            </div>
-        </div>
-        <!-- Mapa -->
-        <div class="row mt-4">
-            <div class="col-md-4">
-                <iframe 
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3763.0903885621556!2d-98.12395142461233!3d19.408500181865758!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85d01fec42df5885%3A0x40e9857c28fb656f!2sTecNM%20Campus%20Apizaco!5e0!3m2!1ses!2smx!4v1737249416565!5m2!1ses!2smx" 
-                    width="100%" 
-                    height="200" 
-                    style="border:0;" 
-                    allowfullscreen="" 
-                    loading="lazy" 
-                    referrerpolicy="no-referrer-when-downgrade">
-                </iframe>
-            </div>
-        </div>
-    </div>
-</footer>
-
-</div>
-</div>
-
-</div>
-<!-- /.container-fluid -->
-    
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
- 
-
-<!-- Content Row -->
-<div class="row">
-</div>
-<!-- End of Content Wrapper -->
-
-</div>
-<!-- End of Page Wrapper -->
-
-<!-- Scroll to Top Button-->
-<a class="scroll-to-top rounded" href="#page-top">
-<i class="fas fa-angle-up"></i>
-</a>
-
-<!-- Logout Modal-->
-<div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-aria-hidden="true">
-<div class="modal-dialog" role="document">
-<div class="modal-content">
-<div class="modal-header">
-<h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
-<button class="close" type="button" data-dismiss="modal" aria-label="Close">
-    <span aria-hidden="true">×</span>
-</button>
-</div>
-<div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
-<div class="modal-footer">
-<button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-<a class="btn btn-primary" href="login.html">Logout</a>
-</div>
-</div>
-</div>
-</div>
 {% endblock %}
-<!-- Bootstrap core JavaScript-->
-<script src="vendor/jquery/jquery.min.js"></script>
-<script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
-<!-- Core plugin JavaScript-->
-<script src="vendor/jquery-easing/jquery.easing.min.js"></script>
-
-<!-- Custom scripts for all pages-->
-<script src="js/sb-admin-2.min.js"></script>
-
+{% block extraCSS %}
 <!-- Page level plugins -->
 <script src="vendor/chart.js/Chart.min.js"></script>
 
 <!-- Page level custom scripts -->
 <script src="js/demo/chart-area-demo.js"></script>
 <script src="js/demo/chart-pie-demo.js"></script>
+{% endblock %}

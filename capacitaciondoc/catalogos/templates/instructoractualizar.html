@@ -4,7 +4,7 @@
 {% block title %}Actualizar instructor{% endblock %}
 
 {% block content %}
-<div class="container">
+<div class="container-fluid">
     <h1 class="h3 mb-2 text-gray-800">Editar instructor</h1>
     <div class="card">
         <div class="card-body">
@@ -12,168 +12,384 @@
         </div>
     </div><br>
 
-    <form method="post">
-        {% csrf_token %}
-        <!-- Datos personales -->
-        <div class="card text-center bg-primary text-white">
+    <!-- Datos personales -->
+    <div id="datos-personales" class="section">
+        <div class="card mb-4">
+            <div class="card-header py-3 text-center bg-primary">
+                <h4 class="m-0 font-weight-bold text-white">DATOS PERSONALES</h4>
+            </div>            
             <div class="card-body">
-                <b>"DATOS PERSONALES"</b>
+                {% if messages %}
+                    {% for message in messages %}
+                        {% if "datos-personales" in message.extra_tags %}
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+                <form method="post" action="{% url 'instructoractualizar' instructor_id=instructor.id %}" novalidate>
+                    {% csrf_token %}
+                        <div class="form-row">
+                            <div class="form-group col-md-3 align-items-center">
+                                <label for="{{ form.clave.id_for_label }}">{{ form.clave.label_tag }}</label>
+                                {{ form.clave }}
+                            </div>
+                            <div class="form-group col-md-5 align-items-center">
+                                <label for="{{ form.first_name.id_for_label }}">{{ form.first_name.label_tag }}</label>
+                                {{ form.first_name }}
+                            </div>
+                            <div class="form-group col-md-4 align-items-center">
+                                <label for="{{ form.last_name_paterno.id_for_label }}">{{ form.last_name_paterno.label_tag }}</label>
+                                {{ form.last_name_paterno }}
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-4 align-items-center">
+                                <label for="{{ form.last_name_materno.id_for_label }}">{{ form.last_name_materno.label_tag }}</label>
+                                {{ form.last_name_materno }}
+                            </div>
+                            <div class="form-group col-md-4 align-items-center">
+                                <label for="{{ form.fechaNac.id_for_label }}">{{ form.fechaNac.label_tag }}</label>
+                                {{ form.fechaNac }}
+                            </div>
+                            <div class="form-group col-md-4 align-items-center">
+                                <label for="{{ form.curp.id_for_label }}">{{ form.curp.label_tag }}</label>
+                                {{ form.curp }}
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-4 align-items-center">
+                                <label for="{{ form.RFC.id_for_label }}">{{ form.RFC.label_tag }}</label>
+                                {{ form.RFC }}
+                            </div>
+                            <div class="form-group col-md-4 align-items-center">
+                                <label for="{{ form.telefono.id_for_label }}">{{ form.telefono.label_tag }}</label>
+                                {{ form.telefono }}
+                            </div>
+                            <div class="form-group col-md-4 align-items-center">
+                                <label for="{{ form.email.id_for_label }}">{{ form.email.label_tag }}</label>
+                                {{ form.email }}
+                            </div>
+                        </div>        
+                        <div class='text-center'>
+                            <button type="submit" name="instructor" class="btn btn-success">Guardar cambios</button>
+                            <a href="{% url 'instructorlista' %}" class="btn btn-secondary">Cancelar</a>
+                        </div>
+                </form>
             </div>
-        </div><br>
+        </div>
+    </div>
+    <hr>
 
-        <div class="form-row">
-            <div class="form-group col-md-3 align-items-center">
-                <label for="{{ form.clave.id_for_label }}">Clave</label>
-                {{ form.clave }}  
+    <!-- Formación académica -->
+    <div id="formacion-academica" class="section">
+        <div class="card mb-4">
+            <div class="card-header py-3 text-center bg-primary">
+                <h4 class="m-0 font-weight-bold text-white">FORMACIÓN ACADÉMICA</h4>
             </div>
-            <div class="form-group col-md-5 align-items-center">
-                <label for="{{ form.nombre.id_for_label }}">Nombre(s)</label>
-                {{ form.nombre }}  
-            </div>
-            <div class="form-group col-md-4 align-items-center">
-                <label for="{{ form.apPaterno.id_for_label }}">Apellido Paterno</label>
-                {{ form.apPaterno }}  
-            </div>
-        </div>
-        <div class="form-row">
-            <div class="form-group col-md-4 align-items-center">
-                <label for="{{ form.apMaterno.id_for_label }}">Apellido Materno</label>
-                {{ form.apMaterno }}  
-            </div>
-            <div class="form-group col-md-4 align-items-center">
-                <label for="{{ form.fechaNac.id_for_label }}">Fecha de nacimiento</label>
-                {{ form.fechaNac }}  
-            </div>
-            <div class="form-group col-md-4 align-items-center">
-                <label for="{{ form.CURP.id_for_label }}">CURP</label>
-                {{ form.CURP }}  
-            </div>
-        </div>
-        <div class="form-row">
-            <div class="form-group col-md-4 align-items-center">
-                <label for="{{ form.RFC.id_for_label }}">RFC</label>
-                {{ form.RFC }}  
-            </div>
-            <div class="form-group col-md-4 align-items-center">
-                <label for="{{ form.telefono.id_for_label }}">Teléfono</label>
-                {{ form.telefono }}  
-            </div>
-            <div class="form-group col-md-4 align-items-center">
-                <label for="{{ form.email.id_for_label }}">Email</label>
-                {{ form.email }}  
-            </div>
-        </div>
-
-        <!-- Formación académica -->
-        <div class="card text-center bg-primary text-white">
             <div class="card-body">
-                <b>"FORMACIÓN ACADÉMICA"</b>
+                {% if messages %}
+                    {% for message in messages %}
+                        {% if "formacion-academica" in message.extra_tags %}
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+                <b class="text-center">Aporte los datos referentes a la formación acádemica.</b>
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Institución</th>
+                                <th>Grado académico</th>
+                                <th>Cédula Profesional</th>
+                                <th>Opciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for formacion in formaciones %}
+                            <tr id="formacion-{{ formacion.id }}">
+                                <td>{{ formacion.institucion }}</td>
+                                <td>{{ formacion.grado }}</td>
+                                <td>{{ formacion.cedulaProf }}</td>
+                                <td>
+                                    <a href="{% url 'instructoractualizar' instructor_id=instructor.id %}?delete_formacion={{ formacion.id }}" class="btn btn-danger btn-sm">Eliminar</a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4">No hay registros de formación académica.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="form-row">
+                        <div class="form-group col-md-4 align-items-center">
+                            <label for="{{ formacion_form.institucion.id_for_label }}">{{ formacion_form.institucion.label_tag }}</label>
+                            {{ formacion_form.institucion }}  
+                        </div>
+                        <div class="form-group col-md-4 align-items-center">
+                            <label for="{{ formacion_form.grado.id_for_label }}">{{ formacion_form.grado.label_tag }}</label>
+                            {{ formacion_form.grado }}  
+                        </div>
+                        <div class="form-group col-md-4 align-items-center">
+                            <label for="{{ formacion_form.cedulaProf.id_for_label }}">{{ formacion_form.cedulaProf.label_tag}}</label>
+                            {{ formacion_form.cedulaProf }}  
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" name="formacion_academica" class="btn btn-success">Agregar Formación Académica</button>
+                        <a href="{% url 'instructorlista' %}" class="btn btn-secondary">Cancelar</a>
+                    </div>
+                </form>
             </div>
         </div>
-        <div class="card text-center">
+    </div>
+    <hr>
+
+    <!-- Experiencia laboral -->
+    <div id="experiencia-laboral" class="section">
+        <div class="card mb-4">
+            <div class="card-header py-3 text-center bg-primary">
+                <h4 class="m-0 font-weight-bold text-white">EXPERIENCIA LABORAL</h4>
+            </div>
             <div class="card-body">
-                <b>Aporte los datos referentes a la formación acádemica.</b>
+                {% if messages %}
+                    {% for message in messages %}
+                        {% if "experiencia-laboral" in message.extra_tags %}
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+                <b class="text-center">Aporte los datos referentes a su experiencia laboral.</b>
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Puesto</th>
+                                <th>Empresa</th>
+                                <th>Periodo</th>
+                                <th>Opciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for experiencia in experiencias_laborales %}
+                            <tr id="experiencia-{{ experiencia.id }}">
+                                <td>{{ experiencia.puesto }}</td>
+                                <td>{{ experiencia.empresa }}</td>
+                                <td>{{ experiencia.fecha_inicio }} - {{ experiencia.fecha_fin }}</td>
+                                <td>
+                                    <a href="{% url 'instructoractualizar' instructor_id=instructor.id %}?delete_experiencia={{ experiencia.id }}" class="btn btn-danger btn-sm">Eliminar</a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4">No hay registros de experiencias laborales.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="form-row">
+                        <div class="form-group col-md-3 align-items-center">
+                            <label for="{{ experiencia_laboral_form.puesto.id_for_label }}">{{ experiencia_laboral_form.puesto.label_tag }}</label>
+                            {{ experiencia_laboral_form.puesto }}  
+                        </div>
+                        <div class="form-group col-md-3 align-items-center">
+                            <label for="{{ experiencia_laboral_form.empresa.id_for_label }}">{{ experiencia_laboral_form.empresa.label_tag }}</label>
+                            {{ experiencia_laboral_form.empresa }}  
+                        </div>
+                        <div class="form-group col-md-3 align-items-center">
+                            <label for="{{ experiencia_laboral_form.fecha_inicio.id_for_label }}">{{ experiencia_laboral_form.fecha_inicio.label_tag}}</label>
+                            {{ experiencia_laboral_form.fecha_inicio }}  
+                        </div>
+                        <div class="form-group col-md-3 align-items-center">
+                            <label for="{{ experiencia_laboral_form.fecha_fin.id_for_label }}">{{ experiencia_laboral_form.fecha_fin.label_tag}}</label>
+                            {{ experiencia_laboral_form.fecha_fin }}  
+                        </div>
+                    </div>
+    
+                    <div class="text-center">
+                        <button type="submit" name="experiencia_laboral" class="btn btn-success">Agregar Experiencia Laboral</button>
+                        <a href="{% url 'instructorlista' %}" class="btn btn-secondary">Cancelar</a>
+                    </div>
+                </form>
             </div>
-        </div><br>
-
-        <div class="form-group col-md-12 align-items-center">
-            <label for="{{ form.institucion.id_for_label }}">Institución académica</label>
-            {{ form.institucion }}  
         </div>
-        <div class="form-row">
-            <div class="form-group col-md-6 align-items-center">
-                <label for="{{ form.grado.id_for_label }}">Grado académico</label>
-                {{ form.grado }}  
-            </div>
-            <div class="form-group col-md-6 align-items-center">
-                <label for="{{ form.cedulaProf.id_for_label }}">Cédula Profesional</label>
-                {{ form.cedulaProf }}  
-            </div>
-        </div>
+    </div>
+    <hr>
 
-        <!-- Experiencia laboral -->
-        <div class="card text-center bg-primary text-white">
+    <!-- Experiencia docente -->
+    <div id="experiencia-docente" class="section">
+        <div class="card mb-4">
+            <div class="card-header py-3 text-center bg-primary">
+                <h4 class="m-0 font-weight-bold text-white">EXPERIENCIA EN DOCENCIA</h4>
+            </div>
+
             <div class="card-body">
-                <b>"EXPERIENCIA LABORAL"</b>
+                {% if messages %}
+                    {% for message in messages %}
+                        {% if "experiencia-docente" in message.extra_tags %}
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+                <b class="text-center">Aporte los datos referentes a la experiencia en docencia.</b>
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Materia</th>
+                                <th>Periodo</th>
+                                <th>Opciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for experiencia_docente in experiencias_docentes %}
+                            <tr id="experiencia-{{ experiencia.id }}">
+                                <td>{{ experiencia_docente.materia }}</td>
+                                <td>{{ experiencia_docente.periodo }}</td>
+                                <td>
+                                    <a href="{% url 'instructoractualizar' instructor_id=instructor.id %}?delete_experiencia_docente={{ experiencia_docente.id }}" class="btn btn-danger btn-sm">Eliminar</a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="3">No hay registros de formación académica.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="form-row">
+                        <div class="form-group col-md-6 align-items-center">
+                            <label for="{{ experiencia_docente_form.materia.id_for_label }}">{{ experiencia_docente_form.materia.label_tag }}</label>
+                            {{ experiencia_docente_form.materia }}  
+                        </div>
+                        <div class="form-group col-md-6 align-items-center">
+                            <label for="{{ experiencia_docente_form.periodo.id_for_label }}">{{ experiencia_docente_form.periodo.label_tag }}</label>
+                            {{ experiencia_docente_form.periodo }}  
+                        </div>
+                    </div>    
+                    <div class="text-center">
+                        <button type="submit" name="experiencia_docente" class="btn btn-success">Agregar Experiencia Docente</button>
+                    </div>    
+                </form>
             </div>
         </div>
-        <div class="card text-center">
+    </div>
+    <hr>
+
+    <!-- Participación como instructor -->
+    <div id="participacion-instructor" class="section">
+        <div class="card mb-4">
+            <div class="card-header py-3 text-center bg-primary">
+                <h4 class="m-0 font-weight-bold text-white">PARTICIPACIONES COMO INSTRUCTOR</h4>
+            </div>
             <div class="card-body">
-                <b>Indique la experiencia laboral más actual, en caso de no tener dejar en blanco.</b>
-            </div>
-        </div><br>
-
-        <div class="form-row">
-            <div class="form-group col-md-6 align-items-center">
-                <label for="{{ form.puesto.id_for_label }}" style="white-space: nowrap;">Puesto laboral</label>
-                {{ form.puesto }}  
-            </div>
-            <div class="form-group col-md-6 align-items-center">
-                <label for="{{ form.empresa.id_for_label }}" style="white-space: nowrap;">Nombre de la Empresa / Institución</label>
-                {{ form.empresa }}  
+                {% if messages %}
+                    {% for message in messages %}
+                        {% if "participacion-instructor" in message.extra_tags %}
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+                <b class="text-center">Aporte los datos referentes a la experiencia en docencia.</b>
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Nombre del curso</th>
+                                <th>Empresa / Institución</th>
+                                <th>Duración (Horas)</th>
+                                <th>Fecha</th>
+                                <th>Opciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for participacion in participaciones %}
+                            <tr id="participacion-{{ participacion.id }}">
+                                <td>{{ participacion.curso }}</td>
+                                <td>{{ participacion.nombreEmpresa }}</td>
+                                <td>{{ participacion.duracionHoras }}</td>
+                                <td>{{ participacion.periodoInicio }} - {{ participacion.periodoFin }}</td>
+                                <td>
+                                    <a href="{% url 'instructoractualizar' instructor_id=instructor.id %}?delete_participacion={{ participacion.id }}" class="btn btn-danger btn-sm">Eliminar</a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5">No hay registros de formación académica.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="form-row">
+                        <div class="form-group col-md-6 align-items-center">
+                            <label for="{{ participacion_form.curso.id_for_label }}">{{ participacion_form.curso.label_tag }}</label>
+                            {{ participacion_form.curso }}  
+                        </div>
+                        <div class="form-group col-md-6 align-items-center">
+                            <label for="{{ participacion_form.nombreEmpresa.id_for_label }}">{{ participacion_form.nombreEmpresa.label_tag }}</label>
+                            {{ participacion_form.nombreEmpresa }}  
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-4 align-items-center">
+                            <label for="{{ participacion_form.duracionHoras.id_for_label }}">{{ participacion_form.duracionHoras.label_tag }}</label>
+                            {{ participacion_form.duracionHoras }}
+                        </div>
+                        <div class="form-group col-md-4 align-items-center">
+                            <label for="{{ participacion_form.periodoInicio.id_for_label }}">{{ participacion_form.periodoInicio.label_tag }}</label>
+                            {{ participacion_form.periodoInicio }}  
+                        </div>
+                        <div class="form-group col-md-4 align-items-center">
+                            <label for="{{ participacion_form.periodoFin.id_for_label }}">{{ participacion_form.periodoFin.label_tag }}</label>
+                            {{ participacion_form.periodoFin }}  
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" name="participacion_instructor" class="btn btn-success">Agregar Participación</button>
+                    </div>    
+                </form>
             </div>
         </div>
+    </div>
 
-        <!-- Experiencia docente -->
-        <div class="card text-center bg-primary text-white">
-            <div class="card-body">
-                <b>"EXPERIENCIA DOCENTE"</b>
-            </div>
-        </div>
-        <div class="card text-center">
-            <div class="card-body">
-                <b>Indique la experiencia docente más actual, en caso de no tener dejar en blanco.</b>
-            </div>
-        </div><br>
-
-        <div class="form-row">
-            <div class="form-group col-md-6 align-items-center">
-                <label for="{{ form.materia.id_for_label }}" style="white-space: nowrap;">Materia</label>
-                {{ form.materia }}  
-            </div>
-            <div class="form-group col-md-6 align-items-center">
-                <label for="{{ form.periodo.id_for_label }}" style="white-space: nowrap;">Período en que llevó la materia</label>
-                {{ form.periodo }}  
-            </div>
-        </div>
-
-        <!-- Participación como instructor -->
-        <div class="card text-center bg-primary text-white">
-            <div class="card-body">
-                <b>"PARTICIPACIÓN COMO INSTRUCTOR"</b>
-            </div>
-        </div>
-        <div class="card text-center">
-            <div class="card-body">
-                <b>Denote su participación como instructor mas actual, en caso de no tener dejar en blanco.</b>
-            </div>
-        </div><br>
-
-        <div class="form-row">
-            <div class="form-group col-md-6 align-items-center">
-                <label for="{{ form.curso.id_for_label }}" style="white-space: nowrap;">Nombre del curso</label>
-                {{ form.curso }}  
-            </div>
-            <div class="form-group col-md-6 align-items-center">
-                <label for="{{ form.nombreEmpresa.id_for_label }}" style="white-space: nowrap;">Nombre de la Empresa / Institución</label>
-                {{ form.nombreEmpresa }}  
-            </div>
-        </div>
-        <div class="form-row">
-            <div class="form-group col-md-6 align-items-center">
-                <label for="{{ form.duracionHoras.id_for_label }}" style="white-space: nowrap;">Duración de horas</label>
-                {{ form.duracionHoras }}  
-            </div>
-            <div class="form-group col-md-6 align-items-center">
-                <label for="{{ form.fechaParticipacion.id_for_label }}" style="white-space: nowrap;">Período en el que participo en el curso</label>
-                {{ form.fechaParticipacion }}  
-            </div>
-        </div><br>
-
-        <div class='text-center'>
-        <button type="submit" class="btn btn-success">Guardar cambios</button>
-        <a href="{% url 'instructorlista' %}" class="btn btn-secondary">Cancelar</a>
-        </div>
-    </form>
 </div>
 {% endblock %}
+

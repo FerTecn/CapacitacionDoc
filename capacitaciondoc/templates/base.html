@@ -1,7 +1,7 @@
 {% load static %}
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
     <meta charset="utf-8">
@@ -10,10 +10,12 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>CAPACITATEC{% block title %} - Inicio{% endblock %}</title>
+    <title>CAPACITATEC {% block title %} {% endblock %}
+    </title>
 
     <!-- Custom fonts for this template-->
-    <link href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
+    <link href="
+        {% static 'vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
     <link
         href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
         rel="stylesheet">
@@ -21,44 +23,10 @@
     <!-- Custom styles for this template-->
     <link href="{% static 'css/sb-admin-2.min.css' %}" rel="stylesheet">
 
-    {% comment %} <style>
-        /* Fijar el sidebar */
-        #wrapper .sidebar {
-            position: fixed;
-            height: 100vh; /* Altura completa para la ventana */
-            top: 0;
-            left: 0;
-            overflow: hidden; /* Elimanar las barra de desplazamiento */
-            z-index: 1040; /* El menú debe de estar encima */
-        }
+    {% block styles %}
+   
+    {% endblock %}
 
-        #content-wrapper {
-            margin-left: 205px; /* Ancho del sidebar */
-        }
-
-        /* Ajusta el contenedor del contenido para el scroll interno */
-        #content {
-            overflow-y: auto;
-        }
-        
-        /* Fijar el navbar */
-        .navbar {
-            position: fixed;
-            top: 0;
-            left: 200px; /* Ancho del sidebar */
-            width: calc(100% - 200px); /* Resto del ancho de la ventana */
-            z-index: 1000; /* Para que quede por encima del contenido */
-        }
-
-        /* Ajustar el contenido principal para que no se superponga al navbar */
-        #content {
-            margin-top: 90px; /* Altura del navbar */
-        }
-    </style> {% endcomment %}
-
-    
-
-    {% block head %}{% endblock %}
 </head>
 
 <body id="page-top">
@@ -68,7 +36,7 @@
 
         <!-- Sidebar -->
         {% block sidebar %}
-        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion fixed-sidebar" id="accordionSidebar">
+        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{% url 'home' %}">
@@ -84,19 +52,18 @@
                     <i class="fas fa-fw fa-home"></i>
                     <span>Inicio</span></a>
             </li>
-            
 
             <!-- Divider -->
             <hr class="sidebar-divider">
-            
+
             <!-- CATALOGOS -->
             <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
-                    aria-expanded="true" aria-controls="collapseTwo">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseOne"
+                    aria-expanded="true" aria-controls="collapseOne">
                     <i class="fas fa-fw fa-cog"></i>
                     <span>Catalogos</span>
                 </a>
-                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <a class="collapse-item" href="{% url 'instructorlista' %}">Instructores</a>
                         <a class="collapse-item" href="{% url 'docentelista' %}">Docentes</a>
@@ -115,58 +82,50 @@
 
             <!-- PLAN DE CAPACITACION -->
             <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
-                    aria-expanded="true" aria-controls="collapseUtilities">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
+                    aria-expanded="true" aria-controls="collapseTwo">
                     <i class="fas fa-fw fa-wrench"></i>
                     <span>Plan de capacitación</span>
                 </a>
-                <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities"
+                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo"
                     data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <a class="collapse-item" href="{% url 'registrolista' %}">Registro de cursos</a>
                         <a class="collapse-item" href="{% url 'validarcursolista' %}">Validación de cursos</a>
-                        <!-- <a class="collapse-item" href="">Ficha técnica</a> -->
+
+                        <!--<a class="collapse-item" href="">Ficha técnica</a>-->
                     </div>
                 </div>
             </li>
-
+ 
             <!-- Divider -->
             <hr class="sidebar-divider">
-
+ 
             <!-- EVENTOS -->
             <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
-                    aria-expanded="true" aria-controls="collapsePages">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseThree"
+                    aria-expanded="true" aria-controls="collapseThree">
                     <i class="fas fa-fw fa-folder"></i>
                     <span>Eventos</span>
                 </a>
-                <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <a class="collapse-item" href="{% url 'eventolista' %}">Eventos</a>
                         <a class="collapse-item" href="blank.html">Oficio de comisión</a>
-                        
-                        <!-- Enlace que controla el submenú -->
-                        <a class="collapse-item" href="#" data-toggle="collapse" data-target="#submenuInscripciones" aria-expanded="false" aria-controls="submenuInscripciones">Inscripciones --- </a>
-                
-                        <!-- Submenú colapsable -->
-                        <div id="submenuInscripciones" class="collapse">
-                            <a class="collapse-item" href="{% url 'inscripcionlista' %}">Incripciones</a>
-                            <!--<a class="collapse-item" href="#">Lista de inscripción</a>-->
-                        </div>
-                
+                        <a class="collapse-item" href="{% url 'inscripcionlista' %}">Inscipciones</a>
                         <a class="collapse-item" href="forgot-password.html">Asistencia</a>
                         <a class="collapse-item" href="404.html">Calificación</a>
                     </div>
-                </div>     
+                </div>
             </li>
-
+ 
             <!-- ENCUESTA -->
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'encuesta' %}">
                     <i class="fas fa-fw fa-chart-area"></i>
                     <span>Encuesta de satisfacción</span></a>
             </li>
-
+ 
             <!-- REPORTES -->
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#colla"
@@ -181,15 +140,15 @@
                     </div>
                 </div>
             </li>
-
+ 
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">
-
+ 
             <!-- Sidebar Toggler (Sidebar) -->
             <div class="text-center d-none d-md-inline">
                 <button class="rounded-circle border-0" id="sidebarToggle"></button>
             </div>
-            
+
         </ul>
         {% endblock %}
         <!-- End of Sidebar -->
@@ -199,10 +158,10 @@
 
             <!-- Main Content -->
             <div id="content">
-
                 <!-- Topbar -->
                 {% block navbar %}
                 <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+                    
                     <!-- Sidebar Toggle (Topbar) -->
                     <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
                         <i class="fa fa-bars"></i>
@@ -210,22 +169,24 @@
 
                     <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
+                        
                         <!-- User Info -->
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+
                                 {% comment %} #Agregado, muestra el nombre de usuario logueado {% endcomment %}
                                 {% if request.user.is_authenticated %}
                                     <span class="mr-2 d-none d-lg-inline text-gray-600 small">
-                                        {{ request.user.first_name }} {{request.user.last_name_paterno}} {{request.user.last_name_materno}}
+                                        {{request.user.rol}} - {{ request.user.first_name }} {{request.user.last_name_paterno}} {{request.user.last_name_materno}}
                                     </span>
                                     <br>
-
                                 {% endif %}
+
                                 <img class="img-profile rounded-circle"
                                     src="{% static 'img/undraw_profile.svg' %}">
                             </a>
-                            {% comment %} #Agregado: Opciones de cerrar sesión {% endcomment %}
+
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="userDropdown">
@@ -239,17 +200,27 @@
                 </nav>
                 {% endblock %}
                 <!-- End of Topbar -->
-
+ 
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
                     {% block content %}
                     <!-- Page content goes here -->
+
                     {% endblock %}
                 </div>
                 <!-- /.container-fluid -->
-
             </div>
             <!-- End of Main Content -->
+
+            <!-- Footer -->
+            <footer class="sticky-footer bg-white">
+                <div class="container my-auto">
+                    <div class="copyright text-center my-auto">
+                        <span>Copyright &copy; CAPACITATEC 2025</span>
+                    </div>
+                </div>
+            </footer>
+            <!-- End of Footer -->
 
         </div>
         <!-- End of Content Wrapper -->
@@ -257,7 +228,12 @@
     </div>
     <!-- End of Page Wrapper -->
 
-    {% comment %} Modal que permite cerrar sesión {% endcomment %}
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+
+    
     <!-- Logout Modal-->
     <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
         aria-hidden="true">
@@ -278,14 +254,21 @@
         </div>
     </div>
 
-    <!-- Custom scripts -->
-    {% block extra_scripts %}
+    <!-- Bootstrap core JavaScript-->
     <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
     <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="{% static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
+
+    <!-- Custom scripts for all pages-->
     <script src="{% static 'js/sb-admin-2.min.js' %}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    {% endblock %}
 
+
+    <!-- Custom scripts -->
+    {% block scripts %}
+    
+    {% endblock %}
+ 
 </body>
-
-</html>
+        
