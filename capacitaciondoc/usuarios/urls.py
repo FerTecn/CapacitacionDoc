@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import signout, signup,signin,home
+from .views import custom_403_view, custom_404_view, signout, signup,signin,home
 from django.contrib.auth import views as auth_views
 
 
@@ -16,3 +16,7 @@ urlpatterns = [
     path('password_change/', auth_views.PasswordChangeView.as_view(), name='password_change'),
     path('password_change/done/', auth_views.PasswordChangeDoneView.as_view(), name='password_change_done'),
 ]
+
+# Asignar la vista personalizada
+handler403 = custom_403_view
+handler404 = custom_404_view

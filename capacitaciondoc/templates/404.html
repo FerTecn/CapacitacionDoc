@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}- 404{% endblock %}
+
+{% block content %}
+<!-- 404 Error Text -->
+<div class="text-center">
+    <div class="error mx-auto" data-text="404">404</div>
+    <p class="lead text-gray-800 mb-5">Página no encontrada</p>
+    <p class="text-gray-500 mb-0">La página a la que intentas acceder no existe.</p>
+
+    {% if previous_url %}
+        <a href="{{ previous_url }}">&larr; Regresar a la página anterior</a>
+    {% else %}
+        <a href="{% url 'home' %}">Ir a la página de inicio</a>
+    {% endif %}
+</div>
+
+{% endblock %}
+

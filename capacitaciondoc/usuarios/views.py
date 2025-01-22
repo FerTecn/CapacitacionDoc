@@ -110,3 +110,15 @@ def home(request):
         return render(request, 'index.html')  
     else:
         return HttpResponseForbidden("No tienes permiso para acceder a esta página.")
+    
+# Vista para el error 403
+def custom_403_view(request, exception=None):
+    # Obtener la URL previa usando HTTP_REFERER
+    previous_url = request.META.get('HTTP_REFERER', None)
+    return render(request, '403.html', {'previous_url': previous_url}, status=403)
+
+# Vista para el error 404
+def custom_404_view(request, exception=None):
+    # Obtener la URL previa usando HTTP_REFERER
+    previous_url = request.META.get('HTTP_REFERER', None)
+    return render(request, '404.html', {'previous_url': previous_url}, status=404)
