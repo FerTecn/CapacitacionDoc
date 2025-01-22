@@ -33,10 +33,13 @@ from .forms import (
 
 #GRADO ACADEMICO
 @login_required(login_url='signin')
+@permission_required('catalogos.view_grado', raise_exception=True)
 def gradolista(request):
     gradoac = GradoAcademico.objects.all()
     return render(request, 'gradolista.html', {'gradoac': gradoac})
 
+@login_required(login_url='signin')
+@permission_required('catalogos.add_grado', raise_exception=True)
 def gradoañadir(request):
     if request.method == 'POST':
         form = AñadirGradoAcForm(request.POST)
@@ -49,11 +52,13 @@ def gradoañadir(request):
     return render(request, 'gradoañadir.html', {'form': form})
 
 @login_required(login_url='signin')
+@permission_required('catalogos.view_grado', raise_exception=True)
 def gradover(request, grado_id):
     grado = get_object_or_404(GradoAcademico, id=grado_id)
     return render(request, 'gradover.html', {'grado': grado})
 
 @login_required(login_url='signin')
+@permission_required('catalogos.change_grado', raise_exception=True)
 def gradoactualizar(request, grado_id):
     grado = get_object_or_404(GradoAcademico, id=grado_id)
     if request.method == 'POST':
@@ -66,6 +71,7 @@ def gradoactualizar(request, grado_id):
     return render(request, 'gradoactualizar.html', {'form': form, 'grado': grado})
 
 @login_required(login_url='signin')
+@permission_required('catalogos.delete_grado', raise_exception=True)
 def gradoeliminar(request, grado_id):
     grado = get_object_or_404(GradoAcademico, id=grado_id)
     if request.method == 'POST':
@@ -74,12 +80,15 @@ def gradoeliminar(request, grado_id):
     return render(request, 'gradoeliminar.html', {'grado': grado})
 
  #LUGARES
+
 @login_required(login_url='signin')
+@permission_required('catalogos.view_lugar', raise_exception=True)
 def lugarlista(request):
     Lugares = Lugar.objects.all()
     return render(request, 'lugarlista.html', {'Lugares': Lugares})
 
 @login_required(login_url='signin')
+@permission_required('catalogos.add_lugar', raise_exception=True)
 def lugarañadir(request):
     if request.method == 'POST':
         form = AñadirLugarForm(request.POST)
@@ -92,11 +101,13 @@ def lugarañadir(request):
     return render(request, 'lugarañadir.html', {'form': form})
 
 @login_required(login_url='signin')
+@permission_required('catalogos.view_lugar', raise_exception=True)
 def lugarver(request, lugar_id):
     lugar = get_object_or_404(Lugar, id=lugar_id)
     return render(request, 'lugarver.html', {'lugar': lugar})
 
 @login_required(login_url='signin')
+@permission_required('catalogos.change_lugar', raise_exception=True)
 def lugaractualizar(request, lugar_id):
     lugar = get_object_or_404(Lugar, id=lugar_id)
     if request.method == 'POST':
@@ -109,6 +120,7 @@ def lugaractualizar(request, lugar_id):
     return render(request, 'lugaractualizar.html', {'form': form, 'lugar': lugar})
 
 @login_required(login_url='signin')
+@permission_required('catalogos.delete_lugar', raise_exception=True)
 def lugareliminar(request, lugar_id):
     lugar = get_object_or_404(Lugar, id=lugar_id)
     if request.method == 'POST':
@@ -118,11 +130,13 @@ def lugareliminar(request, lugar_id):
 
 #SEDES
 @login_required(login_url='signin')
+@permission_required('catalogos.view_sede', raise_exception=True)
 def sedelista(request):
     sedes = Sede.objects.all()
     return render(request, 'sedelista.html', {'sedes': sedes})
 
 @login_required(login_url='signin')
+@permission_required('catalogos.add_sede', raise_exception=True)
 def sedeañadir(request):
     if request.method == 'POST':
         form = AñadirSedeForm(request.POST)
@@ -135,11 +149,13 @@ def sedeañadir(request):
     return render(request, 'sedeañadir.html', {'form': form})
 
 @login_required(login_url='signin')
+@permission_required('catalogos.view_sede', raise_exception=True)
 def sedever(request, sede_id):
     sede = get_object_or_404(Sede, id=sede_id)
     return render(request, 'sedever.html', {'sede': sede})
 
 @login_required(login_url='signin')
+@permission_required('catalogos.change_sede', raise_exception=True)
 def sedeactualizar(request, sede_id):
     sede = get_object_or_404(Sede, id=sede_id)
     if request.method == 'POST':
@@ -152,6 +168,7 @@ def sedeactualizar(request, sede_id):
     return render(request, 'sedeactualizar.html', {'form': form, 'sede': sede})
 
 @login_required(login_url='signin')
+@permission_required('catalogos.delete_sede', raise_exception=True)
 def sedeeliminar(request, sede_id):
     sede = get_object_or_404(Sede, id=sede_id)
     if request.method == 'POST':
@@ -161,7 +178,7 @@ def sedeeliminar(request, sede_id):
 
 #INSTRUCTORES
 @login_required(login_url='signin')
-@login_required(login_url='signin')
+@permission_required('catalogos.view_instructor', raise_exception=True)
 def instructorlista(request):
     if request.user.rol == 'Instructor': #Si eres Instructor, ves tu registro
         try:
@@ -174,6 +191,7 @@ def instructorlista(request):
     return render(request, 'instructorlista.html', {'instructores': instructores})
 
 @login_required(login_url='signin')
+@permission_required('catalogos.add_instructor', raise_exception=True)
 def instructorañadir(request):
     if request.method == 'POST':
         form = AñadirInstructorForm(request.POST)
@@ -186,6 +204,7 @@ def instructorañadir(request):
     return render(request, 'instructorañadir.html', {'form': form})
 
 @login_required(login_url='signin')
+@permission_required('catalogos.view_instructor', raise_exception=True)
 def instructorver(request, instructor_id=None):
     if request.user.rol == 'Instructor':
         # Verificar si el registro que intenta acceder es suyo
@@ -212,6 +231,7 @@ def instructorver(request, instructor_id=None):
     })
 
 @login_required(login_url='signin')
+@permission_required('catalogos.change_instructor', raise_exception=True)
 def instructoractualizar(request, instructor_id=None):
     if request.user.rol == 'Instructor':
         # Si es un instructor, solo puede editar su propio registro
@@ -279,6 +299,8 @@ def instructoractualizar(request, instructor_id=None):
                 nueva_participacion.save()
                 messages.success(request, "Participación como instructor agregada correctamente.", extra_tags="participacion-instructor")
                 return redirect(f'{request.path}#participacion-instructor')
+            else:
+                print(participacion_form.errors)
 
     else:
         # Formularios iniciales para GET
@@ -337,6 +359,7 @@ def instructoractualizar(request, instructor_id=None):
     })
 
 @login_required(login_url='signin')
+@permission_required('catalogos.delete_instructor', raise_exception=True)
 def instructoreliminar(request, instructor_id):
     instructor = get_object_or_404(Instructor, id=instructor_id)
     if request.method == 'POST':
@@ -408,6 +431,7 @@ def docenteactualizar(request, docente_id=None):
     return render(request, 'docenteactualizar.html', {'form': form, 'docente': docente})
 
 @login_required(login_url='signin')
+@permission_required('catalogos.delete_docente', raise_exception=True)
 def docenteeliminar(request, docente_id):
     docente = get_object_or_404(Docente, id=docente_id)
     if request.method == 'POST':
@@ -417,11 +441,13 @@ def docenteeliminar(request, docente_id):
 
 #DEPARTAMENTOS
 @login_required(login_url='signin')
+@permission_required('catalogos.view_departamaneto', raise_exception=True)
 def departamentolista(request):
     departamentos = Departamento.objects.all()
     return render(request, 'departamentolista.html', {'departamentos': departamentos})
 
 @login_required(login_url='signin')
+@permission_required('catalogos.add_departamento', raise_exception=True)
 def departamentoañadir(request):
     if request.method == 'POST':
         form = AñadirDepartamentoForm(request.POST)
@@ -433,14 +459,14 @@ def departamentoañadir(request):
 
     return render(request, 'departamentoañadir.html', {'form': form})
 
-
 @login_required(login_url='signin')
+@permission_required('catalogos.view_departamento', raise_exception=True)
 def departamentover(request, departamento_id):
     departamento= get_object_or_404(Departamento, id=departamento_id)
     return render(request, 'departamentover.html', {'departamento': departamento})
 
-
 @login_required(login_url='signin')
+@permission_required('catalogos.change_departamento', raise_exception=True)
 def departamentoactualizar(request, departamento_id):
     departamento= get_object_or_404(Departamento, id=departamento_id)
     if request.method == 'POST':
@@ -453,6 +479,7 @@ def departamentoactualizar(request, departamento_id):
     return render(request, 'departamentoactualizar.html', {'form': form, 'departamento': departamento})
 
 @login_required(login_url='signin')
+@permission_required('catalogos.delete_departamento', raise_exception=True)
 def departamentoeliminar(request, departamento_id):
     departamento = get_object_or_404(Departamento, id=departamento_id)
     if request.method == 'POST':
@@ -460,14 +487,15 @@ def departamentoeliminar(request, departamento_id):
         return redirect('departamentolista')  
     return render(request, 'departamentoeliminar.html', {'departamento': departamento})
 
-
 #DIRIGIDO
 @login_required(login_url='signin')
+@permission_required('catalogos.view_dirigido', raise_exception=True)
 def dirigidolista(request):
     dirigidos = Dirigido.objects.all()
     return render(request, 'dirigidolista.html', {'dirigidos': dirigidos})
 
 @login_required(login_url='signin')
+@permission_required('catalogos.add_dirigido', raise_exception=True)
 def dirigidoañadir(request):
     if request.method == 'POST':
         form = AñadirDirigidoForm(request.POST)
@@ -480,12 +508,13 @@ def dirigidoañadir(request):
     return render(request, 'dirigidoañadir.html', {'form': form})
 
 @login_required(login_url='signin')
+@permission_required('catalogos.view_dirigido', raise_exception=True)
 def dirigidover(request, dirigido_id):
     dirigido= get_object_or_404(Dirigido, id=dirigido_id)
     return render(request, 'dirigidover.html', {'dirigido': dirigido})
 
-
 @login_required(login_url='signin')
+@permission_required('catalogos.change_dirigido', raise_exception=True)
 def dirigidoactualizar(request, dirigido_id):
     dirigido= get_object_or_404(Dirigido, id=dirigido_id)
     if request.method == 'POST':
@@ -497,8 +526,8 @@ def dirigidoactualizar(request, dirigido_id):
         form = ActualizarDirigidoForm(instance=dirigido)
     return render(request, 'dirigidoactualizar.html', {'form': form, 'dirigido': dirigido})
 
-
 @login_required(login_url='signin')
+@permission_required('catalogos.delete_dirigido', raise_exception=True)
 def dirigidoeliminar(request, dirigido_id):
     dirigido = get_object_or_404(Dirigido, id=dirigido_id)
     if request.method == 'POST':
@@ -506,14 +535,15 @@ def dirigidoeliminar(request, dirigido_id):
         return redirect('dirigidolista')  
     return render(request, 'dirigidoeliminar.html', {'dirigido': dirigido})
 
-
 #GÉNERO
 @login_required(login_url='signin')
+@permission_required('catalogos.view_genero', raise_exception=True)
 def generolista(request):
     generos = Genero.objects.all()
     return render(request, 'generolista.html', {'generos': generos})
 
 @login_required(login_url='signin')
+@permission_required('catalogos.add_genero', raise_exception=True)
 def generoañadir(request):
     if request.method == 'POST':
         form = AñadirGéneroForm(request.POST)
@@ -526,12 +556,13 @@ def generoañadir(request):
     return render(request, 'generoañadir.html', {'form': form})
 
 @login_required(login_url='signin')
+@permission_required('catalogos.view_genero', raise_exception=True)
 def generover(request, genero_id):
     genero= get_object_or_404(Genero, id=genero_id)
     return render(request, 'generover.html', {'genero': genero})
 
-
 @login_required(login_url='signin')
+@permission_required('catalogos.change_genero', raise_exception=True)
 def generoactualizar(request, genero_id):
     genero= get_object_or_404(Genero, id=genero_id)
     if request.method == 'POST':
@@ -543,8 +574,8 @@ def generoactualizar(request, genero_id):
         form = ActualizarGéneroForm(instance=genero)
     return render(request, 'generoactualizar.html', {'form': form, 'genero': genero})
 
-
 @login_required(login_url='signin')
+@permission_required('catalogos.delete_genero', raise_exception=True)
 def generoeliminar(request, genero_id):
     genero = get_object_or_404(Genero, id=genero_id)
     if request.method == 'POST':
@@ -552,16 +583,15 @@ def generoeliminar(request, genero_id):
         return redirect('generolista')  
     return render(request, 'generoeliminar.html', {'genero': genero})
 
-
-
-
 #PERFIL DE CURSO
 @login_required(login_url='signin')
+@permission_required('catalogos.view_perfilcurso', raise_exception=True)
 def perfilcursolista(request):
     perfilcursos = PerfilCurso.objects.all()
     return render(request, 'perfilcursolista.html', {'perfilcursos': perfilcursos})
 
 @login_required(login_url='signin')
+@permission_required('catalogos.add_perfilcurso', raise_exception=True)
 def perfilcursoañadir(request):
     if request.method == 'POST':
         form = AñadirPerfilcursoForm(request.POST)
@@ -574,12 +604,13 @@ def perfilcursoañadir(request):
     return render(request, 'perfilcursoañadir.html', {'form': form})
 
 @login_required(login_url='signin')
+@permission_required('catalogos.view_perfilcurso', raise_exception=True)
 def perfilcursover(request, perfilCurso_id):
     perfilCurso= get_object_or_404(PerfilCurso, id=perfilCurso_id)
     return render(request, 'perfilcursover.html', {'perfilCurso': perfilCurso})
 
-
 @login_required(login_url='signin')
+@permission_required('catalogos.change_perfilcurso', raise_exception=True)
 def perfilcursoactualizar(request, perfilCurso_id):
     perfilCurso= get_object_or_404(PerfilCurso, id=perfilCurso_id)
     if request.method == 'POST':
@@ -591,8 +622,8 @@ def perfilcursoactualizar(request, perfilCurso_id):
         form = ActualizarPerfilcursoForm(instance=perfilCurso)
     return render(request, 'perfilcursoactualizar.html', {'form': form, 'perfilCurso': perfilCurso})
 
-
 @login_required(login_url='signin')
+@permission_required('catalogos.delete_perfilcurso', raise_exception=True)
 def perfilcursoeliminar(request, perfilCurso_id):
     perfilCurso = get_object_or_404(PerfilCurso, id=perfilCurso_id)
     if request.method == 'POST':
@@ -600,14 +631,15 @@ def perfilcursoeliminar(request, perfilCurso_id):
         return redirect('perfilcursolista')  
     return render(request, 'perfilcursoeliminar.html', {'perfilCurso': perfilCurso})
 
-
 #PERIODO
 @login_required(login_url='signin')
+@permission_required('catalogos.view_periodo', raise_exception=True)
 def periodolista(request):
     periodos = Periodo.objects.all()
     return render(request, 'periodolista.html', {'periodos': periodos})
 
 @login_required(login_url='signin')
+@permission_required('catalogos.add_periodo', raise_exception=True)
 def periodoañadir(request):
     if request.method == 'POST':
         form = AñadirPeriodoForm(request.POST)
@@ -620,12 +652,13 @@ def periodoañadir(request):
     return render(request, 'periodoañadir.html', {'form': form})
 
 @login_required(login_url='signin')
+@permission_required('catalogos.view_periodo', raise_exception=True)
 def periodover(request, periodo_id):
     periodo= get_object_or_404(Periodo, id=periodo_id)
     return render(request, 'periodover.html', {'periodo': periodo})
 
-
 @login_required(login_url='signin')
+@permission_required('catalogos.change_periodo', raise_exception=True)
 def periodoactualizar(request, periodo_id):
     periodo= get_object_or_404(Periodo, id=periodo_id)
     if request.method == 'POST':
@@ -637,8 +670,8 @@ def periodoactualizar(request, periodo_id):
         form = ActualizarPeriodoForm(instance=periodo)
     return render(request, 'periodoactualizar.html', {'form': form, 'periodo': periodo})
 
-
 @login_required(login_url='signin')
+@permission_required('catalogos.delete_periodo', raise_exception=True)
 def periodoeliminar(request, periodo_id):
     periodo = get_object_or_404(Periodo, id=periodo_id)
     if request.method == 'POST':
@@ -648,11 +681,13 @@ def periodoeliminar(request, periodo_id):
 
 #Director
 @login_required(login_url='signin')
+@permission_required('catalogos.view_director', raise_exception=True)
 def directorlista(request):
     directores = Director.objects.all()
     return render(request, 'directorlista.html', {'directores': directores})
 
 @login_required(login_url='signin')
+@permission_required('catalogos.add_director', raise_exception=True)
 def directoragregar(request):
     if request.method == 'POST':
         form = AgregarDirectorForm(request.POST)
@@ -665,12 +700,13 @@ def directoragregar(request):
     return render(request, 'directoragregar.html', {'form': form})
 
 @login_required(login_url='signin')
+@permission_required('catalogos.view_director', raise_exception=True)
 def directorver(request, director_id):
     director= get_object_or_404(Director, id=director_id)
     return render(request, 'directorver.html', {'director': director})
 
-
 @login_required(login_url='signin')
+@permission_required('catalogos.change_director', raise_exception=True)
 def directoractualizar(request, director_id):
     director= get_object_or_404(Director, id=director_id)
     if request.method == 'POST':
@@ -682,8 +718,8 @@ def directoractualizar(request, director_id):
         form = ActualizarDirectorForm(instance=director)
     return render(request, 'directoractualizar.html', {'form': form, 'director': director})
 
-
 @login_required(login_url='signin')
+@permission_required('catalogos.delete_director', raise_exception=True)
 def directoreliminar(request, director_id):
     director = get_object_or_404(Director, id=director_id)
     if request.method == 'POST':
