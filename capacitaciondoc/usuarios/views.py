@@ -30,9 +30,8 @@ def signup(request):
                 user.groups.add(group)
                 
                 
-                # Asignar grupo basado en el rol
+                # Crea una instancia de docente o instructor si se registran con ese rol para posteriormente modificar su información
                 if user.rol == 'Docente':
-                    # Crear automáticamente un registro Docente asociado al usuario
                     Docente.objects.create(user=user)
                 if user.rol == 'Instructor':
                     Instructor.objects.create(user=user)
@@ -66,6 +65,7 @@ def signin(request):
             return render(request, 'signin.html', {'form': SigninForm, 'error': 'Usuario y/o contraseña incorrectos'})
         else:
             login(request, user) #Inicia la sesión y
+            messages.success(request, f"¡Bienvenido de nuevo, {user.first_name}!")
             return redirect('/') # redirecciona a la página principal
         
             # # Redirecciones basadas en grupo
@@ -82,6 +82,7 @@ def signin(request):
 @login_required(login_url='signin')
 def signout(request):
     logout(request)
+    messages.success(request, "Has cerrado sesión correctamente.")
     return redirect('signin')
  
  

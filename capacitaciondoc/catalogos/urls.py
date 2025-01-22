@@ -53,11 +53,11 @@ urlpatterns = [
     
 
     #GÉNERO
-    path('génerolista/', views.génerolista, name='génerolista'),
-    path('géneroañadir/', views.géneroañadir, name='géneroañadir'),
-    path('génerover/<int:genero_id>/', views.génerover, name='génerover'),
-    path('géneroactualizar/<int:genero_id>/', views.géneroactualizar, name='géneroactualizar'),
-    path('géneroeliminar/<int:genero_id>/', views.géneroeliminar, name='géneroeliminar'),
+    path('generolista/', views.generolista, name='generolista'),
+    path('generoañadir/', views.generoañadir, name='generoañadir'),
+    path('generover/<int:genero_id>/', views.generover, name='generover'),
+    path('generoactualizar/<int:genero_id>/', views.generoactualizar, name='generoactualizar'),
+    path('generoeliminar/<int:genero_id>/', views.generoeliminar, name='generoeliminar'),
 
 
     #PERFIL DE CURSO

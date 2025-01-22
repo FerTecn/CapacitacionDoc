@@ -9,6 +9,18 @@
     <div class="text-center">
         <h1 class="h4 text-gray-900 mb-4">Iniciar sesión en CAPACITATEC</h1>
     </div>
+    <!-- Mostrar mensajes de Django -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                <strong>{{ message }}</strong>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
     {% if error %}
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
             <strong>Error:</strong> {{error}}

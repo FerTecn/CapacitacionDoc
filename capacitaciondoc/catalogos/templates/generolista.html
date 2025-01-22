@@ -1,6 +1,13 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block title %} - Lista de Géneros{% endblock %}
+
+{% block styles %}
+<!-- Custom styles for this page -->
+<link href="../../static/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+{% endblock %}
+
 {% block content %}
 <div class="container-fluid">
     <!-- Page Heading -->
@@ -15,7 +22,7 @@
     <div class="card shadow mb-4">
         <div class="card-header py-3 d-flex justify-content-between align-items-center">
             <h4 class="m-0 font-weight-bold text-primary">Lista de Géneros</h4>
-            <a href="{% url 'géneroañadir' %}" class="btn btn-success mb-3">Añadir</a>
+            <a href="{% url 'generoañadir' %}" class="btn btn-success mb-3">Añadir</a>
         </div>
         <div class="card-body">
             <div class="table-responsive">
@@ -33,9 +40,9 @@
                            
                             <td>
                                 <!-- Opciones -->
-                                <a href="{% url 'génerover' genero.id %}" class="btn btn-success btn-sm">Ver</a>
-                                <a href="{% url 'géneroactualizar' genero.id %} " class="btn btn-warning btn-sm">Editar</a>
-                                <a href="{% url 'géneroeliminar' genero.id %}" class="btn btn-danger btn-sm">Eliminar</a>
+                                <a href="{% url 'generover' genero.id %}" class="btn btn-success btn-sm">Ver</a>
+                                <a href="{% url 'generoactualizar' genero.id %} " class="btn btn-warning btn-sm">Editar</a>
+                                <a href="{% url 'generoeliminar' genero.id %}" class="btn btn-danger btn-sm">Eliminar</a>
                             </td>
                         </tr>
                         {% endfor %}

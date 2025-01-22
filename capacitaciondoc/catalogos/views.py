@@ -1,13 +1,31 @@
 from django.http import HttpResponseForbidden
-from django.shortcuts import render
-from django.shortcuts import redirect, render, get_object_or_404
-from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect, render, get_object_or_404
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
-from .models import ExperienciaDocente, ExperienciaLaboral, FormacionAcademica, GradoAcademico, Lugar, ParticipacionInstructor, Sede, Instructor, Docente,Departamento,Dirigido,Genero,PerfilCurso,Periodo, Director
-from .forms import AñadirGradoAcForm, ActualizarGradoAcForm, AñadirLugarForm, ActualizarLugarForm, AñadirSedeForm, ActualizarSedeForm, ActualizarDirectorForm, AgregarDirectorForm
-from .forms import AñadirInstructorForm, AgregarDocenteForm, ActualizarDocenteForm, AñadirDepartamentoForm, ActualizarDepartamentoForm,AñadirDirigidoForm,ActualizarDirigidoForm,AñadirGéneroForm,ActualizarGéneroForm,ActualizarPerfilcursoForm,AñadirPerfilcursoForm,ActualizarPeriodoForm,AñadirPeriodoForm
+
+from .models import (
+    ExperienciaDocente, 
+    ExperienciaLaboral, 
+    FormacionAcademica, 
+    ParticipacionInstructor)
+from .models import (
+    Docente, Instructor,
+    GradoAcademico, Lugar, Sede, Departamento,
+    Dirigido, Genero, PerfilCurso ,Periodo, Director)
+
 from .forms import (
-    ActualizarInstructorForm, FormacionAcademicaForm,
+    AñadirGradoAcForm, ActualizarGradoAcForm, 
+    AñadirLugarForm, ActualizarLugarForm, 
+    AñadirSedeForm, ActualizarSedeForm, 
+    ActualizarDirectorForm, AgregarDirectorForm)
+from .forms import (
+    AgregarDocenteForm, ActualizarDocenteForm, 
+    AñadirDepartamentoForm, ActualizarDepartamentoForm, 
+    AñadirDirigidoForm, ActualizarDirigidoForm,
+    AñadirGéneroForm, ActualizarGéneroForm,
+    ActualizarPerfilcursoForm, AñadirPerfilcursoForm, ActualizarPeriodoForm, AñadirPeriodoForm)
+from .forms import (
+    AñadirInstructorForm, ActualizarInstructorForm, FormacionAcademicaForm,
     ExperienciaLaboralForm, ExperienciaDocenteForm,
     ParticipacionInstructorForm
 )
@@ -169,8 +187,29 @@ def instructorañadir(request):
 
 @login_required(login_url='signin')
 def instructorver(request, instructor_id=None):
-    instructor = get_object_or_404(Instructor, id=instructor_id)
-    return render(request, 'instructorver.html', {'instructor': instructor})
+    if request.user.rol == 'Instructor':
+        # Verificar si el registro que intenta acceder es suyo
+        instructor = get_object_or_404(Instructor, user=request.user)
+        if instructor.id != instructor_id:
+            return HttpResponseForbidden("No tienes permiso para ver este registro.")
+        else:
+            # Si el usuario tiene otro rol con permisos, puede acceder al registro del instructor indicado
+            instructor = get_object_or_404(Instructor, id=instructor_id)
+
+    # Obtener las relaciones relacionadas con el instructor
+    formaciones = instructor.formaciones_academicas.all()  # Formación académica
+    experiencias_laborales = instructor.experiencias_laborales.all()  # Experiencia laboral
+    experiencias_docentes = instructor.experiencias_docentes.all()  # Experiencia docente
+    participaciones = instructor.participaciones_instructor.all()  # Participaciones como instructor
+
+    # Renderizar el template con los datos necesarios
+    return render(request, 'instructorver.html', {
+        'instructor': instructor,
+        'formaciones': formaciones,
+        'experiencias_laborales': experiencias_laborales,
+        'experiencias_docentes': experiencias_docentes,
+        'participaciones': participaciones,
+    })
 
 @login_required(login_url='signin')
 def instructoractualizar(request, instructor_id=None):
@@ -297,7 +336,6 @@ def instructoractualizar(request, instructor_id=None):
         'participaciones': participaciones,
     })
 
-
 @login_required(login_url='signin')
 def instructoreliminar(request, instructor_id):
     instructor = get_object_or_404(Instructor, id=instructor_id)
@@ -308,6 +346,7 @@ def instructoreliminar(request, instructor_id):
 
 #DOCENTES
 @login_required(login_url='signin')
+@permission_required('catalogos.view_docente', raise_exception=True)
 def docentelista(request):
     if request.user.rol == 'Docente':  #Si eres docente solo modificas tu registro
         try:
@@ -332,9 +371,15 @@ def docenteañadir(request):
     return render(request, 'docenteañadir.html', {'form': form})
 
 @login_required(login_url='signin')
-def docentever(request, docente_id):
-    docente = get_object_or_404(Docente, id=docente_id)
-    return render(request, 'docentever.html', {'docente': docente})
+def docentever(request, docente_id=None):
+    if request.user.rol == 'Docente':
+        # Verificar si el registro que intenta acceder es suyo
+        docente = get_object_or_404(Docente, user=request.user)
+        if docente.id != docente_id:
+            return HttpResponseForbidden("No tienes permiso para ver este registro.")
+        else:
+            # Si el usuario tiene otro rol con permisos, puede acceder al registro del instructor indicado
+            docente = get_object_or_404(Docente, id=docente_id)
 
 @login_required(login_url='signin')
 def docenteactualizar(request, docente_id=None):
@@ -458,48 +503,48 @@ def dirigidoeliminar(request, dirigido_id):
 
 #GÉNERO
 @login_required(login_url='signin')
-def génerolista(request):
+def generolista(request):
     generos = Genero.objects.all()
-    return render(request, 'génerolista.html', {'generos': generos})
+    return render(request, 'generolista.html', {'generos': generos})
 
 @login_required(login_url='signin')
-def géneroañadir(request):
+def generoañadir(request):
     if request.method == 'POST':
         form = AñadirGéneroForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('génerolista') 
+            return redirect('generolista') 
     else:
         form = AñadirGéneroForm()
 
-    return render(request, 'géneroañadir.html', {'form': form})
+    return render(request, 'generoañadir.html', {'form': form})
 
 @login_required(login_url='signin')
-def génerover(request, genero_id):
+def generover(request, genero_id):
     genero= get_object_or_404(Genero, id=genero_id)
-    return render(request, 'génerover.html', {'genero': genero})
+    return render(request, 'generover.html', {'genero': genero})
 
 
 @login_required(login_url='signin')
-def géneroactualizar(request, genero_id):
+def generoactualizar(request, genero_id):
     genero= get_object_or_404(Genero, id=genero_id)
     if request.method == 'POST':
         form = ActualizarGéneroForm(request.POST, instance=genero)
         if form.is_valid():
             form.save()
-            return redirect('génerolista') 
+            return redirect('generolista') 
     else:
         form = ActualizarGéneroForm(instance=genero)
-    return render(request, 'géneroactualizar.html', {'form': form, 'genero': genero})
+    return render(request, 'generoactualizar.html', {'form': form, 'genero': genero})
 
 
 @login_required(login_url='signin')
-def géneroeliminar(request, genero_id):
+def generoeliminar(request, genero_id):
     genero = get_object_or_404(Genero, id=genero_id)
     if request.method == 'POST':
         genero.delete()
-        return redirect('génerolista')  
-    return render(request, 'géneroeliminar.html', {'genero': genero})
+        return redirect('generolista')  
+    return render(request, 'generoeliminar.html', {'genero': genero})
 
 
 
