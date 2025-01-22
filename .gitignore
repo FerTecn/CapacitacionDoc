@@ -5,9 +5,9 @@ enCap/
 __pycache__/
 *.pyc
 
-# Archivos de configuración local
-*.db
-*.sqlite3
+# # Archivos de configuración local
+# *.db
+# *.sqlite3
 
 # Archivos de Django
 *.log

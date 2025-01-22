@@ -359,6 +359,7 @@ def docentelista(request):
     return render(request, 'docentelista.html', {'docentes': docentes})
 
 @login_required(login_url='signin')
+@permission_required('catalogos.add_docente', raise_exception=True)
 def docenteañadir(request):
     if request.method == 'POST':
         form = AgregarDocenteForm(request.POST)
@@ -371,6 +372,7 @@ def docenteañadir(request):
     return render(request, 'docenteañadir.html', {'form': form})
 
 @login_required(login_url='signin')
+@permission_required('catalogos.view_docente', raise_exception=True)
 def docentever(request, docente_id=None):
     if request.user.rol == 'Docente':
         # Verificar si el registro que intenta acceder es suyo
@@ -380,8 +382,12 @@ def docentever(request, docente_id=None):
         else:
             # Si el usuario tiene otro rol con permisos, puede acceder al registro del instructor indicado
             docente = get_object_or_404(Docente, id=docente_id)
+            
+    # Renderizar el template con el docente
+    return render(request, 'docentever.html', {'docente': docente})
 
 @login_required(login_url='signin')
+@permission_required('catalogos.change_docente', raise_exception=True)
 def docenteactualizar(request, docente_id=None):
     if request.user.rol == 'Docente':
         # Si es un docente, solo puede editar su propio registro
