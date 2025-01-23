@@ -209,11 +209,14 @@ def instructorver(request, instructor_id=None):
     if request.user.rol == 'Instructor':
         # Verificar si el registro que intenta acceder es suyo
         instructor = get_object_or_404(Instructor, user=request.user)
-        if instructor.id != instructor_id:
-            return HttpResponseForbidden("No tienes permiso para ver este registro.")
-        else:
-            # Si el usuario tiene otro rol con permisos, puede acceder al registro del instructor indicado
-            instructor = get_object_or_404(Instructor, id=instructor_id)
+    elif request.user.rol == 'Instructor' and instructor.id != instructor_id:
+        return HttpResponseForbidden("No tienes permiso para ver este registro.")
+    else:
+        # Si es otro rol, puede editar cualquier registro si tienes el permiso
+        if instructor_id is None:
+            return HttpResponseForbidden("No se especificó un instructor para editar.")
+        instructor = get_object_or_404(Instructor, id=instructor_id)
+    
 
     # Obtener las relaciones relacionadas con el instructor
     formaciones = instructor.formaciones_academicas.all()  # Formación académica
@@ -400,11 +403,13 @@ def docentever(request, docente_id=None):
     if request.user.rol == 'Docente':
         # Verificar si el registro que intenta acceder es suyo
         docente = get_object_or_404(Docente, user=request.user)
-        if docente.id != docente_id:
-            return HttpResponseForbidden("No tienes permiso para ver este registro.")
-        else:
-            # Si el usuario tiene otro rol con permisos, puede acceder al registro del instructor indicado
-            docente = get_object_or_404(Docente, id=docente_id)
+    elif request.user.rol == 'Docente' and docente.id != docente_id:
+        return HttpResponseForbidden("No tienes permiso para ver este registro.")
+    else:
+        # Si el usuario tiene otro rol con permisos, puede acceder al registro del instructor indicado
+        if docente_id is None:
+            return HttpResponseForbidden("No se especificó un docente para editar.")
+        docente = get_object_or_404(Docente, id=docente_id)
             
     # Renderizar el template con el docente
     return render(request, 'docentever.html', {'docente': docente})

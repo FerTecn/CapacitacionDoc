@@ -106,7 +106,7 @@ def no_autorizado(request):
 # Vista para el Home (solo accesible para roles específicos)
 @login_required(login_url='signin')
 def home(request):
-    if request.user.rol in ['Docente', 'Instructor', 'Jefe Académico']:
+    if request.user.rol in ['Docente', 'Instructor', 'Jefe Académico', 'Jefe de Capacitación', 'Subdirección']:
         return render(request, 'index.html')  
     else:
         return HttpResponseForbidden("No tienes permiso para acceder a esta página.")
