@@ -3,11 +3,11 @@ from . import views
 
 urlpatterns = [
     #REGISTRO DE CURSOS
-    path('registrolista/', views.registrolista, name='registrolista'),
-    path('registrover/<int:curso_id>/', views.registrover, name='registrover'),
-    path('registroactualizar/<int:curso_id>/', views.registroactualizar, name='registroactualizar'),
-    path('registroeliminar/<int:curso_id>/', views.registroeliminar, name='registroeliminar'),
-    path('registroañadir/', views.registroañadir, name='registroañadir'),
+    path('registrocursolista/', views.registrocursolista, name='registrocursolista'),
+    path('registrocursover/<int:curso_id>/', views.registrocursover, name='registrocursover'),
+    path('registrocursoactualizar/<int:curso_id>/', views.registrocursoactualizar, name='registrocursoactualizar'),
+    path('registrocursoeliminar/<int:curso_id>/', views.registrocursoeliminar, name='registrocursoeliminar'),
+    path('registrocursocrear/', views.registrocursocrear, name='registrocursocrear'),
     
     #VALIDACION DE CURSOS
     path('validarcursolista/', views.validarcursolista, name='validarcursolista'),

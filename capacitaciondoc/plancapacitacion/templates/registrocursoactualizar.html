@@ -1,17 +1,17 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Añadir Curso Propuesto{% endblock %}
+{% block title %}- Actualizar curso{% endblock %}
 
 {% block content %}
 <div class="container">
-    <h1 class="h3 mb-2 text-gray-800">Añadir Curso</h1>
+    <h1 class="h3 mb-2 text-gray-800">Editar Curso</h1>
     <div class="card">
         <div class="card-body">
-            Rellena el siguiente formulario para añadir un nuevo curso.
+            Actualiza los datos necesarios:
         </div>
     </div><br>
-    
+
     <form method="post">
         {% csrf_token %}
         <div class="form-row">
@@ -58,10 +58,10 @@
                 {{ form.perfilCurso }}  
             </div>
         </div><br>
-
+        
         <div class='text-center'>
-        <button type="submit" class="btn btn-primary">Añadir Curso</button>
-        <a href="{% url 'registrolista' %}" class="btn btn-secondary">Cancelar</a>
+        <button type="submit" class="btn btn-success">Guardar cambios</button>
+        <a href="{% url 'registrocursolista' %}" class="btn btn-secondary">Cancelar</a>
         </div>
     </form>
 </div>

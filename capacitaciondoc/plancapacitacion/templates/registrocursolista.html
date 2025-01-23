@@ -22,7 +22,7 @@
     <div class="card shadow mb-4">
         <div class="card-header py-3 d-flex justify-content-between align-items-center">
             <h4 class="m-0 font-weight-bold text-primary">Lista de Cursos Registrados</h4>
-            <a href="{% url 'registroañadir' %}" class="btn btn-success mb-3">Registrar curso</a>
+            <a href="{% url 'registrocursocrear' %}" class="btn btn-success mb-3">Registrar curso</a>
         </div>
         <div class="card-body">
             {% if cursos %}
@@ -46,9 +46,9 @@
                             <td>{{curso.instructor}}</td>
                             <td>
                                 <!-- Opciones -->
-                                <a href="{% url 'registrover' curso.id %}" class="btn btn-success btn-sm">Ver</a>
-                                <a href="{% url 'registroactualizar' curso.id %}" class="btn btn-warning btn-sm">Editar</a>
-                                <a href="{% url 'registroeliminar' curso.id %}" class="btn btn-danger btn-sm">Eliminar</a>
+                                <a href="{% url 'registrocursover' curso.id %}" class="btn btn-success btn-sm">Ver</a>
+                                <a href="{% url 'registrocursoactualizar' curso.id %}" class="btn btn-warning btn-sm">Editar</a>
+                                <a href="{% url 'registrocursoeliminar' curso.id %}" class="btn btn-danger btn-sm">Eliminar</a>
                             </td>
                         </tr>
                         {% endfor %}

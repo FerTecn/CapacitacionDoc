@@ -1,47 +1,47 @@
 from django.shortcuts import render, render, get_object_or_404, redirect
 from .models import registroCurso, validarCurso
-from .forms import EditarCursoForm, AñadirCursoForm
+from .forms import CursoForm
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from eventos.models import Evento
 
 # Create your views here.
-def registrolista(request):
+def registrocursolista(request):
     cursos = registroCurso.objects.all()
-    return render(request, 'registrolista.html', {'cursos': cursos})
+    return render(request, 'registrocursolista.html', {'cursos': cursos})
 
-def registrover(request, curso_id):
+def registrocursover(request, curso_id):
     curso = get_object_or_404(registroCurso, id=curso_id)
-    return render(request, 'registrover.html', {'curso': curso})
+    return render(request, 'registrocursover.html', {'curso': curso})
 
-def registroactualizar(request, curso_id):
+def registrocursoactualizar(request, curso_id):
     curso = get_object_or_404(registroCurso, id=curso_id)
     if request.method == 'POST':
-        form = EditarCursoForm(request.POST, instance=curso)
+        form = CursoForm(request.POST, instance=curso)
         if form.is_valid():
             form.save()
-            return redirect('registrolista')  #Regresa a la lista de los cursos
+            return redirect('registrocursolista')  #Regresa a la lista de los cursos
     else:
-        form = EditarCursoForm(instance=curso)
-    return render(request, 'registroactualizar.html', {'form': form, 'curso': curso})
+        form = CursoForm(instance=curso)
+    return render(request, 'registrocursoactualizar.html', {'form': form, 'curso': curso})
 
-def registroeliminar(request, curso_id):
+def registrocursoeliminar(request, curso_id):
     curso = get_object_or_404(registroCurso, id=curso_id)
     if request.method == 'POST':
         curso.delete()
-        return redirect('registrolista')  
-    return render(request, 'registroeliminar.html', {'curso': curso})
+        return redirect('registrocursolista')  
+    return render(request, 'registrocursoeliminar.html', {'curso': curso})
 
-def registroañadir(request):
+def registrocursocrear(request):
     if request.method == 'POST':
-        form = AñadirCursoForm(request.POST)
+        form = CursoForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('registrolista') 
+            return redirect('registrocursolista') 
     else:
-        form = AñadirCursoForm()
+        form = CursoForm()
 
-    return render(request, 'registroañadir.html', {'form': form})
+    return render(request, 'registrocursocrear.html', {'form': form})
 
 #VALIDACION DE CURSOS
 def validarcursolista(request):
