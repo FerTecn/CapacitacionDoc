@@ -8,7 +8,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 # Create your models here.
-class registroCurso(models.Model):
+class RegistroCurso(models.Model):
     clave = models.CharField(max_length=10)
     nombre=models.CharField(max_length=40)
     objetivo=models.TextField(max_length=200)
@@ -27,22 +27,23 @@ class registroCurso(models.Model):
         # Llama al método original de guardado
         super().save(*args, **kwargs)
         # Asegúrate de que el curso no esté ya en validarCurso
-        if not validarCurso.objects.filter(curso=self).exists():
-            validarCurso.objects.create(curso=self)
+        if not ValidarCurso.objects.filter(curso=self).exists():
+            ValidarCurso.objects.create(curso=self)
     
     class Meta:
         verbose_name_plural = 'Registro de cursos'
+        db_table = 'plancapacitacion_registrocurso'
     
-class validarCurso(models.Model):
-    curso= models.ForeignKey(registroCurso, on_delete=models.CASCADE)
+class ValidarCurso(models.Model):
+    curso= models.ForeignKey(RegistroCurso, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"Curso: {self.curso.nombre} "
     
     class Meta:
         verbose_name_plural = 'Validación de cursos'
-      
-class fichaTecnica(models.Model):
+
+class FichaTecnica(models.Model):
     clave = models.CharField(max_length=10)
     nombre=models.CharField(max_length=40)
     instructor=models.CharField(max_length=40)
