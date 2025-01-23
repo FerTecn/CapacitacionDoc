@@ -23,7 +23,7 @@ from .forms import (
     AñadirDepartamentoForm, ActualizarDepartamentoForm, 
     AñadirDirigidoForm, ActualizarDirigidoForm,
     AñadirGéneroForm, ActualizarGéneroForm,
-    ActualizarPerfilcursoForm, AñadirPerfilcursoForm, ActualizarPeriodoForm, AñadirPeriodoForm)
+    ActualizarPerfilcursoForm, AñadirPerfilcursoForm, PeriodoForm)
 from .forms import (
     AñadirInstructorForm, ActualizarInstructorForm, FormacionAcademicaForm,
     ExperienciaLaboralForm, ExperienciaDocenteForm,
@@ -645,16 +645,16 @@ def periodolista(request):
 
 @login_required(login_url='signin')
 @permission_required('catalogos.add_periodo', raise_exception=True)
-def periodoañadir(request):
+def periodoagregar(request):
     if request.method == 'POST':
-        form = AñadirPeriodoForm(request.POST)
+        form = PeriodoForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('periodolista') 
+            return redirect('periodolista')
     else:
-        form = AñadirPeriodoForm()
+        form = PeriodoForm()
 
-    return render(request, 'periodoañadir.html', {'form': form})
+    return render(request, 'periodoagregar.html', {'form': form})
 
 @login_required(login_url='signin')
 @permission_required('catalogos.view_periodo', raise_exception=True)
@@ -667,12 +667,12 @@ def periodover(request, periodo_id):
 def periodoactualizar(request, periodo_id):
     periodo= get_object_or_404(Periodo, id=periodo_id)
     if request.method == 'POST':
-        form = ActualizarPeriodoForm(request.POST, instance=periodo)
+        form = PeriodoForm(request.POST, instance=periodo)
         if form.is_valid():
             form.save()
             return redirect('periodolista') 
     else:
-        form = ActualizarPeriodoForm(instance=periodo)
+        form = PeriodoForm(instance=periodo)
     return render(request, 'periodoactualizar.html', {'form': form, 'periodo': periodo})
 
 @login_required(login_url='signin')

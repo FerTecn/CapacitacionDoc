@@ -69,7 +69,7 @@ urlpatterns = [
 
     #PERIODO
     path('periodolista/', views.periodolista, name='periodolista'),
-    path('periodoañadir/', views.periodoañadir, name='periodoañadir'),
+    path('periodoagregar/', views.periodoagregar, name='periodoagregar'),
     path('periodover/<int:periodo_id>/', views.periodover, name='periodover'),
     path('periodoactualizar/<int:periodo_id>/', views.periodoactualizar, name='periodoactualizar'),
     path('periodoeliminar/<int:periodo_id>/', views.periodoeliminar, name='periodoeliminar'),

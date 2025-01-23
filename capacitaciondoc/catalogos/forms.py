@@ -1,3 +1,4 @@
+import datetime
 from django import forms
 from .models import ExperienciaDocente, ExperienciaLaboral, FormacionAcademica, GradoAcademico, Lugar, ParticipacionInstructor, Sede, Instructor, Docente,Departamento,Dirigido,Genero,PerfilCurso,Periodo, Director
 
@@ -37,7 +38,7 @@ class AñadirLugarForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         for field in iter(self.fields):
             self.fields[field].widget.attrs.update({'class': 'form-control'})  
-              
+
 class ActualizarLugarForm(forms.ModelForm):
     class Meta:
         model= Lugar
@@ -253,7 +254,6 @@ class ExperienciaDocenteForm(forms.ModelForm):
             raise forms.ValidationError("Ya existe esa experiencia en docencia.")
         return cleaned_data
 
-
 class ParticipacionInstructorForm(forms.ModelForm):
     class Meta:
         model = ParticipacionInstructor
@@ -454,69 +454,33 @@ class ActualizarPerfilcursoForm(forms.ModelForm):
             self.fields[field].widget.attrs.update({'class': 'form-control'}) 
 
 #PERIODO
-class AñadirPeriodoForm(forms.ModelForm):
+class PeriodoForm(forms.ModelForm):
     class Meta:
         model= Periodo
-        fields = '__all__'
-        labels={'inicioPeriodo': 'Inicio de periodo', 
-                'finPeriodo': 'Fin de periodo',}
-        
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        placeholders = {
-            'clave':'Ejemplo: mm/aa - mm/aa',
+        fields = ['inicioPeriodo', 'finPeriodo']
+        labels = {
+            'inicioPeriodo': 'Inicio de Periodo',
+            'finPeriodo': 'Fin de periodo'
         }
-        for field in self.fields:
-            self.fields[field].widget.attrs.update({
-                'class': 'form-control',
-                'placeholder': placeholders.get(field, '')  
-            })
-        
-        self.fields['inicioPeriodo'].widget = forms.DateInput(
-            attrs={
-                'type': 'date',  
-                'class': 'form-control',
-            })
-        
-        self.fields['finPeriodo'].widget = forms.DateInput(
-            attrs={
-                'type': 'date',  
-                'class': 'form-control',
-            })
-
-class ActualizarPeriodoForm(forms.ModelForm):
-    class Meta:
-        model= Periodo
-        fields = '__all__'
-        labels={'inicioPeriodo': 'Inicio de periodo', 
-                'finPeriodo': 'Fin de periodo',}
-        
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        placeholders = {
-            'clave': 'Ejemplo: mm/aa - mm/aa',
+        widgets = {
+            'inicioPeriodo': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}, format='%Y-%m-%d'),
+            'finPeriodo': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}, format='%Y-%m-%d'),
         }
-        for field in self.fields:
-            self.fields[field].widget.attrs.update({
-                'class': 'form-control',
-                'placeholder': placeholders.get(field, '')  
-            })
-        
-        # Configurar inicioPeriodo como un campo de tipo date
-        self.fields['inicioPeriodo'].widget = forms.DateInput(
-            format='%Y-%m-%d',  # Asegúrate de usar un formato compatible con HTML5
-            attrs={
-                'type': 'date',
-                'class': 'form-control',
-            })
 
-        # Configurar finPeriodo como un campo de tipo date
-        self.fields['finPeriodo'].widget = forms.DateInput(
-            format='%Y-%m-%d',
-            attrs={
-                'type': 'date',
-                'class': 'form-control',
-            })
+    def clean(self):
+        cleaned_data = super().clean()
+        inicio = cleaned_data.get('inicioPeriodo')
+        fin = cleaned_data.get('finPeriodo')
+
+        # Validar que ambas fechas estén presentes
+        if not inicio or not fin:
+            raise forms.ValidationError("Debe proporcionar tanto la fecha de inicio como la fecha de fin.")
+
+        # Validar que la fecha de fin no sea menor que la fecha de inicio
+        if fin < inicio:
+            raise forms.ValidationError("La fecha de fin no puede ser menor que la fecha de inicio.")
+
+        return cleaned_data
 
 #DIRECTOR
 class AgregarDirectorForm(forms.ModelForm):

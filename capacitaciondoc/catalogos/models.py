@@ -1,3 +1,4 @@
+import locale
 from django.db import models
 
 from usuarios.models import CustomUser
@@ -100,7 +101,6 @@ class Docente(models.Model):
     class Meta:
         verbose_name_plural = 'Docentes'
 
-    
 class Genero(models.Model):
     genero=models.CharField(max_length=20)
 
@@ -128,9 +128,25 @@ class Departamento(models.Model):
         verbose_name_plural = 'Departamentos'
 
 class Periodo(models.Model):
-    clave=models.TextField(max_length=50)
+    clave=models.TextField(max_length=50, blank=True)
     inicioPeriodo=models.DateField()
     finPeriodo=models.DateField()
+
+
+    def save(self, *args, **kwargs):
+        # Establecer temporalmente el idioma a español
+        try:
+            locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')  # Configuración para sistemas Linux/MacOS
+        except locale.Error:
+            locale.setlocale(locale.LC_TIME, 'Spanish_Spain.1252')
+
+        # Generar clave con el formato "Mes Año - Mes Año"
+        self.clave = f"{self.inicioPeriodo.strftime('%B %Y').capitalize()} - {self.finPeriodo.strftime('%B %Y').capitalize()}"
+
+        # Restaurar el idioma al predeterminado del sistema
+        locale.setlocale(locale.LC_TIME, '')
+        super().save(*args, **kwargs)
+        
     
     def __str__(self):
         return f"{self.clave}"

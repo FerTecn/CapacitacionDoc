@@ -15,12 +15,6 @@
     <form method="post">
         {% csrf_token %}
         <div class="form-row justify-content-center">
-            <div class="form-group col-md-8">
-                <label for="{{ form.clave.id_for_label }}">Clave</label>
-                {{ form.clave }}  
-            </div>
-        </div>
-        <div class="form-row justify-content-center">
             <div class="form-group col-md-4">
                 <label for="{{ form.inicioPeriodo.id_for_label }}">Inicio de Período</label>
                 {{ form.inicioPeriodo }}  
