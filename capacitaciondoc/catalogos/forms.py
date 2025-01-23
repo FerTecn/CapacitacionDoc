@@ -167,11 +167,10 @@ class FormacionAcademicaForm(forms.ModelForm):
         labels = {
             'institucion': 'Institución',
             'cedulaProf': 'Cédula Profesional',
-            'grado': 'Grado académico'
         }
         widgets = {
             'institucion': forms.TextInput(attrs={'class': 'form-control'}),
-            'grado': forms.TextInput(attrs={'class': 'form-control'}),
+            'grado': forms.Select(attrs={'class': 'form-control'}),
             'cedulaProf': forms.TextInput(attrs={'class': 'form-control'}),
         }
 

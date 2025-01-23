@@ -19,7 +19,8 @@ class Instructor(models.Model):
 class FormacionAcademica(models.Model):
     instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE, related_name='formaciones_academicas')
     institucion = models.CharField(max_length=40)
-    grado = models.CharField(max_length=40)
+    grado = models.ForeignKey('GradoAcademico', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Grado Académico")
+
     cedulaProf = models.CharField(max_length=8, null=True)
 
     def __str__(self):
@@ -55,7 +56,6 @@ class ParticipacionInstructor(models.Model):
         return f"{self.curso} en {self.nombreEmpresa}"
 
 class GradoAcademico(models.Model):
-    #clave = models.CharField(max_length=10)
     grado = models.CharField(max_length=40) 
 
     def __str__(self):
