@@ -1,13 +1,13 @@
 {% extends 'base.html' %}
 
-{% block title %}Cambiar Instructor{% endblock %}
+{% block title %}- Cambiar Instructor{% endblock %}
 
 {% block content %}
 <div class="container">
     <h1 class="h3 mb-2 text-gray-800">Cambiar instructor</h1>
     <div class="card">
         <div class="card-body">
-            Seleecione en nuevo instructor, en caso de no estar añada uno nuevo
+            Seleccione en nuevo instructor, en caso de no estar añada uno nuevo
         </div>
     </div><br>
         
@@ -18,7 +18,9 @@
             <div class="form-group d-flex justify-content-center">
                 <select name="nuevo_instructor" id="nuevo_instructor" class="form-control" required style="max-width: 70%;">
                     {% for instructor in instructores %}
-                        <option value="{{ instructor.id }}">{{ instructor.nombre }} {{ instructor.apPaterno }} {{ instructor.apMaterno }}</option>
+                        <option value="{{ instructor.id }}" {% if instructor.id == instructor_actual.id %}selected{% endif %}>
+                            {{ instructor.user.first_name }} {{ instructor.user.last_name_paterno }} {{ instructor.user.last_name_materno }}
+                        </option>
                     {% endfor %}
                 </select>
                 <!-- Botón para agregar un nuevo instructor -->

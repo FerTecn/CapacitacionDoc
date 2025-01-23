@@ -41,7 +41,7 @@ def crearevento(request, evento_id):
             nuevo_instructor = get_object_or_404(Instructor, id=nuevo_instructor_id)
             evento.curso.instructor = nuevo_instructor
             evento.curso.save()
-            
+
         # Actualizar las horas 
         horas_nuevas = request.POST.get('horas')
         if horas_nuevas and horas_nuevas.isdigit() and int(horas_nuevas) > 0:
@@ -55,7 +55,7 @@ def crearevento(request, evento_id):
 
         # Redirigir a la lista de inscripciones
         return redirect(reverse('eventolista'))
-        
+
     # Renderizar el formulario si no es una solicitud POST
     return render(request, 'crearevento.html', {
         'evento': evento,
@@ -88,6 +88,9 @@ def cambiarinstructor(request, evento_id):
     evento = get_object_or_404(Evento, id=evento_id)
     instructores = Instructor.objects.all()  # Obtener todos los instructores disponibles
 
+    # Obtener el instructor actual asociado al curso
+    instructor_actual = evento.curso.instructor
+
     if request.method == 'POST':
         nuevo_instructor_id = request.POST.get('nuevo_instructor')
         if nuevo_instructor_id:
@@ -99,6 +102,7 @@ def cambiarinstructor(request, evento_id):
     return render(request, 'cambiarinstructor.html', {
         'evento': evento,
         'instructores': instructores,
+        'instructor_actual': instructor_actual,
     })
     
 def añadirinstructor(request, evento_id):
