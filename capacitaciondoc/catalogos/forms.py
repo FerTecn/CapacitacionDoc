@@ -1,22 +1,13 @@
 import datetime
 from django import forms
-from .models import ExperienciaDocente, ExperienciaLaboral, FormacionAcademica, GradoAcademico, Lugar, ParticipacionInstructor, Sede, Instructor, Docente,Departamento,Dirigido,Genero,PerfilCurso,Periodo, Director
+from .models import (
+    ExperienciaDocente, ExperienciaLaboral, FormacionAcademica, 
+    GradoAcademico, Lugar, ParticipacionInstructor, Sede, 
+    Instructor, Docente, Director,
+    Departamento, Dirigido, Genero, PerfilCurso, Periodo)
 
 #GRADO ACADEMICO
-class AñadirGradoAcForm(forms.ModelForm):
-    class Meta:
-        model= GradoAcademico
-        fields = '__all__'
-        labels={ 'grado': 'Grado académico',}
-        
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        for field in self.fields.values():
-            field.widget.attrs.update({
-                'class': 'form-control'
-            })
-
-class ActualizarGradoAcForm(forms.ModelForm):
+class GradoAcForm(forms.ModelForm):
     class Meta:
         model=GradoAcademico
         fields = '__all__'
@@ -28,18 +19,7 @@ class ActualizarGradoAcForm(forms.ModelForm):
             self.fields[field].widget.attrs.update({'class': 'form-control'})
         
 #LUGAR
-class AñadirLugarForm(forms.ModelForm):
-    class Meta:
-        model= Lugar
-        fields = '__all__'
-        labels={'nombreEdificio': 'Nombre del edificio'}
-        
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        for field in iter(self.fields):
-            self.fields[field].widget.attrs.update({'class': 'form-control'})  
-
-class ActualizarLugarForm(forms.ModelForm):
+class LugarForm(forms.ModelForm):
     class Meta:
         model= Lugar
         fields = '__all__'
@@ -51,17 +31,7 @@ class ActualizarLugarForm(forms.ModelForm):
             self.fields[field].widget.attrs.update({'class': 'form-control'})  
 
 #SEDES
-class AñadirSedeForm(forms.ModelForm):
-    class Meta:
-        model= Sede
-        fields = '__all__'
-        
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        for field in iter(self.fields):
-            self.fields[field].widget.attrs.update({'class': 'form-control'})  
-
-class ActualizarSedeForm(forms.ModelForm):
+class SedeForm(forms.ModelForm):
     class Meta:
         model= Sede
         fields = '__all__'
@@ -368,17 +338,7 @@ class ActualizarDocenteForm(forms.ModelForm):
             return docente 
             
 #DEPARTAMENTOS
-class AñadirDepartamentoForm(forms.ModelForm):
-    class Meta:
-        model= Departamento
-        fields = '__all__'
-        
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        for field in iter(self.fields):
-            self.fields[field].widget.attrs.update({'class': 'form-control'}) 
-
-class ActualizarDepartamentoForm(forms.ModelForm):
+class DepartamentoForm(forms.ModelForm):
     class Meta:
         model= Departamento
         fields = '__all__'
@@ -389,17 +349,7 @@ class ActualizarDepartamentoForm(forms.ModelForm):
             self.fields[field].widget.attrs.update({'class': 'form-control'}) 
 
 #DIRIGIDO
-class AñadirDirigidoForm(forms.ModelForm):
-    class Meta:
-        model= Dirigido
-        fields = '__all__'
-        
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        for field in iter(self.fields):
-            self.fields[field].widget.attrs.update({'class': 'form-control'}) 
-
-class ActualizarDirigidoForm(forms.ModelForm):
+class DirigidoForm(forms.ModelForm):
     class Meta:
         model= Dirigido
         fields = '__all__'
@@ -410,17 +360,7 @@ class ActualizarDirigidoForm(forms.ModelForm):
             self.fields[field].widget.attrs.update({'class': 'form-control'}) 
 
 #GÉNERO
-class AñadirGéneroForm(forms.ModelForm):
-    class Meta:
-        model= Genero
-        fields = '__all__'
-        
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        for field in iter(self.fields):
-            self.fields[field].widget.attrs.update({'class': 'form-control'}) 
-
-class ActualizarGéneroForm(forms.ModelForm):
+class GeneroForm(forms.ModelForm):
     class Meta:
         model= Genero
         fields = '__all__'
@@ -431,18 +371,7 @@ class ActualizarGéneroForm(forms.ModelForm):
             self.fields[field].widget.attrs.update({'class': 'form-control'}) 
 
 #PERFIL DE CURSO
-class AñadirPerfilcursoForm(forms.ModelForm):
-    class Meta:
-        model= PerfilCurso
-        fields = '__all__'
-        labels={'perfilCurso': 'Perfil del curso'}
-        
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        for field in iter(self.fields):
-            self.fields[field].widget.attrs.update({'class': 'form-control'}) 
-
-class ActualizarPerfilcursoForm(forms.ModelForm):
+class PerfilcursoForm(forms.ModelForm):
     class Meta:
         model= PerfilCurso
         fields = '__all__'
@@ -483,7 +412,7 @@ class PeriodoForm(forms.ModelForm):
         return cleaned_data
 
 #DIRECTOR
-class AgregarDirectorForm(forms.ModelForm):
+class DirectorForm(forms.ModelForm):
     class Meta:
         model = Director
         fields = '__all__'
@@ -494,13 +423,3 @@ class AgregarDirectorForm(forms.ModelForm):
             self.fields[field].widget.attrs.update({
                 'class': 'form-control',
             })
-
-class ActualizarDirectorForm(forms.ModelForm):
-    class Meta:
-        model= Director
-        fields = '__all__'
-    
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        for field in iter(self.fields):
-            self.fields[field].widget.attrs.update({'class': 'form-control'}) 

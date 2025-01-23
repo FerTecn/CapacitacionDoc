@@ -13,17 +13,10 @@ from .models import (
     GradoAcademico, Lugar, Sede, Departamento,
     Dirigido, Genero, PerfilCurso ,Periodo, Director)
 
-from .forms import (
-    AñadirGradoAcForm, ActualizarGradoAcForm, 
-    AñadirLugarForm, ActualizarLugarForm, 
-    AñadirSedeForm, ActualizarSedeForm, 
-    ActualizarDirectorForm, AgregarDirectorForm)
+from .forms import GradoAcForm, LugarForm, SedeForm, DirectorForm
 from .forms import (
     AgregarDocenteForm, ActualizarDocenteForm, 
-    AñadirDepartamentoForm, ActualizarDepartamentoForm, 
-    AñadirDirigidoForm, ActualizarDirigidoForm,
-    AñadirGéneroForm, ActualizarGéneroForm,
-    ActualizarPerfilcursoForm, AñadirPerfilcursoForm, PeriodoForm)
+    DepartamentoForm, DirigidoForm, GeneroForm, PerfilcursoForm, PeriodoForm)
 from .forms import (
     AñadirInstructorForm, ActualizarInstructorForm, FormacionAcademicaForm,
     ExperienciaLaboralForm, ExperienciaDocenteForm,
@@ -40,16 +33,16 @@ def gradolista(request):
 
 @login_required(login_url='signin')
 @permission_required('catalogos.add_gradoacademico', raise_exception=True)
-def gradoañadir(request):
+def gradocrear(request):
     if request.method == 'POST':
-        form = AñadirGradoAcForm(request.POST)
+        form = GradoAcForm(request.POST)
         if form.is_valid():
             form.save()
             return redirect('gradolista') 
     else:
-        form = AñadirGradoAcForm()
+        form = GradoAcForm()
 
-    return render(request, 'gradoañadir.html', {'form': form})
+    return render(request, 'gradocrear.html', {'form': form})
 
 @login_required(login_url='signin')
 @permission_required('catalogos.view_gradoacademico', raise_exception=True)
@@ -62,12 +55,12 @@ def gradover(request, grado_id):
 def gradoactualizar(request, grado_id):
     grado = get_object_or_404(GradoAcademico, id=grado_id)
     if request.method == 'POST':
-        form = ActualizarGradoAcForm(request.POST, instance=grado)
+        form = GradoAcForm(request.POST, instance=grado)
         if form.is_valid():
             form.save()
             return redirect('gradolista') 
     else:
-        form = ActualizarGradoAcForm(instance=grado)
+        form = GradoAcForm(instance=grado)
     return render(request, 'gradoactualizar.html', {'form': form, 'grado': grado})
 
 @login_required(login_url='signin')
@@ -89,16 +82,16 @@ def lugarlista(request):
 
 @login_required(login_url='signin')
 @permission_required('catalogos.add_lugar', raise_exception=True)
-def lugarañadir(request):
+def lugarcrear(request):
     if request.method == 'POST':
-        form = AñadirLugarForm(request.POST)
+        form = LugarForm(request.POST)
         if form.is_valid():
             form.save()
             return redirect('lugarlista') 
     else:
-        form = AñadirLugarForm()
+        form = LugarForm()
 
-    return render(request, 'lugarañadir.html', {'form': form})
+    return render(request, 'lugarcrear.html', {'form': form})
 
 @login_required(login_url='signin')
 @permission_required('catalogos.view_lugar', raise_exception=True)
@@ -111,12 +104,12 @@ def lugarver(request, lugar_id):
 def lugaractualizar(request, lugar_id):
     lugar = get_object_or_404(Lugar, id=lugar_id)
     if request.method == 'POST':
-        form = ActualizarLugarForm(request.POST, instance=lugar)
+        form = LugarForm(request.POST, instance=lugar)
         if form.is_valid():
             form.save()
             return redirect('lugarlista') 
     else:
-        form = ActualizarLugarForm(instance=lugar)
+        form = LugarForm(instance=lugar)
     return render(request, 'lugaractualizar.html', {'form': form, 'lugar': lugar})
 
 @login_required(login_url='signin')
@@ -137,16 +130,16 @@ def sedelista(request):
 
 @login_required(login_url='signin')
 @permission_required('catalogos.add_sede', raise_exception=True)
-def sedeañadir(request):
+def sedecrear(request):
     if request.method == 'POST':
-        form = AñadirSedeForm(request.POST)
+        form = SedeForm(request.POST)
         if form.is_valid():
             form.save()
             return redirect('sedelista') 
     else:
-        form = AñadirSedeForm()
+        form = SedeForm()
 
-    return render(request, 'sedeañadir.html', {'form': form})
+    return render(request, 'sedecrear.html', {'form': form})
 
 @login_required(login_url='signin')
 @permission_required('catalogos.view_sede', raise_exception=True)
@@ -159,12 +152,12 @@ def sedever(request, sede_id):
 def sedeactualizar(request, sede_id):
     sede = get_object_or_404(Sede, id=sede_id)
     if request.method == 'POST':
-        form = ActualizarSedeForm(request.POST, instance=sede)
+        form = SedeForm(request.POST, instance=sede)
         if form.is_valid():
             form.save()
             return redirect('sedelista') 
     else:
-        form = ActualizarSedeForm(instance=sede)
+        form = SedeForm(instance=sede)
     return render(request, 'sedeactualizar.html', {'form': form, 'sede': sede})
 
 @login_required(login_url='signin')
@@ -192,7 +185,7 @@ def instructorlista(request):
 
 @login_required(login_url='signin')
 @permission_required('catalogos.add_instructor', raise_exception=True)
-def instructorañadir(request):
+def instructorcrear(request):
     if request.method == 'POST':
         form = AñadirInstructorForm(request.POST)
         if form.is_valid():
@@ -201,7 +194,7 @@ def instructorañadir(request):
     else:
         form = AñadirInstructorForm()
 
-    return render(request, 'instructorañadir.html', {'form': form})
+    return render(request, 'instructorcrear.html', {'form': form})
 
 @login_required(login_url='signin')
 @permission_required('catalogos.view_instructor', raise_exception=True)
@@ -386,7 +379,7 @@ def docentelista(request):
 
 @login_required(login_url='signin')
 @permission_required('catalogos.add_docente', raise_exception=True)
-def docenteañadir(request):
+def docentecrear(request):
     if request.method == 'POST':
         form = AgregarDocenteForm(request.POST)
         if form.is_valid():
@@ -395,7 +388,7 @@ def docenteañadir(request):
     else:
         form = AgregarDocenteForm()
 
-    return render(request, 'docenteañadir.html', {'form': form})
+    return render(request, 'docentecrear.html', {'form': form})
 
 @login_required(login_url='signin')
 @permission_required('catalogos.view_docente', raise_exception=True)
@@ -453,16 +446,16 @@ def departamentolista(request):
 
 @login_required(login_url='signin')
 @permission_required('catalogos.add_departamento', raise_exception=True)
-def departamentoañadir(request):
+def departamentocrear(request):
     if request.method == 'POST':
-        form = AñadirDepartamentoForm(request.POST)
+        form = DepartamentoForm(request.POST)
         if form.is_valid():
             form.save()
             return redirect('departamentolista') 
     else:
-        form = AñadirDepartamentoForm()
+        form = DepartamentoForm()
 
-    return render(request, 'departamentoañadir.html', {'form': form})
+    return render(request, 'departamentocrear.html', {'form': form})
 
 @login_required(login_url='signin')
 @permission_required('catalogos.view_departamento', raise_exception=True)
@@ -475,12 +468,12 @@ def departamentover(request, departamento_id):
 def departamentoactualizar(request, departamento_id):
     departamento= get_object_or_404(Departamento, id=departamento_id)
     if request.method == 'POST':
-        form = ActualizarDepartamentoForm(request.POST, instance=departamento)
+        form = DepartamentoForm(request.POST, instance=departamento)
         if form.is_valid():
             form.save()
             return redirect('departamentolista') 
     else:
-        form = ActualizarDepartamentoForm(instance=departamento)
+        form = DepartamentoForm(instance=departamento)
     return render(request, 'departamentoactualizar.html', {'form': form, 'departamento': departamento})
 
 @login_required(login_url='signin')
@@ -501,16 +494,16 @@ def dirigidolista(request):
 
 @login_required(login_url='signin')
 @permission_required('catalogos.add_dirigido', raise_exception=True)
-def dirigidoañadir(request):
+def dirigidocrear(request):
     if request.method == 'POST':
-        form = AñadirDirigidoForm(request.POST)
+        form = DirigidoForm(request.POST)
         if form.is_valid():
             form.save()
             return redirect('dirigidolista') 
     else:
-        form = AñadirDirigidoForm()
+        form = DirigidoForm()
 
-    return render(request, 'dirigidoañadir.html', {'form': form})
+    return render(request, 'dirigidocrear.html', {'form': form})
 
 @login_required(login_url='signin')
 @permission_required('catalogos.view_dirigido', raise_exception=True)
@@ -523,12 +516,12 @@ def dirigidover(request, dirigido_id):
 def dirigidoactualizar(request, dirigido_id):
     dirigido= get_object_or_404(Dirigido, id=dirigido_id)
     if request.method == 'POST':
-        form = ActualizarDirigidoForm(request.POST, instance=dirigido)
+        form = DirigidoForm(request.POST, instance=dirigido)
         if form.is_valid():
             form.save()
             return redirect('dirigidolista') 
     else:
-        form = ActualizarDirigidoForm(instance=dirigido)
+        form = DirigidoForm(instance=dirigido)
     return render(request, 'dirigidoactualizar.html', {'form': form, 'dirigido': dirigido})
 
 @login_required(login_url='signin')
@@ -549,16 +542,16 @@ def generolista(request):
 
 @login_required(login_url='signin')
 @permission_required('catalogos.add_genero', raise_exception=True)
-def generoañadir(request):
+def generocrear(request):
     if request.method == 'POST':
-        form = AñadirGéneroForm(request.POST)
+        form = GeneroForm(request.POST)
         if form.is_valid():
             form.save()
             return redirect('generolista') 
     else:
-        form = AñadirGéneroForm()
+        form = GeneroForm()
 
-    return render(request, 'generoañadir.html', {'form': form})
+    return render(request, 'generocrear.html', {'form': form})
 
 @login_required(login_url='signin')
 @permission_required('catalogos.view_genero', raise_exception=True)
@@ -571,12 +564,12 @@ def generover(request, genero_id):
 def generoactualizar(request, genero_id):
     genero= get_object_or_404(Genero, id=genero_id)
     if request.method == 'POST':
-        form = ActualizarGéneroForm(request.POST, instance=genero)
+        form = GeneroForm(request.POST, instance=genero)
         if form.is_valid():
             form.save()
             return redirect('generolista') 
     else:
-        form = ActualizarGéneroForm(instance=genero)
+        form = GeneroForm(instance=genero)
     return render(request, 'generoactualizar.html', {'form': form, 'genero': genero})
 
 @login_required(login_url='signin')
@@ -597,16 +590,16 @@ def perfilcursolista(request):
 
 @login_required(login_url='signin')
 @permission_required('catalogos.add_perfilcurso', raise_exception=True)
-def perfilcursoañadir(request):
+def perfilcursocrear(request):
     if request.method == 'POST':
-        form = AñadirPerfilcursoForm(request.POST)
+        form = PerfilcursoForm(request.POST)
         if form.is_valid():
             form.save()
             return redirect('perfilcursolista') 
     else:
-        form = AñadirPerfilcursoForm()
+        form = PerfilcursoForm()
 
-    return render(request, 'perfilcursoañadir.html', {'form': form})
+    return render(request, 'perfilcursocrear.html', {'form': form})
 
 @login_required(login_url='signin')
 @permission_required('catalogos.view_perfilcurso', raise_exception=True)
@@ -619,12 +612,12 @@ def perfilcursover(request, perfilCurso_id):
 def perfilcursoactualizar(request, perfilCurso_id):
     perfilCurso= get_object_or_404(PerfilCurso, id=perfilCurso_id)
     if request.method == 'POST':
-        form = ActualizarPerfilcursoForm(request.POST, instance=perfilCurso)
+        form = PerfilcursoForm(request.POST, instance=perfilCurso)
         if form.is_valid():
             form.save()
             return redirect('perfilcursolista') 
     else:
-        form = ActualizarPerfilcursoForm(instance=perfilCurso)
+        form = PerfilcursoForm(instance=perfilCurso)
     return render(request, 'perfilcursoactualizar.html', {'form': form, 'perfilCurso': perfilCurso})
 
 @login_required(login_url='signin')
@@ -645,7 +638,7 @@ def periodolista(request):
 
 @login_required(login_url='signin')
 @permission_required('catalogos.add_periodo', raise_exception=True)
-def periodoagregar(request):
+def periodocrear(request):
     if request.method == 'POST':
         form = PeriodoForm(request.POST)
         if form.is_valid():
@@ -654,7 +647,7 @@ def periodoagregar(request):
     else:
         form = PeriodoForm()
 
-    return render(request, 'periodoagregar.html', {'form': form})
+    return render(request, 'periodocrear.html', {'form': form})
 
 @login_required(login_url='signin')
 @permission_required('catalogos.view_periodo', raise_exception=True)
@@ -693,14 +686,14 @@ def directorlista(request):
 
 @login_required(login_url='signin')
 @permission_required('catalogos.add_director', raise_exception=True)
-def directoragregar(request):
+def directorcrear(request):
     if request.method == 'POST':
-        form = AgregarDirectorForm(request.POST)
+        form = DirectorForm(request.POST)
         if form.is_valid():
             form.save()
             return redirect('directorlista') 
     else:
-        form = AgregarDirectorForm()
+        form = DirectorForm()
 
     return render(request, 'directoragregar.html', {'form': form})
 
@@ -715,12 +708,12 @@ def directorver(request, director_id):
 def directoractualizar(request, director_id):
     director= get_object_or_404(Director, id=director_id)
     if request.method == 'POST':
-        form = ActualizarPeriodoForm(request.POST, instance=director)
+        form = PeriodoForm(request.POST, instance=director)
         if form.is_valid():
             form.save()
             return redirect('periodolista') 
     else:
-        form = ActualizarDirectorForm(instance=director)
+        form = DirectorForm(instance=director)
     return render(request, 'directoractualizar.html', {'form': form, 'director': director})
 
 @login_required(login_url='signin')
