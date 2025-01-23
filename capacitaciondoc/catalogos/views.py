@@ -33,13 +33,13 @@ from .forms import (
 
 #GRADO ACADEMICO
 @login_required(login_url='signin')
-@permission_required('catalogos.view_grado', raise_exception=True)
+@permission_required('catalogos.view_gradoacademico', raise_exception=True)
 def gradolista(request):
     gradoac = GradoAcademico.objects.all()
     return render(request, 'gradolista.html', {'gradoac': gradoac})
 
 @login_required(login_url='signin')
-@permission_required('catalogos.add_grado', raise_exception=True)
+@permission_required('catalogos.add_gradoacademico', raise_exception=True)
 def gradoañadir(request):
     if request.method == 'POST':
         form = AñadirGradoAcForm(request.POST)
@@ -52,13 +52,13 @@ def gradoañadir(request):
     return render(request, 'gradoañadir.html', {'form': form})
 
 @login_required(login_url='signin')
-@permission_required('catalogos.view_grado', raise_exception=True)
+@permission_required('catalogos.view_gradoacademico', raise_exception=True)
 def gradover(request, grado_id):
     grado = get_object_or_404(GradoAcademico, id=grado_id)
     return render(request, 'gradover.html', {'grado': grado})
 
 @login_required(login_url='signin')
-@permission_required('catalogos.change_grado', raise_exception=True)
+@permission_required('catalogos.change_gradoacademico', raise_exception=True)
 def gradoactualizar(request, grado_id):
     grado = get_object_or_404(GradoAcademico, id=grado_id)
     if request.method == 'POST':
@@ -71,7 +71,7 @@ def gradoactualizar(request, grado_id):
     return render(request, 'gradoactualizar.html', {'form': form, 'grado': grado})
 
 @login_required(login_url='signin')
-@permission_required('catalogos.delete_grado', raise_exception=True)
+@permission_required('catalogos.delete_gradoacademico', raise_exception=True)
 def gradoeliminar(request, grado_id):
     grado = get_object_or_404(GradoAcademico, id=grado_id)
     if request.method == 'POST':
@@ -446,7 +446,7 @@ def docenteeliminar(request, docente_id):
 
 #DEPARTAMENTOS
 @login_required(login_url='signin')
-@permission_required('catalogos.view_departamaneto', raise_exception=True)
+@permission_required('catalogos.view_departamento', raise_exception=True)
 def departamentolista(request):
     departamentos = Departamento.objects.all()
     return render(request, 'departamentolista.html', {'departamentos': departamentos})
