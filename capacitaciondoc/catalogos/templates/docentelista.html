@@ -1,74 +1,142 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %} - Lista de Docentes{% endblock %}
+{% block title %}
+{% if request.user.rol == 'Instructor' %}- Mis datos de Docente
+{% else %}- Lista de Docentes {% endif %}
+{% endblock %}
 
 {% block styles %}
 <!-- Custom styles for this page -->
-<link href="../../static/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+<link href="{% static 'vendor/datatables/dataTables.bootstrap4.min.css' %}" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
-    <!-- Page Heading -->
-    <h1 class="h3 mb-2 text-gray-800">Docentes</h1>
-    <div class="card">
-        <div class="card-body">
-            Aquí puedes registrar los diferentes Docentes
-        </div>
-    </div> <br>
+{% if request.user.rol == 'Docente' %}
+<!-- Page Heading -->
+<div class="d-flex justify-content-between align-items-center mb-2">
+    <div class="col-md-8">
+        <h1 class="h3 text-gray-800">Mis datos como Docente</h1>
+    </div>
+    <div class="col-md-2">
+        <a href="{% url 'docentever' request.user.id %}" class="btn btn-success btn-sm">Ver todos mis datos</a>
+    </div>
+    <div class="col-md-2">
+        <a href="{% url 'docenteactualizar' request.user.id %}" class="btn btn-warning btn-sm">Modificar todos mis datos</a>
+    </div>
+</div>
 
-
-    <!-- DataTales Example -->    
-    <div class="card shadow mb-4">
-        <div class="card-header py-3 d-flex justify-content-between align-items-center">
-            <h4 class="m-0 font-weight-bold text-primary">Lista de Docentes</h4>
-            <a href="{% url 'docentecrear' %}" class="btn btn-success mb-3">Añadir</a>
+<div class="card mb-4">
+    <div class="card-header bg-primary text-white text-center">
+        <h4 class="m-0 font-weight-bold text-white">DATOS PERSONALES</h4>
+    </div>
+    <div class="card-body">
+        <div class="form-row" >
+            <div class="form-group col-md-4 align-items-center">
+                <p><strong style="display: block;">Clave</strong> {{ docente.clave }}</p>
+            </div>
+            <div class="form-group col-md-4 align-items-center">
+                <p><strong style="display: block;">Nombre(s)</strong> {{ request.user.first_name }}</p>
+            </div>
+            <div class="form-group col-md-4 align-items-center">
+                <p><strong style="display: block;">Apellido Paterno</strong> {{ request.user.last_name_paterno }}</p>
+            </div>
         </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                    <thead>
-                        <tr>
-                            <th>Nombre completo</th>
-                            <th>Género</th>
-                            <th>CURP</th>
-                            <th>Correo</th>
-                            <th>Opciones</th>
-                        </tr>
-                    </thead>
-                    <tfoot>
-                        <tr>
-                            <th>Nombre Completo</th>
-                            <th>Género</th>
-                            <th>CURP</th>
-                            <th>Correo</th>
-                            <th>Opciones</th>
-                        </tr>
-                    </tfoot>
-                    <tbody>
-                        {% for docente in docentes %}
-                        <tr id="docente-{{ docente.id }}">
-                            <td>{{docente.user.first_name}} {{docente.user.last_name_paterno}} {{docente.user.last_name_materno}}</td>
-                            <td>{% if docente.genero %}
-                                {{ docente.genero.genero }}
-                              {% else %}
-                                No especificado
-                              {% endif %}</td>
-                            <td>{{docente.user.curp}}</td>
-                            <td>{{docente.user.email}}</td>
-                            <td>
-                                <!-- Opciones -->
-                                <a href="{% url 'docentever' docente.id %}" class="btn btn-success btn-sm">Ver</a>
-                                <a href="{% url 'docenteactualizar' docente.id %}" class="btn btn-warning btn-sm">Editar</a>
-                                <a href="{% url 'docenteeliminar' docente.id %}" class="btn btn-danger btn-sm">Eliminar</a>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+        <div class="form-row">
+            <div class="form-group col-md-4 align-items-center">
+                <p><strong style="display: block;">Apellido Materno</strong> {{ request.user.last_name_materno }}</p>
+            </div>
+            <div class="form-group col-md-4 align-items-center">
+                <p><strong style="display: block;">Fecha de nacimiento</strong>{{ request.user.docente.fechaNac}}</p>
+            </div>
+            <div class="form-group col-md-4 align-items-center">
+                <p><strong style="display: block;">Genéro</strong>{{ request.user.docente.genero.genero}}</p>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-4 align-items-center">
+                <p><strong style="display: block;">CURP</strong>{{ request.user.curp}}</p>
+            </div>
+            <div class="form-group col-md-4 align-items-center">
+                <p><strong style="display: block;">RFC</strong>{{ request.user.docente.RFC}}</p>
+            </div>
+            <div class="form-group col-md-4 align-items-center">
+                <p><strong style="display: block;">Teléfono</strong>{{ request.user.docente.telefono}}</p>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-6 align-items-center">
+                <p><strong style="display: block;">Email</strong>{{ request.user.email}}</p>
+            </div>
+            <div class="form-group col-md-6 align-items-center">
+                <p><strong style="display: block;">Departamento al que corresponde</strong>{{ request.user.docente.departamento.departamento}}</p>
             </div>
         </div>
     </div>
+</div>
+
+{% else %}
+<!-- Page Heading -->
+<h1 class="h3 mb-2 text-gray-800">Docentes</h1>
+<div class="card">
+    <div class="card-body">
+        Aquí puedes registrar los diferentes Docentes
+    </div>
+</div> <br>
+
+
+<!-- DataTales Example -->    
+<div class="card shadow mb-4">
+    <div class="card-header py-3 d-flex justify-content-between align-items-center">
+        <h4 class="m-0 font-weight-bold text-primary">Lista de Docentes</h4>
+        <a href="{% url 'docentecrear' %}" class="btn btn-success mb-3">Añadir</a>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Nombre completo</th>
+                        <th>Género</th>
+                        <th>CURP</th>
+                        <th>Correo</th>
+                        <th>Opciones</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <th>Nombre Completo</th>
+                        <th>Género</th>
+                        <th>CURP</th>
+                        <th>Correo</th>
+                        <th>Opciones</th>
+                    </tr>
+                </tfoot>
+                <tbody>
+                    {% for docente in docentes %}
+                    <tr id="docente-{{ docente.id }}">
+                        <td>{{docente.user.first_name}} {{docente.user.last_name_paterno}} {{docente.user.last_name_materno}}</td>
+                        <td>{% if docente.genero %}
+                            {{ docente.genero.genero }}
+                            {% else %}
+                            No especificado
+                            {% endif %}</td>
+                        <td>{{docente.user.curp}}</td>
+                        <td>{{docente.user.email}}</td>
+                        <td>
+                            <!-- Opciones -->
+                            <a href="{% url 'docentever' docente.id %}" class="btn btn-success btn-sm">Ver</a>
+                            <a href="{% url 'docenteactualizar' docente.id %}" class="btn btn-warning btn-sm">Editar</a>
+                            <a href="{% url 'docenteeliminar' docente.id %}" class="btn btn-danger btn-sm">Eliminar</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endif %}
 {% endblock %}
 
 {% block scripts %}
