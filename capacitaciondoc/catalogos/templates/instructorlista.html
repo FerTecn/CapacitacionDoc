@@ -1,15 +1,74 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}- Lista de Grado Académico{% endblock %}
+{% block title %}
+{% if request.user.rol == 'Instructor' %}- Mis datos de Instructor
+{% else %}- Lista de Instructores {% endif %}
+{% endblock %}
 
 {% block styles %}
 <!-- Custom styles for this page -->
-<link href="../../static/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+<link href="{% static 'vendor/datatables/dataTables.bootstrap4.min.css' %}" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid">
+{% if request.user.rol == 'Instructor' %}
+<!-- Page Heading -->
+<div class="d-flex justify-content-between align-items-center mb-2">
+    <div class="col-md-8">
+        <h1 class="h3 text-gray-800">Mis datos como Instructor</h1>
+    </div>
+    <div class="col-md-2">
+        <a href="{% url 'instructorver' request.user.id %}" class="btn btn-success btn-sm">Ver todos mis datos</a>
+    </div>
+    <div class="col-md-2">
+        <a href="{% url 'instructoractualizar' request.user.id %}" class="btn btn-warning btn-sm">Modificar todos mis datos</a>
+    </div>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header bg-primary text-white text-center">
+        <h4 class="m-0 font-weight-bold text-white">DATOS PERSONALES</h4>
+    </div>
+    <div class="card-body">
+        <div class="form-row">
+            <div class="form-group col-md-4 align-items-center">
+                <p><strong style="display: block;">Clave:</strong> {{ request.user.instructor.clave }}</p>
+            </div>
+            <div class="form-group col-md-4 align-items-center">
+                <p><strong style="display: block;">Nombre(s)</strong> {{ request.user.first_name }}</p>
+            </div>
+            <div class="form-group col-md-4 align-items-center">
+                <p><strong style="display: block;">Apellido Paterno</strong> {{ request.user.last_name_paterno }}</p>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-4 align-items-center">
+                <p><strong style="display: block;">Apellido Materno</strong> {{ request.user.last_name_materno }}</p>
+            </div>
+            <div class="form-group col-md-4 align-items-center">
+                <p><strong style="display: block;">Fecha de nacimiento</strong>{{ request.user.instructor.fechaNac}}</p>
+            </div>
+            <div class="form-group col-md-4 align-items-center">
+                <p><strong style="display: block;">CURP</strong>{{ request.user.curp}}</p>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-4 align-items-center">
+                <p><strong style="display: block;">RFC</strong>{{ request.user.instructor.RFC}}</p>
+            </div>
+            <div class="form-group col-md-4 align-items-center">
+                <p><strong style="display: block;">Teléfono</strong>{{ request.user.instructor.telefono}}</p>
+            </div>
+            <div class="form-group col-md-4 align-items-center">
+                <p><strong style="display: block;">Email</strong>{{ request.user.email}}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% else %}
     <!-- Page Heading -->
     <h1 class="h3 mb-2 text-gray-800">Instructores</h1>
     <div class="card">
@@ -53,7 +112,7 @@
             </div>
         </div>
     </div>
-</div>
+{% endif %}
 {% endblock %}
 
 {% block scripts %}
