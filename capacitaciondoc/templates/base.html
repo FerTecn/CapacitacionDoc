@@ -22,11 +22,9 @@
 
     <!-- Custom styles for this template-->
     <link href="{% static 'css/sb-admin-2.min.css' %}" rel="stylesheet">
-
     {% block styles %}
-   
+    
     {% endblock %}
-
 </head>
 
 <body id="page-top">
@@ -47,20 +45,29 @@
             <hr class="sidebar-divider my-0">
 
             <!-- Nav Item - Dashboard -->
-            <li class="nav-item active">
+            <li class="nav-item">
                 <a class="nav-link" href="{% url 'home' %}">
                     <i class="fas fa-fw fa-home"></i>
                     <span>Inicio</span></a>
             </li>
 
+            {% if request.user.rol == "Docente" or request.user.rol == "Instructor" %}
+            <li class="nav-item">
+                <a class="nav-link" href="{% if request.user.rol == 'Docente' %}{% url 'docentelista' %}{% elif request.user.rol == 'Instructor' %}{% url 'instructorlista' %}{% endif %}">
+                    <i class="fas fa-fw fa-user"></i>
+                    <span>Mis datos de {{ request.user.rol }}</span></a>
+            </li>
+            {% endif %}
+
             <!-- Divider -->
             <hr class="sidebar-divider">
 
             <!-- CATALOGOS -->
+            {% if request.user.rol != "Docente" and request.user.rol != "Instructor" %}
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseOne"
                     aria-expanded="true" aria-controls="collapseOne">
-                    <i class="fas fa-fw fa-cog"></i>
+                    <i class="fas fa-fw fa-folder"></i>
                     <span>Catalogos</span>
                 </a>
                 <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionSidebar">
@@ -79,12 +86,13 @@
                     </div>
                 </div>
             </li>
+            {% endif %}
 
             <!-- PLAN DE CAPACITACION -->
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
                     aria-expanded="true" aria-controls="collapseTwo">
-                    <i class="fas fa-fw fa-wrench"></i>
+                    <i class="fas fa-chalkboard-teacher"></i>
                     <span>Plan de capacitación</span>
                 </a>
                 <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo"
@@ -97,15 +105,15 @@
                     </div>
                 </div>
             </li>
- 
+
             <!-- Divider -->
             <hr class="sidebar-divider">
- 
+
             <!-- EVENTOS -->
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseThree"
                     aria-expanded="true" aria-controls="collapseThree">
-                    <i class="fas fa-fw fa-folder"></i>
+                    <i class="fas fa-fw fa-calendar-day"></i>
                     <span>Eventos</span>
                 </a>
                 <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionSidebar">
@@ -122,7 +130,7 @@
             <!-- ENCUESTA -->
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'encuesta' %}">
-                    <i class="fas fa-fw fa-chart-area"></i>
+                    <i class="fas fa-fw fa-poll"></i>
                     <span>Encuesta de satisfacción</span></a>
             </li>
  
@@ -130,7 +138,7 @@
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#colla"
                     aria-expanded="true" aria-controls="colla">
-                    <i class="fas fa-fw fa-folder"></i>
+                    <i class="fas fa-fw fa-file-pdf"></i>
                     <span>Reportes</span>
                 </a>
                 <div id="colla" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
