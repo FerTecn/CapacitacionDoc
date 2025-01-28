@@ -9,58 +9,59 @@
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-    <!-- Page Heading -->
-    <h1 class="h3 mb-2 text-gray-800">Validación de cursos </h1>
-    <div class="card">
-        <div class="card-body">
-            Se muestra la lista de los cursos registrados para hacer su posible validación
-        </div>
-    </div><br>
+<!-- Page Heading -->
+<h1 class="h3 mb-2 text-gray-800">Validación de cursos </h1>
+<div class="card">
+    <div class="card-body">
+        Se muestra la lista de los cursos registrados para hacer su posible validación.
+    </div>
+</div><br>
 
-    <!-- DataTales Example -->
-    <div class="card shadow mb-4">
-        <div class="card-header py-3 d-flex justify-content-between align-items-center">
-            <h4 class="m-0 font-weight-bold text-primary">Lista de Cursos registrados</h4>
+<!-- DataTales Example -->
+<div class="card shadow mb-4">
+    <div class="card-header py-3 d-flex justify-content-between align-items-center">
+        <h4 class="m-0 font-weight-bold text-primary">Lista de Cursos</h4>
+    </div>
+    <div class="card-body">
+        {% if validarcurso %}
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Periodo</th>
+                        <th>Horas</th>
+                        <th>Instructor</th>
+                        <th>Opciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for validar in validarcurso %}
+                        <td>{{ validar.curso.nombre }}</td>
+                        <td>{{ validar.curso.periodo }}</td>
+                        <td>{{ validar.curso.horas }}</td>
+                        <td>{{ validar.curso.instructor }}</td>
+                        <td>
+                            {% if perms.plancapacitacion.view_registrocurso %}
+                            <a href="{% url 'validarver' validar.id %}" class="btn btn-success btn-sm">Ver</a>{% endif %}
+                            <!-- Al dar clic en Aceptar se vuelve true y cambia a aceptado, asi mismo se bloquea el botón-->
+                            {% if validar.curso.aceptado %}
+                            {% if perms.plancapacitacion.change_registrocurso %}
+                                <button class="btn btn-secondary btn-sm" disabled>Aceptado</button>
+                                <a href="{% url 'invalidar_curso' validar.curso.id %}" class="btn btn-warning btn-sm">Invalidar</a>{% endif %}
+                            {% else %}
+                            {% if perms.plancapacitacion.change_registrocurso %}
+                                <a href="{% url 'aceptar_curso' validar.id %}" class="btn btn-primary btn-sm">Aceptar</a>{% endif %}
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
-        <div class="card-body">
-            {% if validarcurso %}
-            <div class="table-responsive">
-                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                    <thead>
-                        <tr>
-                            <th>Nombre</th>
-                            <th>Periodo</th>
-                            <th>Horas</th>
-                            <th>Instructor</th>
-                            <th>Opciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for validar in validarcurso %}
-                            <td>{{ validar.curso.nombre }}</td>
-                            <td>{{ validar.curso.periodo }}</td>
-                            <td>{{ validar.curso.horas }}</td>
-                            <td>{{ validar.curso.instructor }}</td>
-                            <td>
-                                <a href="{% url 'validarver' validar.id %}" class="btn btn-success btn-sm">Ver</a>
-                                <!-- Al dar clic en Aceptar se vuelve true y cambia a aceptado, asi mismo se bloquea el botón-->
-                                {% if validar.curso.aceptado %}
-                                    <button class="btn btn-secondary btn-sm" disabled>Aceptado</button>
-                                    <a href="{% url 'invalidar_curso' validar.curso.id %}" class="btn btn-warning btn-sm">Invalidar</a>
-                                {% else %}
-                                    <a href="{% url 'aceptar_curso' validar.id %}" class="btn btn-primary btn-sm">Aceptar</a>
-                                {% endif %}
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            {% else %}
-            <p>No hay cursos registrados.</p>
-            {% endif %}
-        </div>
+        {% else %}
+        <p>No hay cursos registrados.</p>
+        {% endif %}
     </div>
 </div>
 {% endblock %}
