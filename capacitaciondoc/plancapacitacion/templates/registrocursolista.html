@@ -9,56 +9,58 @@
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-    <!-- Page Heading -->
-    <h1 class="h3 mb-2 text-gray-800">Registro de cursos </h1>
-    <div class="card">
-        <div class="card-body">
-            Aquí puedes registrar los cursos propuestos para su posible validación
-        </div>
-    </div><br>
+<!-- Page Heading -->
+<h1 class="h3 mb-2 text-gray-800">Registro de cursos </h1>
+<div class="card">
+    <div class="card-body">
+        Aquí puedes registrar los cursos propuestos para su posible validación
+    </div>
+</div><br>
 
-    <!-- DataTales Example -->
-    <div class="card shadow mb-4">
-        <div class="card-header py-3 d-flex justify-content-between align-items-center">
-            <h4 class="m-0 font-weight-bold text-primary">Lista de Cursos Registrados</h4>
-            <a href="{% url 'registrocursocrear' %}" class="btn btn-success mb-3">Registrar curso</a>
+<!-- DataTales Example -->
+<div class="card shadow mb-4">
+    <div class="card-header py-3 d-flex justify-content-between align-items-center">
+        <h4 class="m-0 font-weight-bold text-primary">Lista de Cursos Registrados</h4>
+        {% if perms.plancapacitacion.add_registrocurso %}
+        <a href="{% url 'registrocursocrear' %}" class="btn btn-success mb-3">Registrar curso</a>{% endif %}
+    </div>
+    <div class="card-body">
+        {% if cursos %}
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Periodo</th>
+                        <th>Horas</th>
+                        <th>Instructor</th>
+                        <th>Opciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for curso in cursos %}
+                    <tr id="curso-{{ curso.id }}">
+                        <td>{{curso.nombre}}</td>
+                        <td>{{curso.periodo}}</td>
+                        <td>{{curso.horas}}</td>
+                        <td>{{curso.instructor}}</td>
+                        <td>
+                            <!-- Opciones -->
+                            {% if perms.plancapacitacion.view_registrocurso %}
+                            <a href="{% url 'registrocursover' curso.id %}" class="btn btn-success btn-sm">Ver</a>{% endif %}
+                            {% if perms.plancapacitacion.change_registrocurso %}
+                            <a href="{% url 'registrocursoactualizar' curso.id %}" class="btn btn-warning btn-sm">Editar</a>{% endif %}
+                            {% if perms.plancapacitacion.delete_registrocurso %}
+                            <a href="{% url 'registrocursoeliminar' curso.id %}" class="btn btn-danger btn-sm">Eliminar</a>{% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
-        <div class="card-body">
-            {% if cursos %}
-            <div class="table-responsive">
-                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                    <thead>
-                        <tr>
-                            <th>Nombre</th>
-                            <th>Periodo</th>
-                            <th>Horas</th>
-                            <th>Instructor</th>
-                            <th>Opciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for curso in cursos %}
-                        <tr id="curso-{{ curso.id }}">
-                            <td>{{curso.nombre}}</td>
-                            <td>{{curso.periodo}}</td>
-                            <td>{{curso.horas}}</td>
-                            <td>{{curso.instructor}}</td>
-                            <td>
-                                <!-- Opciones -->
-                                <a href="{% url 'registrocursover' curso.id %}" class="btn btn-success btn-sm">Ver</a>
-                                <a href="{% url 'registrocursoactualizar' curso.id %}" class="btn btn-warning btn-sm">Editar</a>
-                                <a href="{% url 'registrocursoeliminar' curso.id %}" class="btn btn-danger btn-sm">Eliminar</a>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            {% else %}
-            <p>No hay cursos registrados.</p>
-            {% endif %}
-        </div>
+        {% else %}
+        <p>No hay cursos registrados.</p>
+        {% endif %}
     </div>
 </div>
 {% endblock %}
