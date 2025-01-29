@@ -1,22 +1,35 @@
+from datetime import datetime
 from django.shortcuts import render, redirect, reverse
 from django.shortcuts import get_object_or_404, redirect
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required, permission_required
+from plancapacitacion.models import RegistroCurso
+
+from .forms import EventoForm
 from .models import Evento, Inscripcion
 from catalogos.models import Lugar, Instructor, GradoAcademico, Periodo
 
 # Create your views here.
+@login_required(login_url='signin')
+@permission_required('eventos.view_evento', raise_exception=True)
 def eventolista(request):
     eventos = Evento.objects.all()
     return render(request, 'eventolista.html', {'eventos': eventos})
 
+@login_required(login_url='signin')
+@permission_required('eventos.view_evento', raise_exception=True)
 def eventover(request, evento_id):
     evento = get_object_or_404(Evento, id=evento_id)  
     return render(request, 'eventover.html', {'evento': evento})
 
 #CREACION DEL EVENTO
+@login_required(login_url='signin')
+@permission_required('eventos.change_evento', raise_exception=True)
 def crearevento(request, evento_id):
     evento = get_object_or_404(Evento, id=evento_id)
     lugares = Lugar.objects.all()
     instructores = Instructor.objects.all()
+    error = None
 
     # Guardar el ID del evento en la sesión para redirección
     request.session['evento_id'] = evento_id
@@ -30,41 +43,78 @@ def crearevento(request, evento_id):
         evento.save()
 
     if request.method == 'POST':
-        # Actualizar el lugar si es enviado en el formulario
-        lugar_id = request.POST.get('lugar')
-        lugar = get_object_or_404(Lugar, id=lugar_id)
-        evento.lugar = lugar
+        form = EventoForm(request.POST, instance=evento)
+        if form.is_valid():
+            # Guardar el evento
+            evento = form.save(commit=False)
+            
+            # Actualizar el instructor si es necesario
+            nuevo_instructor_id = request.POST.get('nuevo_instructor')
+            if nuevo_instructor_id:
+                nuevo_instructor = get_object_or_404(Instructor, id=nuevo_instructor_id)
+                evento.curso.instructor = nuevo_instructor
+                evento.curso.save()
+            
+            # Actualizar las horas del curso
+            horas_nuevas = request.POST.get('horas')
+            if horas_nuevas and horas_nuevas.isdigit() and int(horas_nuevas) > 0:
+                evento.curso.horas = int(horas_nuevas)
+                evento.curso.save()
 
-        # Si se seleccionó un nuevo instructor, actualizarlo
-        nuevo_instructor_id = request.POST.get('nuevo_instructor')
-        if nuevo_instructor_id:
-            nuevo_instructor = get_object_or_404(Instructor, id=nuevo_instructor_id)
-            evento.curso.instructor = nuevo_instructor
-            evento.curso.save()
+            # Actualizar el lugar si es enviado en el formulario
+            lugar_id = request.POST.get('lugar')
+            lugar = get_object_or_404(Lugar, id=lugar_id)
+            evento.lugar = lugar
 
-        # Actualizar las horas 
-        horas_nuevas = request.POST.get('horas')
-        if horas_nuevas and horas_nuevas.isdigit() and int(horas_nuevas) > 0:
-            evento.curso.horas = int(horas_nuevas)
-            evento.curso.save()
+            evento.save()
 
-        evento.save()
-        
-        # Crear la inscripción para este evento
-        Inscripcion.objects.create(evento=evento)
+            # Crear el curso listo para inscripcion para este evento
+            Inscripcion.objects.get_or_create(evento=evento)
 
-        # Redirigir a la lista de inscripciones
-        return redirect(reverse('eventolista'))
+            return redirect(reverse('eventolista'))
+        else:
+            error = "Por favor corrija los errores en el formulario."
+    else:
+        form = EventoForm(instance=evento)
 
     # Renderizar el formulario si no es una solicitud POST
     return render(request, 'crearevento.html', {
+        'form': form,
         'evento': evento,
         'lugares': lugares,
         'instructores': instructores,
         'lugar_seleccionado': lugar_seleccionado,
+        'error': error,
     })
 
-def añadirlugar(request):
+@login_required(login_url='signin')
+@permission_required('eventos.change_evento', raise_exception=True)
+def eventodeshacer(request, evento_id):
+    # Obtener el evento
+    evento = get_object_or_404(Evento, id=evento_id)
+
+    # Eliminar las inscripciones asociadas al evento
+    inscripciones = Inscripcion.objects.filter(evento=evento)
+    if inscripciones.exists():
+        inscripciones.delete()
+        messages.success(request, "Las inscripciones asociadas al evento han sido eliminadas.")
+
+        # Limpiar los campos de lugar y fechas del evento
+        evento.lugar = None
+        evento.fechaInicio = None
+        evento.fechaFin = None
+        evento.horaInicio = None
+        evento.horaFin = None
+        evento.save()
+
+        messages.info(request, "Los campos de lugar y fecha del evento han sido limpiados.")
+    else:
+        messages.info(request, "No hay inscripciones asociadas a este evento.")
+
+    # Redirigir a la lista de eventos
+    return redirect(reverse('eventolista'))
+
+def lugarcrearnuevo(request):
     if request.method == 'POST':
         nombre_edificio = request.POST.get('nombreEdificio')
         ubicacion = request.POST.get('ubicacion')
@@ -82,7 +132,7 @@ def añadirlugar(request):
             # Redirigir a la página de crear evento con el lugar seleccionado
             return redirect('crearevento', evento_id=request.session.get('evento_id'))
 
-    return render(request, 'añadirlugar.html')
+    return render(request, 'lugarcrearnuevo.html')
 
 def cambiarinstructor(request, evento_id):
     evento = get_object_or_404(Evento, id=evento_id)
@@ -182,36 +232,101 @@ def añadirinstructor(request, evento_id):
     })
     
 #INSCRIPCION
+@login_required(login_url='signin')
+@permission_required('eventos.view_evento', raise_exception=True)
 def inscripcionlista(request):
-    inscripciones = Inscripcion.objects.all()  # Obtener todas las inscripciones
-    eventos = []
+    # Filtrar eventos que tienen lugar, fecha y hora definidos
+    eventos_disponibles = Evento.objects.filter(
+        lugar__isnull=False, fechaInicio__isnull=False, fechaFin__isnull=False
+    )
 
-    for inscripcion in inscripciones:
-        evento = inscripcion.evento  # Obtener el evento asociado a cada inscripción
-        eventos.append({
-            'id': evento.id,  # Agrega el ID del evento aquí
-            'nombre': evento.curso.nombre,
-            'periodo': evento.curso.periodo,
-            'horas': evento.curso.horas,
-            'instructor': evento.curso.instructor,
-            'lugar': evento.lugar,
-            'aceptado': inscripcion.aceptado, #Estado para que cambien los botones
-        })
+    # Verificar en qué eventos está inscrito el usuario actual
+    inscripciones_usuario = Inscripcion.objects.filter(usuario=request.user)
+    eventos_inscritos = [inscripcion.evento for inscripcion in inscripciones_usuario]
+
+    # Dividir eventos en dos listas
+    eventos_inscritos = [inscripcion.evento for inscripcion in inscripciones_usuario]
+    eventos_disponibles = eventos_disponibles.exclude(id__in=[evento.id for evento in eventos_inscritos])
+
+    return render(request, 'inscripcionlista.html', {
+        'eventos_disponibles': eventos_disponibles,
+        'eventos_inscritos': eventos_inscritos,
+    })
+    # inscripciones = Inscripcion.objects.all()  # Obtener todas las inscripciones
+    # eventos = []
+
+    # for inscripcion in inscripciones:
+    #     evento = inscripcion.evento  # Obtener el evento asociado a cada inscripción
+    #     eventos.append({
+    #         'id': evento.id,  # Agrega el ID del evento aquí
+    #         'nombre': evento.curso.nombre,
+    #         'periodo': evento.curso.periodo,
+    #         'horas': evento.curso.horas,
+    #         'instructor': evento.curso.instructor,
+    #         'lugar': evento.lugar,
+    #         'aceptado': inscripcion.aceptado, #Estado para que cambien los botones
+    #     })
 
     return render(request, 'inscripcionlista.html', {'eventos': eventos})
 
+@login_required(login_url='signin')
+@permission_required('eventos.view_evento', raise_exception=True)
 def vercurso(request, evento_id):
     evento = get_object_or_404(Evento, id=evento_id)
     return render(request, 'vercurso.html', {'evento': evento})
 
-def aceptarinscripcion(request, inscripcion_id):
-    inscripcion = get_object_or_404(Inscripcion, id=inscripcion_id)
-    inscripcion.aceptado = True
-    inscripcion.save()
-    return redirect('inscripcionlista')  
+@login_required(login_url='signin')
+@permission_required('eventos.change_inscripcion', raise_exception=True)
+def aceptarinscripcion(request, evento_id):
+    evento = get_object_or_404(Evento, id=evento_id)
+    # Verificar si el usuario ya está inscrito
+    print(evento.id, request.user.id)
 
-def invalidarinscripcion(request, inscripcion_id):
-    inscripcion = get_object_or_404(Inscripcion, id=inscripcion_id)
-    inscripcion.aceptado = False
-    inscripcion.save()
-    return redirect('inscripcionlista')  
+    if not Inscripcion.objects.filter(evento=evento, usuario=request.user).exists():
+        Inscripcion.objects.create(evento=evento, usuario=request.user, aceptado=True)
+        messages.success(request, f"Te has inscrito exitosamente al curso '{evento.curso.nombre}'.")
+    else:
+        messages.info(request, f"Ya estás inscrito en el curso '{evento.curso.nombre}'.")
+
+    return redirect('inscripcionlista')
+
+@login_required(login_url='signin')
+@permission_required('eventos.change_inscripcion', raise_exception=True)
+def invalidarinscripcion(request, evento_id):
+    evento = get_object_or_404(Evento, id=evento_id)
+    # Verificar si el usuario está inscrito
+    inscripcion = Inscripcion.objects.filter(evento=evento, usuario=request.user).first()
+    if inscripcion:
+        inscripcion.delete()
+        messages.success(request, f"Tu inscripción al curso '{evento.curso.nombre}' ha sido invalidada.")
+    else:
+        messages.warning(request, "No tienes una inscripción para este evento.")
+    return redirect('inscripcionlista')
+
+@login_required(login_url='signin')
+@permission_required('plancapacitacion.view_registrocurso', raise_exception=True)
+def miscursosinstructor(request):
+    if request.user.rol == 'Instructor':
+        # Obtener el instructor a partir del usuario autenticado
+        instructor = get_object_or_404(Instructor, user=request.user)
+
+        # Obtener los cursos asignados al instructor actual
+        cursos_asignados = RegistroCurso.objects.filter(instructor=instructor)
+
+        # Obtener los eventos relacionados con esos cursos
+        eventos_asignados = Evento.objects.filter(curso__in=cursos_asignados)
+
+        # Obtener los docentes inscritos en esos eventos
+        eventos_con_docentes = []
+        for evento in eventos_asignados:
+            docentes_inscritos = Inscripcion.objects.filter(evento=evento)
+            eventos_con_docentes.append({
+                'evento': evento,
+                'docentes': docentes_inscritos
+            })
+
+        return render(request, 'miscursos.html', {
+            'eventos_con_docentes': eventos_con_docentes,
+        })
+    else:
+        return redirect ('home')
