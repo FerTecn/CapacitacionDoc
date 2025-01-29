@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}- Mis Cursos Asignados{% endblock %}
+
+{% block content %}
+<h1 class="h3 mb-2 text-gray-800">Mis Cursos Asignados</h1>
+
+{% if eventos_con_docentes %}
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h5>Cursos que enseño</h5>
+        </div>
+        <div class="card-body">
+            <div class="list-group">
+                {% for evento_data in eventos_con_docentes %}
+                <div class="list-group-item">
+                    <h5 class="mb-1">{{ evento_data.evento.curso.nombre }}</h5>
+                    <p><strong>Periodo:</strong> {{ evento_data.evento.curso.periodo }}</p>
+                    <p><strong>Horas:</strong> {{ evento_data.evento.curso.horas }}</p>
+                    <p><strong>Lugar:</strong> {{ evento_data.evento.lugar }}</p>
+                    
+                    <hr>
+
+                    <h6>Docentes Inscritos:</h6>
+                    <ul>
+                        {% for inscripcion in evento_data.docentes %}
+                            <li>{{ inscripcion.usuario.first_name }} {{ inscripcion.usuario.last_name }}</li>
+                        {% empty %}
+                            <li>No hay docentes inscritos.</li>
+                        {% endfor %}
+                    </ul>
+                    
+                    <a href="{% url 'vercurso' evento_data.evento.id %}" class="btn btn-info btn-sm">Ver detalles de mi curso</a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% else %}
+    <p>No tienes cursos asignados o no hay eventos con docentes inscritos.</p>
+{% endif %}
+{% endblock %}
