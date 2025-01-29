@@ -44,7 +44,17 @@
         <div class="form-group col-md-3 align-items-center">
             <p><strong style="display: block;">Lugar</strong> {{ evento.lugar.nombreEdificio }} - {{ evento.lugar.ubicacion }}</p>
         </div>
-    </div><br>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <p><strong>Fecha del curso</strong></p>
+            {{ evento.fechaInicio }} - {{ evento.fechaFin }}
+        </div>
+        <div class="form-group col-md-6">
+            <p><strong>Horario del curso</strong></p>
+            {{ evento.horaInicio }} <span class="mx-2">a</span> {{ evento.horaFin }}
+        </div>
+    </div>
 
     <div class="text-center">
         <a href="{% url 'inscripcionlista' %}" class="btn btn-primary">Regresar</a>

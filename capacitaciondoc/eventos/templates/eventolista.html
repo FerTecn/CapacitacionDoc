@@ -1,57 +1,76 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Registro de Eventos{% endblock %}
+{% block title %}- Registro de Eventos{% endblock %}
+
+{% block styles %}
+<!-- Custom styles for this page -->
+<link href="{% static 'vendor/datatables/dataTables.bootstrap4.min.css' %}" rel="stylesheet">
+{% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-    <!-- Page Heading -->
-    <h1 class="h3 mb-2 text-gray-800">Registro de los Eventos </h1>
-    <div class="card">
-        <div class="card-body">
-            Se muestran los cursos que fueron aceptados 
-        </div>
-    </div><br>
-
-    <!-- DataTales Example -->
-    <div class="card shadow mb-4">
-        <div class="card-header py-3 d-flex justify-content-between align-items-center">
-            <h4 class="m-0 font-weight-bold text-primary">Lista de Eventos </h4>
-        </div>
-        <div class="card-body">
-            {% if eventos %}
-            <div class="table-responsive">
-                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                    <thead>
-                        <tr>
-                            <th>Nombre</th>
-                            <th>Periodo</th>
-                            <th>Horas</th>
-                            <th>Instructor</th>
-                            <th>Opciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for evento in eventos%}
-                        <tr>
-                            <td>{{ evento.curso.nombre }}</td>
-                            <td>{{ evento.curso.periodo }}</td>
-                            <td>{{ evento.curso.horas }}</td>
-                            <td>{{ evento.curso.instructor }}</td>
-                            <td>
-                                <!-- Opciones -->
-                                <a href="{% url 'crearevento' evento.id %}" class="btn btn-primary btn-sm">Crear evento</a>
-                                <a href="{% url 'eventover' evento.id %}" class="btn btn-success btn-sm">Ver</a>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+<!-- Page Heading -->
+<h1 class="h3 mb-2 text-gray-800">Registro de los Eventos </h1>
+{% if messages %}
+    <div class="messages-container">
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Cerrar">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
-            {% else %}
-            <p>No hay cursos registrados.</p>
-            {% endif %}
+        {% endfor %}
+    </div>
+{% endif %}
+<div class="card">
+    <div class="card-body">
+        Se muestran los cursos que fueron aceptados 
+    </div>
+</div><br>
+
+<!-- DataTales Example -->
+<div class="card shadow mb-4">
+    <div class="card-header py-3 d-flex justify-content-between align-items-center">
+        <h4 class="m-0 font-weight-bold text-primary">Lista de Eventos </h4>
+    </div>
+    <div class="card-body">
+        {% if eventos %}
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Periodo</th>
+                        <th>Horas</th>
+                        <th>Instructor</th>
+                        <th>Opciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for evento in eventos%}
+                    <tr>
+                        <td>{{ evento.curso.nombre }}</td>
+                        <td>{{ evento.curso.periodo }}</td>
+                        <td>{{ evento.curso.horas }}</td>
+                        <td>{{ evento.curso.instructor }}</td>
+                        <td>
+                            <!-- Opciones -->
+                            <a href="{% url 'crearevento' evento.id %}" class="btn btn-{% if evento.inscripcion_set.exists %}warning{% else %}primary{% endif %} btn-sm">
+                                {% if evento.inscripcion_set.exists %}Modificar{% else %}Crear{% endif %} evento</a>
+                                {% if evento.inscripcion_set.exists %}
+                                <a href="{% url 'eventodeshacer' evento.id %}" class="btn btn-danger btn-sm">
+                                Deshacer evento</a>{% endif %}
+                            <a href="{% url 'eventover' evento.id %}" class="btn btn-success btn-sm">Ver</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
+        {% else %}
+        <p>No hay cursos registrados.</p>
+        {% endif %}
     </div>
 </div>
 {% endblock %}

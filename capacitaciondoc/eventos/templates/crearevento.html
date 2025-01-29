@@ -1,15 +1,102 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Crear evento{% endblock %}
+{% block title %}- Datos del evento{% endblock %}
 
 {% block content %}
-<div class="container">
+<div class="container-fluid">
+    <h1 class="h3 mb-2 text-gray-800">Datos del Evento</h1>
+    <form method="post">
+        {% csrf_token %}
+        <!-- Mostrar errores -->
+        {% if error %}
+            <div class="alert alert-danger">{{ error }}</div>
+        {% endif %}
+
+        <div class="form-row">
+            <div class="form-group col-md-4 align-items-center">
+                <p><strong style="display: block;">Clave:</strong> {{ evento.curso.clave }}</p>
+            </div>
+            <div class="form-group col-md-8 align-items-center">
+                <p><strong style="display: block;">Nombre del curso:</strong> {{ evento.curso.nombre }}</p>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-12 align-items-center">
+                <p><strong style="display: block;">Objetivo:</strong> {{ evento.curso.objetivo }}</p>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-md-4 align-items-center">
+                <p><strong style="display: block;">Período del curso:</strong> {{ evento.curso.periodo }}</p>
+            </div>
+            <div class="form-group col-md-6 align-items-center">
+                <p><strong style="display: block;">Sede:</strong> {{ evento.curso.sede }}</p>
+            </div>
+            <div class="form-group col-md-2 align-items-center">
+                <!-- Horas -->
+                <p>
+                    <label for="id_horas"><strong style="display: block;">Horas:</strong></label>
+                    <input type="number" id="id_horas" name="horas" class="form-control" style="max-width: 80%;"
+                            value="{{ evento.curso.horas }}" min="1" required>
+                </p>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <!-- Mostrar instructor y botón para cambiar -->
+            <div class="form-group col-md-4">
+                <p><strong>Instructor:</strong> {{ evento.curso.instructor }}</p>
+                <a href="{% url 'cambiarinstructor' evento_id=evento.id %}" class="btn btn-warning">Cambiar Instructor</a>
+            </div>
+            <div class="form-group col-md-2">
+                <p><strong style="display: block;">Dirigido a:</strong> {{ evento.curso.dirigido }}</p>
+            </div>
+            <div class="form-group col-md-3">
+                <p><strong style="display: block;">Perfil de Curso:</strong> {{ evento.curso.perfilCurso }}</p>
+            </div>
+            <div class="form-group col-md-3">
+                <p><strong>{{ form.lugar.label_tag}}</strong></p>
+                {{ form.lugar }}
+                <!-- Botón debajo del select -->
+                <a href="{% url 'lugarcrearnuevo' %}" class="btn btn-success mt-2">Añadir nuevo lugar</a>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-3">
+                <p><strong>{{ form.fechaInicio.label_tag }}</strong></p>
+                {{ form.fechaInicio }}
+            </div>
+            <div class="form-group col-md-3">
+                <p><strong>{{ form.fechaFin.label_tag }}</strong></p>
+                {{ form.fechaFin }}
+            </div>
+            <div class="form-group col-md-6">
+                <p><strong>Horario de:</strong></p>
+                <div class="d-flex align-items-center">
+                {{ form.horaInicio }} <span class="mx-2">a</span> {{ form.horaFin }}
+                </div>
+            </div>
+        </div>
+
+        
+        <div class='text-center'>
+            <button type="submit" class="btn btn-primary">Guardar</button>
+            <a href="{% url 'eventolista' %}" class="btn btn-secondary">Cancelar</a>
+        </div> 
+    </form>
+</div>
+
+{% comment %} <div class="container">
     <h1 class="h3 mb-2 text-gray-800">Datos del Evento</h1>
     <form method="post">
         {% csrf_token %}
         
         <div class="form-row">
+            {% if error %}
+                <div class="alert alert-danger">{{ error }}</div>
+            {% endif %}
             <div class="form-group col-md-4 align-items-center">
                 <p><strong style="display: block;">Clave</strong> {{ evento.curso.clave }}</p>
             </div>
@@ -62,15 +149,44 @@
                     {% endfor %}
                 </select>
                 <!-- Botón debajo del select -->
-                <a href="{% url 'añadirlugar' %}" class="btn btn-success mt-2">Añadir nuevo lugar</a>
+                <a href="{% url 'lugarcrearnuevo' %}" class="btn btn-success mt-2">Añadir nuevo lugar</a>
             </div>
-        </div><br>
+        </div>
+
+        <!-- Fecha del evento -->
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="fecha_inicio"><strong>Fecha de Inicio</strong></label>
+                <input type="date" id="fecha_inicio" name="fecha_inicio" class="form-control" required>
+            </div>
+            <div class="form-group col-md-6">
+                <label for="fecha_fin"><strong>Fecha de Fin</strong></label>
+                <input type="date" id="fecha_fin" name="fecha_fin" class="form-control" required>
+            </div>
+            <small class="form-text text-muted">
+                Debe estar entre {{ evento.curso.periodo.inicioPeriodo }} y {{ evento.curso.periodo.finPeriodo }}.
+            </small>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <label><strong>Días de la Semana</strong></label><br>
+                {% for dia in ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'] %}
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" name="dias_semana" value="{{ dia }}" 
+                            {% if dia in evento.dias.split(',') %}checked{% endif %} 
+                            id="{{ dia }}">
+                        <label class="form-check-label" for="{{ dia }}">{{ dia }}</label>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
     
         <div class='text-center'>
             <button type="submit" class="btn btn-primary">Guardar</button>
             <a href="{% url 'eventolista' %}" class="btn btn-secondary">Cancelar</a>
         </div> 
     </form>
-</div>
+</div> {% endcomment %}
 
 {% endblock %}
