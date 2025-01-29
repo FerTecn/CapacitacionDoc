@@ -34,7 +34,7 @@
 
         <!-- Sidebar -->
         {% block sidebar %}
-        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+        <ul class="navbar-nav bg-gray-900 sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{% url 'home' %}">
@@ -44,13 +44,14 @@
             <!-- Divider -->
             <hr class="sidebar-divider my-0">
 
-            <!-- Nav Item - Dashboard -->
+            <!-- Nav Item - Home -->
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'home' %}">
                     <i class="fas fa-fw fa-home"></i>
                     <span>Inicio</span></a>
             </li>
 
+            <!-- Nav Item - Datos personales si rol es Docente o Instructor -->
             {% if request.user.rol == "Docente" or request.user.rol == "Instructor" %}
             <li class="nav-item">
                 <a class="nav-link" href="{% if request.user.rol == 'Docente' %}{% url 'docentelista' %}{% elif request.user.rol == 'Instructor' %}{% url 'instructorlista' %}{% endif %}">
@@ -62,16 +63,17 @@
             <!-- Divider -->
             <hr class="sidebar-divider">
 
-            <!-- CATALOGOS -->
+            <!-- Nav Item - Catálogos Collapse Menu si los roles NO SON Docente o Instructor-->
             {% if request.user.rol != "Docente" and request.user.rol != "Instructor" %}
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseOne"
                     aria-expanded="true" aria-controls="collapseOne">
                     <i class="fas fa-fw fa-folder"></i>
-                    <span>Catalogos</span>
+                    <span>Catálogos</span>
                 </a>
                 <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Todos los catálogos:</h6>
                         <a class="collapse-item" href="{% url 'instructorlista' %}">Instructores</a>
                         <a class="collapse-item" href="{% url 'docentelista' %}">Docentes</a>
                         <a class="collapse-item" href="{% url 'departamentolista' %}">Departamentos</a>
@@ -88,7 +90,7 @@
             </li>
             {% endif %}
 
-            <!-- PLAN DE CAPACITACION -->
+            <!-- Nav Item - Plan de Capacitaciones Collapse Menu -->
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
                     aria-expanded="true" aria-controls="collapseTwo">
@@ -98,6 +100,7 @@
                 <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo"
                     data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Opciones de cursos:</h6>
                         <a class="collapse-item" href="{% url 'registrocursolista' %}">Registro de cursos</a>
                         <a class="collapse-item" href="{% url 'validarcursolista' %}">Validación de cursos</a>
 
@@ -109,7 +112,7 @@
             <!-- Divider -->
             <hr class="sidebar-divider">
 
-            <!-- EVENTOS -->
+            <!-- Nav Item - Eventos Collapse Menu -->
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseThree"
                     aria-expanded="true" aria-controls="collapseThree">
@@ -118,6 +121,7 @@
                 </a>
                 <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Eventos:</h6>
                         <a class="collapse-item" href="{% url 'eventolista' %}">Eventos</a>
                         <a class="collapse-item" href="blank.html">Oficio de comisión</a>
                         <a class="collapse-item" href="{% url 'inscripcionlista' %}">Inscipciones</a>
@@ -126,15 +130,22 @@
                     </div>
                 </div>
             </li>
- 
-            <!-- ENCUESTA -->
+
+            <!-- Nav Item - Mis cursos Collapse Menu -->
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'miscursos' %}">
+                    <i class="fas fa-fw fa-poll"></i>
+                    <span>Mis cursos</span></a>
+            </li>
+
+            <!-- Nav Item - Encuesta Collapse Menu -->
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'encuesta' %}">
                     <i class="fas fa-fw fa-poll"></i>
                     <span>Encuesta de satisfacción</span></a>
             </li>
- 
-            <!-- REPORTES -->
+
+            <!-- Nav Item - Reportes Collapse Menu -->
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#colla"
                     aria-expanded="true" aria-controls="colla">
@@ -171,7 +182,7 @@
                 <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
                     
                     <!-- Sidebar Toggle (Topbar) -->
-                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3" id="sidebarToggle">
                         <i class="fa fa-bars"></i>
                     </button>
 
@@ -185,7 +196,7 @@
 
                                 {% comment %} #Agregado, muestra el nombre de usuario logueado {% endcomment %}
                                 {% if request.user.is_authenticated %}
-                                    <span class="mr-2 d-none d-lg-inline text-gray-600 small">
+                                    <span class="mr-2  text-gray-600 small">
                                         {{request.user.rol}} - {{ request.user.first_name }} {{request.user.last_name_paterno}} {{request.user.last_name_materno}}
                                     </span>
                                     <br>
@@ -271,12 +282,35 @@
 
     <!-- Custom scripts for all pages-->
     <script src="{% static 'js/sb-admin-2.min.js' %}"></script>
+    <script>
+        // Función para alternar el estado del sidebar
+        document.addEventListener("DOMContentLoaded", function () {
+            const sidebar = document.getElementById('accordionSidebar');
+            const sidebarToggle = document.getElementById('sidebarToggle');
+    
+            // Verifica el estado guardado en localStorage y ajusta el estado del sidebar
+            if (localStorage.getItem('sidebarState') === 'closed') {
+                sidebar.classList.remove('toggled');
+            } else {
+                sidebar.classList.add('toggled');
+            }
+    
+            // Cuando el usuario hace clic en el botón de toggle, guarda el estado del sidebar
+            sidebarToggle.addEventListener('click', function () {
+                if (sidebar.classList.contains('toggled')) {
+                    localStorage.setItem('sidebarState', 'closed');
+                } else {
+                    localStorage.setItem('sidebarState', 'open');
+                }
+            });
+        });
+    </script>
+    
 
 
     <!-- Custom scripts -->
     {% block scripts %}
     
-    {% endblock %}
- 
+    {% endblock %}
 </body>
-        
+</html>
