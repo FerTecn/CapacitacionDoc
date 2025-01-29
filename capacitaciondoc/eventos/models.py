@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 from catalogos.models import Lugar, Instructor
 from plancapacitacion.models import RegistroCurso
 
@@ -8,23 +9,28 @@ class Evento(models.Model):
     curso= models.ForeignKey(RegistroCurso, on_delete=models.CASCADE, null=True)
     instructor=models.ForeignKey(Instructor,on_delete=models.SET_NULL, null=True, blank=True )
     lugar=models.ForeignKey(Lugar,on_delete=models.SET_NULL, null=True )
-    fecha = models.DateField(null=True, blank=True)
+    fechaInicio = models.DateField(null=True, blank=True)
+    fechaFin = models.DateField(null=True, blank=True)
+    horaInicio = models.TimeField(null=True, blank=True)  # Hora de inicio
+    horaFin = models.TimeField(null=True, blank=True)  # Hora de fin
     
     
     def __str__(self):
-        return f"{self.curso} - {self.fecha}"
+        return f"{self.curso} - {self.fechaInicio} a {self.fechaFin}"
     class Meta:
         verbose_name_plural = 'Eventos'
 
 class Inscripcion(models.Model):
     evento = models.ForeignKey(Evento, on_delete=models.CASCADE, null=True, blank=True)
     aceptado = models.BooleanField(default=False)  # Campo para rastrear estado de aceptación
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)  # Docente que se inscribe
 
     def __str__(self):
         return f"{self.evento}"
     
     class Meta:
         verbose_name_plural = 'Inscripcion'
+        unique_together = ('evento', 'usuario')
     
 class asistencia(models.Model):
     evento = models.ForeignKey(Evento, on_delete=models.CASCADE, null=True, blank=True)
