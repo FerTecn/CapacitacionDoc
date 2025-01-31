@@ -39,7 +39,7 @@ class PlancapacitacionConfig(AppConfig):
 
                 # Grupo Jefe Capacitación: puede ver, agregar, modificar y eliminar cursos y validarlos
                 capacitacion_group.permissions.add(
-                    *permisos_registro_curso, *permisos_validados
+                    *permisos_registro_curso, *permisos_validados.filter(codename__startswith='view')
                 )
 
                 # Grupo Subdirección Académica: Valida cursos

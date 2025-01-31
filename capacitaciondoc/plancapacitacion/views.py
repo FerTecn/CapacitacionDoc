@@ -71,7 +71,7 @@ def validarver(request, validar_id):
     return render(request, 'validarver.html', {'curso': curso})
 
 @login_required(login_url='signin')
-@permission_required('plancapacitacion.change_registrocurso', raise_exception=True)
+@permission_required('plancapacitacion.change_validarcurso', raise_exception=True)
 def aceptar_curso(request, curso_id):
     curso = get_object_or_404(RegistroCurso, id=curso_id)
     
@@ -85,7 +85,7 @@ def aceptar_curso(request, curso_id):
     return HttpResponseRedirect(reverse('validarcursolista'))
 
 @login_required(login_url='signin')
-@permission_required('plancapacitacion.change_registrocurso', raise_exception=True)
+@permission_required('plancapacitacion.change_validarcurso', raise_exception=True)
 def invalidar_curso(request, curso_id):
     curso = get_object_or_404(RegistroCurso, id=curso_id)
     
