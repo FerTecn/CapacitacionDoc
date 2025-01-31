@@ -1,6 +1,6 @@
 from django.db import models
 from django.conf import settings
-from catalogos.models import Lugar, Instructor
+from catalogos.models import Docente, Lugar, Instructor
 from plancapacitacion.models import RegistroCurso
 
 
@@ -32,15 +32,20 @@ class Inscripcion(models.Model):
         verbose_name_plural = 'Inscripcion'
         unique_together = ('evento', 'usuario')
     
-class asistencia(models.Model):
-    evento = models.ForeignKey(Evento, on_delete=models.CASCADE, null=True, blank=True)
-    #Docentes
+class Asistencia(models.Model):
+    inscripcion =models.ForeignKey(Inscripcion, on_delete=models.CASCADE, null=True, blank=True)
+    fecha = models.DateField(null=True)
+    asistio = models.BooleanField(default=False)
     
     def __str__(self):
-        return f"{self.evento}"
+        estado = "Presente" if self.asistio else "Ausente"
+        return f"{self.inscripcion.usuario.first_name} {self.inscripcion.usuario.last_name_paterno} - {self.inscripcion.evento.curso.nombre} - {estado}"
 
     class Meta:
-        verbose_name_plural = 'Asistencia'
+        verbose_name_plural = 'Asistencias'
+        unique_together = ('inscripcion', 'fecha')
+    #     db_table = 'eventos_asistencia'
+
 class oficioComision(models.Model):
     clave = models.CharField(max_length=10)
     fecha=models.CharField(max_length=40)
