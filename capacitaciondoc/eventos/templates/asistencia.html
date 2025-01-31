@@ -1,17 +1,38 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load custom_filters %}
+
+{% block title %}- Registrar asistencia en {{ evento.curso.nombre }} {% endblock %}
+
+{% block styles %}
+<!-- Custom styles for this page -->
+<link href="{% static 'vendor/datatables/dataTables.bootstrap4.min.css' %}" rel="stylesheet">
+{% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-    <!-- Page Heading -->
-    <h1 class="h3 mb-2 text-gray-800"><center>Curso</center></h1>
+<!-- Page Heading -->
+<h1 class="h3 mb-2 text-gray-800"><center>Curso</center></h1>
+<p><strong>Nombre del curso: </strong>{{ evento.curso.nombre }}</p>
+<p><strong>Nombre del(a) instructor(a): </strong>{{ evento.curso.instructor }}</p>
+<p><strong>Período: </strong>{{ evento.curso.periodo }}</p>
+<p><strong>Duración: </strong>{{ evento.curso.horas }} horas</p>
 
-    <p><strong>Nombre del curso:</strong> </p>
-    <p><strong>Nombre del(a) instructor(a):</strong> </p>
-    <p><strong>Período:</strong> </p>
-    <p><strong>Duración:</strong> </p>
+{% if messages %}
+    <div class="messages-container">
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Cerrar">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
 
-    <!-- DataTales Example -->
+<!-- DataTales -->
+<form method="POST">
+    {% csrf_token %}
     <div class="card shadow mb-4">
         <div class="card-body">
             <div class="table-responsive">
@@ -19,34 +40,42 @@
                     <thead>
                         <tr>
                             <th>No.</th>
-                            <th>Nombre del participante</th>
+                            <th>Nombre del inscripcion</th>
                             <th>Puesto y área de adscripción</th>
+                            <th>F</th>
                             <th>M</th>
-                            <th>H</th>
-                            <th>Asistencia</th>
+                            {% for fecha in dias_semana %}
+                                <th>{{ fecha|date:"D d/m" }}</th>
+                            {% endfor %}
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
+                        {% for asistencia_inscripcion in asistencias_por_inscripcion %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ asistencia_inscripcion.inscripcion.usuario.first_name }} {{ asistencia_inscripcion.inscripcion.usuario.last_name_paterno }} {{ asistencia_inscripcion.inscripcion.usuario.last_name_materno }}</td>
+                                <td>{{ asistencia_inscripcion.inscripcion.usuario.docente.departamento }}</td>
+                                <td>{% if asistencia_inscripcion.inscripcion.usuario.docente.genero.genero == "Femenino" %} X{% endif %}</td>
+                                <td>{% if asistencia_inscripcion.inscripcion.usuario.docente.genero.genero == "Masculino" %} X{% endif %}</td>
+                                {% for fecha in dias_semana %}
+                                <td>
+                                    <input type="checkbox" 
+                                        name="asistencia_{{ asistencia_inscripcion.inscripcion.id }}_{{ fecha|date:'Y-m-d' }}"
+                                        {% if asistencia_inscripcion.asistencias|get_item:fecha %}checked{% endif %}>
+                                </td>
+                                {% endfor %}
+                            </tr>
                         {% endfor %}
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
-
     <div class="text-center">
-        <a href="" class="btn btn-primary">Regresar</a>
+        <button type="submit" class="btn btn-success">Registrar Asistencia</button>
+        <a href="{% url 'miscursos' %}" class="btn btn-primary">Regresar</a>
     </div>
-
-</div>
+</form>
 {% endblock %}
 
 {% block scripts %}
