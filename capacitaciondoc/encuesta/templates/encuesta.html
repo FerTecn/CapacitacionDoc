@@ -8,10 +8,10 @@
 <h3 class="h3 mb-2 text-gray-800"><center><b>ENCUESTA DE OPINIÓN</b></center></h3>
 <center><b>Cursos de Capacitación Presencial</b></center><br>
 
-<p><strong>Nombre del curso:</strong> </p>
-<p><strong>Nombre de Institución:</strong> </p>
-<p><strong>Nombre del facilitador:</strong> </p>
-<p><strong>Fecha de realización:</strong> </p>
+<p><strong>Nombre del curso: </strong>{{ evento.curso.nombre}}</p>
+<p><strong>Nombre de Institución: </strong>{{ evento.curso.sede }}</p>
+<p><strong>Nombre del facilitador: </strong>{{ evento.curso.instructor }}</p>
+<p><strong>Fecha de realización: </strong> </p>
 
 
 <div class="card">
@@ -26,32 +26,36 @@
        <b>INSTRUCCIÓN:</b> Solicitamos exprese su opinión sobre los siguientes aspectos seleccionando el número 
        correspondiente en el recuadro de la derecha según la siguiente escala:
     </div>
-    
-    <div class="card-body d-flex justify-content-around align-items-center">
-        <div class="text-center">
-            <div class="border border-dark fw-bold fixed-size">5</div>
+
+    <div class="row mx-4">
+        <div class="col-xl-1 col-md-6 mb-4 text-center">
+        </div>
+        <div class="col-xl-2 col-md-6 mb-4 text-center">
+            <div class="card border border-dark fw-bold fixed-size">5</div>
             <small>Totalmente de acuerdo</small>
         </div>
-        <div class="text-center">
-            <div class="border border-dark fw-bold fixed-size">4</div>
+        <div class="col-xl-2 col-md-6 mb-4 text-center">
+            <div class="card border border-dark fw-bold fixed-size">4</div>
             <small>Parcialmente de acuerdo</small>
         </div>
-        <div class="text-center">
-            <div class="border border-dark fw-bold fixed-size">3</div>
+        <div class="col-xl-2 col-md-6 mb-4 text-center">
+            <div class="card border border-dark fw-bold fixed-size">3</div>
             <small>Indiferente</small>
         </div>
-        <div class="text-center">
-            <div class="border border-dark fw-bold fixed-size">2</div>
+        <div class="col-xl-2 col-md-6 mb-4 text-center">
+            <div class="card border border-dark fw-bold fixed-size">2</div>
             <small>Parcialmente en desacuerdo</small>
         </div>
-        <div class="text-center">
-            <div class="border border-dark fw-bold fixed-size">1</div>
+        <div class="col-xl-2 col-md-6 mb-4 text-center">
+            <div class="card border border-dark fw-bold fixed-size">1</div>
             <small>En desacuerdo</small>
+        </div>
+        <div class="col-xl-1 col-md-6 mb-4 text-center">
         </div>
     </div>
 </div><br>
 
-<form method="POST" action="{% url 'encuesta' %}">
+<form method="POST">
     {% csrf_token %}
 
 <div class="row">
@@ -196,7 +200,7 @@
                 <h6 class="m-0 font-weight-bold text-primary"><center>COMENTARIOS O SUGERENCIAS</center></h6>
             </div><br>
             <div class="form-floating">
-                <center><textarea name="comentarios" rows="4" cols="50"></textarea></center><br>
+                <center><textarea class="form-control w-75" name="comentarios" rows="4" cols="50"></textarea></center><br>
             </div>
         </div>
     </div>
