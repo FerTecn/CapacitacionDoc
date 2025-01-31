@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import Evento
-from .models import asistencia
+from .models import Asistencia
 from .models import oficioComision
 from .models import Inscripcion
 from .models import calificacion
@@ -15,7 +15,8 @@ class InscripcionAdmin(admin.ModelAdmin):
     list_display = ('evento__curso__nombre', 'evento__curso__instructor', 'evento__curso__horas')
 admin.site.register(Inscripcion, InscripcionAdmin)
 
-admin.site.register(asistencia)
+admin.site.register(Asistencia)
+
 class oficioComisionAdmin(admin.ModelAdmin):
     list_display = ('fecha', 'nombre', 'lugar', 'horas')
 admin.site.register(oficioComision, oficioComisionAdmin)
