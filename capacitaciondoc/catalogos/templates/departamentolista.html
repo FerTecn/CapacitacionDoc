@@ -41,7 +41,7 @@
                         <td>{{departamento.nomenclatura}}</td>
                         <td>{{departamento.numerodepartamento}}</td>
                         <td>{{departamento.departamento}}</td>
-                        <td>{{departamento.nombreJefe}}</td>
+                        <td>{{departamento.nombreJefe}} {{departamento.apParternoJefe}} {{ departamento.apMaternoJefe }}</td>
                         <td>
                             <!-- Opciones -->
                             <a href="{% url 'departamentover' departamento.id %}" class="btn btn-success btn-sm">Ver</a>
