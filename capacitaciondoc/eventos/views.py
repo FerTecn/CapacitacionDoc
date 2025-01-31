@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.shortcuts import render, redirect, reverse
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib import messages
@@ -6,8 +6,8 @@ from django.contrib.auth.decorators import login_required, permission_required
 from plancapacitacion.models import RegistroCurso
 
 from .forms import EventoForm
-from .models import Evento, Inscripcion
-from catalogos.models import Lugar, Instructor, GradoAcademico, Periodo
+from .models import Asistencia, Evento, Inscripcion
+from catalogos.models import Docente, Lugar, Instructor, GradoAcademico, Periodo
 
 # Create your views here.
 @login_required(login_url='signin')
@@ -242,7 +242,6 @@ def inscripcionlista(request):
 
     # Verificar en qué eventos está inscrito el usuario actual
     inscripciones_usuario = Inscripcion.objects.filter(usuario=request.user)
-    eventos_inscritos = [inscripcion.evento for inscripcion in inscripciones_usuario]
 
     # Dividir eventos en dos listas
     eventos_inscritos = [inscripcion.evento for inscripcion in inscripciones_usuario]
@@ -252,22 +251,6 @@ def inscripcionlista(request):
         'eventos_disponibles': eventos_disponibles,
         'eventos_inscritos': eventos_inscritos,
     })
-    # inscripciones = Inscripcion.objects.all()  # Obtener todas las inscripciones
-    # eventos = []
-
-    # for inscripcion in inscripciones:
-    #     evento = inscripcion.evento  # Obtener el evento asociado a cada inscripción
-    #     eventos.append({
-    #         'id': evento.id,  # Agrega el ID del evento aquí
-    #         'nombre': evento.curso.nombre,
-    #         'periodo': evento.curso.periodo,
-    #         'horas': evento.curso.horas,
-    #         'instructor': evento.curso.instructor,
-    #         'lugar': evento.lugar,
-    #         'aceptado': inscripcion.aceptado, #Estado para que cambien los botones
-    #     })
-
-    return render(request, 'inscripcionlista.html', {'eventos': eventos})
 
 @login_required(login_url='signin')
 @permission_required('eventos.view_evento', raise_exception=True)
@@ -312,9 +295,22 @@ def miscursosinstructor(request):
 
         # Obtener los cursos asignados al instructor actual
         cursos_asignados = RegistroCurso.objects.filter(instructor=instructor)
-
-        # Obtener los eventos relacionados con esos cursos
         eventos_asignados = Evento.objects.filter(curso__in=cursos_asignados)
+
+        return render(request, 'miscursos.html', {
+            'eventos': eventos_asignados,
+            'cursos': cursos_asignados,
+        })
+    else:
+        return redirect('home')
+
+def detalle_curso(request, curso_id):
+    if request.user.rol == 'Instructor':
+        # Obtener el curso específico
+        curso = get_object_or_404(RegistroCurso, id=curso_id)
+
+        # Obtener los eventos relacionados con ese curso
+        eventos_asignados = Evento.objects.filter(curso=curso)
 
         # Obtener los docentes inscritos en esos eventos
         eventos_con_docentes = []
@@ -325,8 +321,54 @@ def miscursosinstructor(request):
                 'docentes': docentes_inscritos
             })
 
-        return render(request, 'miscursos.html', {
+        return render(request, 'vercurso.html', {
+            'curso': curso,
+            'eventos_asignados': eventos_asignados,
             'eventos_con_docentes': eventos_con_docentes,
         })
     else:
-        return redirect ('home')
+        return redirect('home')
+
+def generar_dias_semana(evento):
+    dias_semana = []
+    fecha_actual = evento.fechaInicio
+    while fecha_actual <= evento.fechaFin:
+        if fecha_actual.weekday() < 5:  # 0=Lunes, 4=Viernes
+            dias_semana.append(fecha_actual)
+        fecha_actual += timedelta(days=1)
+    return dias_semana
+
+def tomar_asistencia(request, evento_id):
+    evento = get_object_or_404(Evento, id=evento_id)
+    inscripciones = Inscripcion.objects.filter(evento=evento).select_related('usuario__docente')
+    dias_semana = generar_dias_semana(evento)  # Lista de fechas (Lunes a Viernes)
+
+    # Preprocesar asistencias para cada inscripción y día
+    asistencias_por_inscripcion = []
+    for inscripcion in inscripciones:
+        asistencias = {}
+        for fecha in dias_semana:
+            asistencia = inscripcion.asistencia_set.filter(fecha=fecha).first()
+            asistencias[fecha] = asistencia.asistio if asistencia else False
+        asistencias_por_inscripcion.append({
+            'inscripcion': inscripcion,
+            'asistencias': asistencias
+        })
+
+    if request.method == 'POST':
+        for inscripcion in inscripciones:
+            for fecha in dias_semana:
+                asistio = request.POST.get(f'asistencia_{inscripcion.id}_{fecha}', False)
+                Asistencia.objects.update_or_create(
+                    inscripcion=inscripcion,
+                    fecha=fecha,
+                    defaults={'asistio': bool(asistio)}
+                )
+        messages.success(request, "Asistencias guardadas correctamente.")
+        return redirect('tomar-asistencia', evento_id=evento.id)
+
+    return render(request, 'asistencia.html', {
+        'evento': evento,
+        'asistencias_por_inscripcion': asistencias_por_inscripcion,
+        'dias_semana': dias_semana,
+    })
