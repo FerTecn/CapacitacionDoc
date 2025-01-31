@@ -68,9 +68,6 @@ def crearevento(request, evento_id):
 
             evento.save()
 
-            # Crear el curso listo para inscripcion para este evento
-            Inscripcion.objects.get_or_create(evento=evento)
-
             return redirect(reverse('eventolista'))
         else:
             error = "Por favor corrija los errores en el formulario."
