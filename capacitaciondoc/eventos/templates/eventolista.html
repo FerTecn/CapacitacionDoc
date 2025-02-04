@@ -56,9 +56,9 @@
                         <td>{{ evento.curso.instructor }}</td>
                         <td>
                             <!-- Opciones -->
-                            <a href="{% url 'crearevento' evento.id %}" class="btn btn-{% if evento.inscripcion_set.exists %}warning{% else %}primary{% endif %} btn-sm">
-                                {% if evento.inscripcion_set.exists %}Modificar{% else %}Crear{% endif %} evento</a>
-                                {% if evento.inscripcion_set.exists %}
+                            <a href="{% url 'crearevento' evento.id %}" class="btn btn-{% if evento.horaInicio and evento.horaFin %}warning{% else %}primary{% endif %} btn-sm">
+                                {% if evento.horaInicio and evento.horaFin %}Modificar{% else %}Crear{% endif %} evento</a>
+                                {% if evento.horaInicio and evento.horaFin %}
                                 <a href="{% url 'eventodeshacer' evento.id %}" class="btn btn-danger btn-sm">
                                 Deshacer evento</a>{% endif %}
                             <a href="{% url 'eventover' evento.id %}" class="btn btn-success btn-sm">Ver</a>
