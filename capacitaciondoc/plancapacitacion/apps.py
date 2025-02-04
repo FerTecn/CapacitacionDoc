@@ -25,21 +25,18 @@ class PlancapacitacionConfig(AppConfig):
                 permisos_validados = Permission.objects.filter(content_type__app_label='plancapacitacion', codename__icontains='validarcurso')
 
                 # Asignar permisos a los grupos
-                # Grupo Instructor: puede ver, crear, editar o eliminar cursos
-                instructor_group.permissions.add(
-                    *permisos_registro_curso
-                    )
+                # Grupo Instructor: no puede registrar ni validar cursos
 
-                # Grupo Docente: no puede hacer de registrar ni validar cursos
+                # Grupo Docente: no puede registrar ni validar cursos
 
-                # Grupo Jefe Académico: solo puede ver los cursos
+                # Grupo Jefe Académico: registra, modifica, crea y elimina los cursos
                 academico_group.permissions.add(
-                    *permisos_registro_curso.filter(codename__startswith='view'),
+                    *permisos_registro_curso
                 )
 
-                # Grupo Jefe Capacitación: puede ver, agregar, modificar y eliminar cursos y validarlos
+                # Grupo Jefe Capacitación: solo puede ver los cursos y ver los cursos validados
                 capacitacion_group.permissions.add(
-                    *permisos_registro_curso, *permisos_validados.filter(codename__startswith='view')
+                    *permisos_registro_curso.filter(codename__startswith='view'), *permisos_validados.filter(codename__startswith='view')
                 )
 
                 # Grupo Subdirección Académica: Valida cursos
