@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from usuarios.views import home
+from usuarios.views import custom_403_view, custom_404_view, home
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -27,3 +27,6 @@ urlpatterns = [
     path('eventos/', include('eventos.urls')),
     path('encuesta/', include('encuesta.urls')),
 ]
+# Asignar la vista personalizada
+handler403 = custom_403_view
+handler404 = custom_404_view
