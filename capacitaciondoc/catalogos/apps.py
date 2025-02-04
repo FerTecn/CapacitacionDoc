@@ -63,6 +63,20 @@ class CatalogosConfig(AppConfig):
                     *permisos_lugar, *permisos_sede, *permisos_perfil_curso, *permisos_periodo
                 )
 
+                subdireccion_group.permissions.add(
+                    *permisos_instructor.filter(codename__startswith='view'),
+                    *permisos_docente.filter(codename__startswith='view'),
+                    *permisos_dirigido.filter(codename__startswith='view'),
+                    *permisos_departamento.filter(codename__startswith='view'),
+                    *permisos_director.filter(codename__startswith='view'),
+                    *permisos_genero.filter(codename__startswith='view'),
+                    *permisos_grado_academico.filter(codename__startswith='view'),
+                    *permisos_lugar.filter(codename__startswith='view'),
+                    *permisos_sede.filter(codename__startswith='view'),
+                    *permisos_perfil_curso.filter(codename__startswith='view'),
+                    *permisos_periodo.filter(codename__startswith='view'),
+                )
+
             except Permission.DoesNotExist as e:
                 # Mostrar un error detallado en la consola si algún permiso no existe
                 print(f"Error al configurar permisos: {e}")
