@@ -47,7 +47,7 @@
                         <td>
                             <!-- Opciones -->
                             {% if perms.plancapacitacion.view_registrocurso %}
-                            <a href="{% url 'registrocursover' curso.id %}" class="btn btn-success btn-sm">Ver</a>{% endif %}
+                            <a href="{% url 'registrocursover' curso.id %}" class="btn btn-info btn-sm">Ver</a>{% endif %}
                             {% if perms.plancapacitacion.change_registrocurso %}
                             <a href="{% url 'registrocursoactualizar' curso.id %}" class="btn btn-warning btn-sm">Editar</a>{% endif %}
                             {% if perms.plancapacitacion.delete_registrocurso %}
