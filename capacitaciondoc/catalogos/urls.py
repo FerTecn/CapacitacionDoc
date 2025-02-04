@@ -77,5 +77,5 @@ urlpatterns = [
     path('directorcrear/', views.directorcrear, name='directorcrear'),
     path('directorver/<int:director_id>/', views.directorver, name='directorver'),
     path('directoractualizar/<int:director_id>/', views.directoractualizar, name='directoractualizar'),
-    path('directoreliminar/<int:director_id>/', views.directoreliminar, name='directoreliminar'),
+    # path('directoreliminar/<int:director_id>/', views.directoreliminar, name='directoreliminar'),
 ]
