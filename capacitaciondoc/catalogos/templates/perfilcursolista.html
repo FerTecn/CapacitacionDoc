@@ -20,8 +20,9 @@
 <!-- DataTales Example -->
 <div class="card shadow mb-4">
     <div class="card-header py-3 d-flex justify-content-between align-items-center">
-        <h4 class="m-0 font-weight-bold text-primary">Lista de Instructores</h4>
-        <a href="{% url 'perfilcursocrear' %}" class="btn btn-success mb-3">Añadir</a>
+        <h4 class="m-0 font-weight-bold text-primary">Lista de perfiles</h4>
+        {% if perms.catalogos.add_perfilcurso %}
+        <a href="{% url 'perfilcursocrear' %}" class="btn btn-success mb-3">Añadir</a>{% endif %}
     </div>
     <div class="card-body">
         <div class="table-responsive">
@@ -38,9 +39,12 @@
                         <td>{{perfilCurso.perfilCurso}}</td>
                         <td>
                             <!-- Opciones -->
-                            <a href="{% url 'perfilcursover' perfilCurso.id %}" class="btn btn-success btn-sm">Ver</a>
-                            <a href="{% url 'perfilcursoactualizar' perfilCurso.id %}" class="btn btn-warning btn-sm">Editar</a>
-                            <a href="{% url 'perfilcursoeliminar' perfilCurso.id %}" class="btn btn-danger btn-sm">Eliminar</a>
+                             {% if perms.catalogos.view_perfilcurso %}
+                            <a href="{% url 'perfilcursover' perfilCurso.id %}" class="btn btn-info btn-sm">Ver</a>{% endif %}
+                            {% if perms.catalogos.change_perfilcurso %}
+                            <a href="{% url 'perfilcursoactualizar' perfilCurso.id %}" class="btn btn-warning btn-sm">Editar</a>{% endif %}
+                            {% if perms.catalogos.delete_perfilcurso %}
+                            <a href="{% url 'perfilcursoeliminar' perfilCurso.id %}" class="btn btn-danger btn-sm">Eliminar</a>{% endif %}
                         </td>
                     </tr>
                     {% endfor %}

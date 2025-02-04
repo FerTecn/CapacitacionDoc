@@ -81,7 +81,7 @@
     <div class="card shadow mb-4">
         <div class="card-header py-3 d-flex justify-content-between align-items-center">
             <h4 class="m-0 font-weight-bold text-primary">Lista de Instructores</h4>
-            <a href="{% url 'instructorcrear' %}" class="btn btn-success mb-3">Añadir</a>
+            {% comment %} <a href="{% url 'instructorcrear' %}" class="btn btn-success mb-3">Añadir</a> {% endcomment %}
         </div>
         <div class="card-body">
             <div class="table-responsive">
@@ -98,12 +98,14 @@
                         <tr id="instructor-{{ instructor.id }}">
                             <td>{{instructor.user.first_name}} {{instructor.user.last_name_paterno}} {{instructor.user.last_name_materno}}</td>
                             <td>{{instructor.user.curp}}</td>
-                            {% comment %} <td>{{instructor.grado}}</td> {% endcomment %}
                             <td>
                                 <!-- Opciones -->
-                                <a href="{% url 'instructorver' instructor.id %}" class="btn btn-success btn-sm">Ver</a>
-                                <a href="{% url 'instructoractualizar' instructor.id %}" class="btn btn-warning btn-sm">Editar</a>
-                                <a href="{% url 'instructoreliminar' instructor.id %}" class="btn btn-danger btn-sm">Eliminar</a>
+                                {% if perms.catalogos.view_instructor %}
+                                <a href="{% url 'instructorver' instructor.id %}" class="btn btn-info btn-sm">Ver</a>{% endif %}
+                                {% if perms.catalogos.change_instructor %}
+                                <a href="{% url 'instructoractualizar' instructor.id %}" class="btn btn-warning btn-sm">Editar</a>{% endif %}
+                                {% if perms.catalogos.delete_instructor %}
+                                <a href="{% url 'instructoreliminar' instructor.id %}" class="btn btn-danger btn-sm">Eliminar</a>{% endif %}
                             </td>
                         </tr>
                         {% endfor %}

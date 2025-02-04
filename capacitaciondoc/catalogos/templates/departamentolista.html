@@ -21,7 +21,8 @@
 <div class="card shadow mb-4">
     <div class="card-header py-3 d-flex justify-content-between align-items-center">
         <h4 class="m-0 font-weight-bold text-primary">Lista de Departamentos</h4>
-        <a href="{% url 'departamentocrear' %}" class="btn btn-success mb-3">Añadir</a>
+        {% if perms.catalogos.add_departamento %}
+        <a href="{% url 'departamentocrear' %}" class="btn btn-success mb-3">Añadir</a>{% endif %}
     </div>
     <div class="card-body">
         <div class="table-responsive">
@@ -44,9 +45,12 @@
                         <td>{{departamento.nombreJefe}} {{departamento.apParternoJefe}} {{ departamento.apMaternoJefe }}</td>
                         <td>
                             <!-- Opciones -->
-                            <a href="{% url 'departamentover' departamento.id %}" class="btn btn-success btn-sm">Ver</a>
-                            <a href="{% url 'departamentoactualizar' departamento.id %} " class="btn btn-warning btn-sm">Editar</a>
-                            <a href="{% url 'departamentoeliminar' departamento.id %}" class="btn btn-danger btn-sm">Eliminar</a>
+                            {% if perms.catalogos.view_departamento %}
+                            <a href="{% url 'departamentover' departamento.id %}" class="btn btn-info btn-sm">Ver</a> {% endif %}
+                            {% if perms.catalogos.change_departamento %}
+                            <a href="{% url 'departamentoactualizar' departamento.id %} " class="btn btn-warning btn-sm">Editar</a>{% endif %}
+                            {% if perms.catalogos.delete_departamento %}
+                            <a href="{% url 'departamentoeliminar' departamento.id %}" class="btn btn-danger btn-sm">Eliminar</a>{% endif %}
                         </td>
                     </tr>
                     {% endfor %}

@@ -21,7 +21,8 @@
 <div class="card shadow mb-4">
     <div class="card-header py-3 d-flex justify-content-between align-items-center">
         <h4 class="m-0 font-weight-bold text-primary">Lista de Sedes</h4>
-        <a href="{% url 'sedecrear' %}" class="btn btn-success mb-3">Añadir</a>
+        {% if perms.catalogos.add_sede %}
+        <a href="{% url 'sedecrear' %}" class="btn btn-success mb-3">Añadir</a>{% endif %}
     </div>
     <div class="card-body">
         <div class="table-responsive">
@@ -38,9 +39,12 @@
                         <td>{{sede.sede}}</td>
                         <td>
                             <!-- Opciones -->
-                            <a href="{% url 'sedever' sede.id %}" class="btn btn-success btn-sm">Ver</a>
-                            <a href="{% url 'sedeactualizar' sede.id %}" class="btn btn-warning btn-sm">Editar</a>
-                            <a href="{% url 'sedeeliminar' sede.id %}" class="btn btn-danger btn-sm">Eliminar</a>
+                             {% if perms.catalogos.view_sede %}
+                            <a href="{% url 'sedever' sede.id %}" class="btn btn-info btn-sm">Ver</a>{% endif %}
+                            {% if perms.catalogos.change_sede %}
+                            <a href="{% url 'sedeactualizar' sede.id %}" class="btn btn-warning btn-sm">Editar</a>{% endif %}
+                            {% if perms.catalogos.delete_sede %}
+                            <a href="{% url 'sedeeliminar' sede.id %}" class="btn btn-danger btn-sm">Eliminar</a>{% endif %}
                         </td>
                     </tr>
                     {% endfor %}
