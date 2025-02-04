@@ -17,7 +17,7 @@ admin.site.register(GradoAcademico)
 admin.site.register(Sede)
 admin.site.register(Dirigido)
 admin.site.register(PerfilCurso)
-admin.site.register(Director)
+
 admin.site.register(FormacionAcademica)
 admin.site.register(ExperienciaLaboral)
 admin.site.register(ExperienciaDocente)
@@ -84,10 +84,9 @@ class PeriodoAdmin(admin.ModelAdmin):
     list_display=('inicioPeriodo', 'finPeriodo')
 admin.site.register(Periodo, PeriodoAdmin)
 
-
-class HoraAdmin(admin.ModelAdmin):
-    list_display = ('cantidad',)
-    search_fields = ('cantidad',)
+class DirectorAdmin(admin.ModelAdmin):
+    list_display = ('nombre', 'apPaterno', 'apMaterno', 'cargo', 'estatus')
+admin.site.register(Director)
 
 
 
