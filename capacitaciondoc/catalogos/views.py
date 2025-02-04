@@ -708,19 +708,19 @@ def directorver(request, director_id):
 def directoractualizar(request, director_id):
     director= get_object_or_404(Director, id=director_id)
     if request.method == 'POST':
-        form = PeriodoForm(request.POST, instance=director)
+        form = DirectorForm(request.POST, instance=director)
         if form.is_valid():
             form.save()
-            return redirect('periodolista') 
+            return redirect('directorlista')
     else:
         form = DirectorForm(instance=director)
     return render(request, 'directoractualizar.html', {'form': form, 'director': director})
 
-@login_required(login_url='signin')
-@permission_required('catalogos.delete_director', raise_exception=True)
-def directoreliminar(request, director_id):
-    director = get_object_or_404(Director, id=director_id)
-    if request.method == 'POST':
-        director.delete()
-        return redirect('directorlista')  
-    return render(request, 'directoreliminar.html', {'director': director})
+# @login_required(login_url='signin')
+# @permission_required('catalogos.delete_director', raise_exception=True)
+# def directoreliminar(request, director_id):
+#     director = get_object_or_404(Director, id=director_id)
+#     if request.method == 'POST':
+#         director.delete()
+#         return redirect('directorlista')  
+#     return render(request, 'directoreliminar.html', {'director': director})
