@@ -32,6 +32,7 @@
                         <th>Periodo</th>
                         <th>Horas</th>
                         <th>Instructor</th>
+                        <th>Estado</th>
                         <th>Opciones</th>
                     </tr>
                 </thead>
@@ -42,16 +43,22 @@
                         <td>{{ validar.curso.horas }}</td>
                         <td>{{ validar.curso.instructor }}</td>
                         <td>
+                            {% if validar.curso.aceptado %}
+                                <button class="btn btn-secondary btn-sm" disabled>Aceptado</button>
+                            {% else %}
+                            <button class="btn btn-secondary btn-sm" disabled>No aceptado</button>
+                            {% endif %}
+                        </td>
+                        <td>
                             {% if perms.plancapacitacion.view_registrocurso %}
-                            <a href="{% url 'validarver' validar.id %}" class="btn btn-success btn-sm">Ver</a>{% endif %}
+                            <a href="{% url 'validarver' validar.id %}" class="btn btn-info btn-sm">Ver</a>{% endif %}
                             <!-- Al dar clic en Aceptar se vuelve true y cambia a aceptado, asi mismo se bloquea el botón-->
                             {% if validar.curso.aceptado %}
-                            {% if perms.plancapacitacion.change_registrocurso %}
-                                <button class="btn btn-secondary btn-sm" disabled>Aceptado</button>
-                                <a href="{% url 'invalidar_curso' validar.curso.id %}" class="btn btn-warning btn-sm">Invalidar</a>{% endif %}
+                                {% if perms.plancapacitacion.change_registrocurso %}
+                                    <a href="{% url 'invalidar_curso' validar.curso.id %}" class="btn btn-warning btn-sm">Invalidar</a>{% endif %}
                             {% else %}
-                            {% if perms.plancapacitacion.change_registrocurso %}
-                                <a href="{% url 'aceptar_curso' validar.id %}" class="btn btn-primary btn-sm">Aceptar</a>{% endif %}
+                                {% if perms.plancapacitacion.change_registrocurso %}
+                                    <a href="{% url 'aceptar_curso' validar.id %}" class="btn btn-primary btn-sm">Aceptar</a>{% endif %}
                             {% endif %}
                         </td>
                     </tr>
