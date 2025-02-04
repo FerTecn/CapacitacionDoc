@@ -179,3 +179,4 @@ class Director(models.Model):
     apPaterno=models.CharField(max_length=40)
     apMaterno=models.CharField(max_length=40)
     puesto=models.CharField(max_length=40)
+    estatus=models.BooleanField()
