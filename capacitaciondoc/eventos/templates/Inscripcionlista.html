@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}- Cursos {% endblock %}
+{% block title %}- Inscripciones {% endblock %}
 
 {% block styles %}
 <!-- Custom styles for this page -->
@@ -22,7 +22,7 @@
     </div>
 {% endif %}
 
-{% if request.user.rol == 'Docente' %}
+{% if es_docente %}
 <!-- Encabezado de página -->
 <h1 class="h3 mb-2 text-gray-800">Cursos en los que estás inscrito</h1>
 <div class="row">
@@ -31,18 +31,14 @@
             <div class="col-xl-4 col-md-6 mb-4">
                 <div class="card border-left-primary shadow h-100 py-2">
                     <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <div class="font-weight-bold text-primary text-uppercase mb-1">{{ evento.curso.nombre }}</div>
-                                <div class="font-weight-bold text-gray mb-1">{{ evento.curso.instructor }}</div>
-                                <div class="font-weight-bold text-gray mb-1">{{ evento.fechaInicio }} - {{evento.fechaFin}}</div>
-                                <div class="font-weight-bold text-gray mb-1">{{ evento.horaInicio }} - {{evento.horaFin}}</div>
-                                {% if perms.eventos.view_inscripcion %}
-                                <a href="{% url 'vercurso' evento.id %}" class="btn btn-primary btn-sm btn-block mb-2">Ver</a>{% endif %}
-                                {% if perms.eventos.change_inscripcion %}
-                                <a href="{% url 'invalidarinscripcion' evento.id %}" class="btn btn-warning btn-sm btn-block">Invalidar</a>{% endif %}
-                            </div>
-                        </div>
+                        <div class="font-weight-bold text-primary text-uppercase mb-1">{{ evento.curso.nombre }}</div>
+                        <div class="font-weight-bold text-gray mb-1">{{ evento.curso.instructor }}</div>
+                        <div class="font-weight-bold text-gray mb-1">{{ evento.fechaInicio }} - {{evento.fechaFin}}</div>
+                        <div class="font-weight-bold text-gray mb-1">{{ evento.horaInicio }} - {{evento.horaFin}}</div>
+                        {% if perms.eventos.view_inscripcion %}
+                        <a href="{% url 'vercurso' evento.id %}" class="btn btn-info btn-sm btn-block mb-2">Ver</a>{% endif %}
+                        {% if perms.eventos.change_inscripcion %}
+                        <a href="{% url 'invalidarinscripcion' evento.id %}" class="btn btn-warning btn-sm btn-block">Invalidar</a>{% endif %}
                     </div>
                 </div>
             </div>
@@ -57,42 +53,66 @@
 </div>
 {% endif %}
 
+{% if es_instructor %}
+    <h1 class="h3 mb-2 text-gray-800">Cursos asignados</h1>
+    <div class="row">
+        {% if eventos_instructor %}
+            {% for evento in eventos_instructor %}
+                <div class="col-xl-4 col-md-6 mb-4">
+                    <div class="card border-left-info shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="font-weight-bold text-info text-uppercase mb-1">{{ evento.curso.nombre }}</div>
+                            <div class="font-weight-bold text-gray mb-1">{{ evento.fechaInicio }} - {{ evento.fechaFin }}</div>
+                            <div class="font-weight-bold text-gray mb-1">{{ evento.horaInicio }} - {{evento.horaFin}}</div>
+                            <a href="{% url 'vercurso' evento.id %}" class="btn btn-info btn-sm btn-block">Ver</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No tienes cursos asignados como instructor.</p>
+        {% endif %}
+    </div>
+{% endif %}
+
 <!-- Todos los cursos -->
-<h1 class="h3 mb-2 text-gray-800">
-    {% if request.user.rol == 'Docente' %}Cursos en los que puedes inscribirte
-    {% else %}Lista de todos los cursos {% endif %}
-</h1>
-<div class="row">
-    {% if eventos_disponibles %}
-        {% for evento in eventos_disponibles %}
-            <div class="col-xl-4 col-md-6 mb-4">
-                <div class="card border-left-success shadow h-100 py-2">
-                    <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <div class="font-weight-bold text-success text-uppercase mb-1">{{ evento.curso.nombre }}</div>
-                                <div class="font-weight-bold text-gray mb-1">{{ evento.curso.instructor }}</div>
-                                <div class="font-weight-bold text-gray mb-1">{{ evento.fechaInicio }} - {{evento.fechaFin}}</div>
-                                <div class="font-weight-bold text-gray mb-1">{{ evento.horaInicio }} - {{evento.horaFin}}</div>
-                                {% if perms.eventos.view_inscripcion %}
-                                <a href="{% url 'vercurso' evento.id %}" class="btn btn-primary btn-sm btn-block mb-2">Ver</a>{% endif %}
-                                {% if perms.eventos.change_inscripcion %}
-                                <a href="{% url 'aceptarinscripcion' evento.id %}" class="btn btn-success btn-sm btn-block">Incribirse</a>{% endif %}
+{% if not es_instructor %}
+    <h1 class="h3 mb-2 text-gray-800">
+        {% if es_docente %}Cursos en los que puedes inscribirte
+        {% elif not es_docente and not es_instructor %}Lista de todos los cursos {% endif %}
+    </h1>
+    <div class="row">
+        {% if eventos_disponibles %}
+            {% for evento in eventos_disponibles %}
+                <div class="col-xl-4 col-md-6 mb-4">
+                    <div class="card border-left-success shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="font-weight-bold text-success text-uppercase mb-1">{{ evento.curso.nombre }}</div>
+                                    <div class="font-weight-bold text-gray mb-1">{{ evento.curso.instructor }}</div>
+                                    <div class="font-weight-bold text-gray mb-1">{{ evento.fechaInicio }} - {{evento.fechaFin}}</div>
+                                    <div class="font-weight-bold text-gray mb-1">{{ evento.horaInicio }} - {{evento.horaFin}}</div>
+                                    {% if perms.eventos.view_inscripcion %}
+                                    <a href="{% url 'vercurso' evento.id %}" class="btn btn-info btn-sm btn-block mb-2">Ver</a>{% endif %}
+                                    {% if perms.eventos.change_inscripcion %}
+                                    <a href="{% url 'aceptarinscripcion' evento.id %}" class="btn btn-success btn-sm btn-block">Incribirse</a>{% endif %}
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+            {% endfor %}
+        {% else %}
+            <div class="card col-xl-12 mb-4">
+                <div class="card-body">
+                    {% if es_docente %}No hay cursos en los que puedas inscribirte.
+                    {% elif not es_docente and not es_instructor %}No hay cursos disponibles. {% endif %}
+                </div>
             </div>
-        {% endfor %}
-    {% else %}
-        <div class="card col-xl-12 mb-4">
-            <div class="card-body">
-                {% if request.user.rol == 'Docente' %}No hay cursos en los que puedas inscribirte.
-                {% else %}No hay cursos disponibles. {% endif %}
-            </div>
-        </div>
-    {% endif %}
-</div>
+        {% endif %}
+    </div>
+{% endif %}
 {% endblock %}
 
 {% block scripts %}
