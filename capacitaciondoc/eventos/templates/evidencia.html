@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}- Cargar evidencia{% endblock %}
+
+{% block content %}
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="form-row">
+        <div class="form-group col-md-4 align-items-center">
+            <p><strong style="display: block;">Nombre del curso:</strong> {{ evento.curso.nombre }}</p>
+        </div>
+        <div class="form-group col-md-4 align-items-center">
+            <p><strong style="display: block;">Periodo del curso:</strong> {{ evento.curso.periodo }}</p>
+        </div>
+        <div class="form-group col-md-4 align-items-center">
+            <p><strong style="display: block;">Instructor:</strong> {{ evento.curso.instructor }}</p>
+        </div>
+    </div>
+    <hr>
+    <div class="card py-2">
+        <div class="card-body">
+            <div class="form-row">
+                <div class="form-group col-md-6 align-items-center">
+                    <p><strong style="display: block;">Evidencia anterior:</strong></p>
+                    <div class="card" style="width: 100%; height: 20rem">
+                        <div class="card-body">
+
+                        {% if evidencia.archivo_evidencia %}
+                            <img src="{{ evidencia.archivo_evidencia.url }}" style="width: 100%; height: 100%; object-fit: contain;">
+                        {% else %}
+                            No hay evidencia
+                        {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group col-md-6 align-items-center">
+                    <p><strong style="display: block;">Cargar evidencia:</strong></p>
+                    
+                    <!-- Input file oculto -->
+                    <input type="file" name="archivo_evidencia" id="imagen-input" class="d-none">
+        
+                    <!-- Botón personalizado -->
+                    <label for="imagen-input" class="btn btn-primary">Seleccionar archivo</label>
+        
+                    <!-- Mostrar nombre del archivo seleccionado -->
+                    <span id="nombre-archivo" class="text-muted">No se eligió ningún archivo</span>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+    
+    <div class="text-center my-2">
+        <button type="submit" class="btn btn-success">Guardar evidencia</button>
+        <a href="{% url 'calificacion' %}" class="btn btn-primary">Regresar</a>
+    </div>
+    
+</form>
+{% endblock content %}
+
+{% block scripts %}
+<script>
+    document.getElementById("imagen-input").addEventListener("change", function() {
+        var archivo = this.files[0]; // Obtiene el archivo seleccionado
+        if (archivo) {
+            document.getElementById("nombre-archivo").textContent = archivo.name;
+        } else {
+            document.getElementById("nombre-archivo").textContent = "No se eligió ningún archivo";
+        }
+    });
+    </script>
+    
+{% endblock scripts %}

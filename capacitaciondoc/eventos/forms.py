@@ -1,5 +1,5 @@
 from django import forms
-from .models import Evento
+from .models import Evento, Evidencia
 
 class EventoForm(forms.ModelForm):
     class Meta:
@@ -32,3 +32,15 @@ class EventoForm(forms.ModelForm):
             raise forms.ValidationError("La hora de inicio debe ser menor que la hora de fin.")
 
         return cleaned_data
+
+class EvidenciaForm(forms.ModelForm):
+    class Meta:
+        model = Evidencia
+        fields = ['archivo_evidencia']
+        widgets = {
+            'archivo_evidencia': forms.FileInput(attrs={
+                'class': 'btn btn-primary',  # Clase CSS para estilos
+                'accept': 'image/*',  # Aceptar solo imágenes
+                'id': 'imagen-input',  # ID para JavaScript
+            }),
+        }

@@ -1,3 +1,4 @@
+import os
 from django.db import models
 from django.conf import settings
 from catalogos.models import Docente, Lugar, Instructor
@@ -61,15 +62,33 @@ class oficioComision(models.Model):
 
     class Meta:
         verbose_name_plural = 'Inscripciones'
-class calificacion(models.Model):
-    clave = models.CharField(max_length=10)
-    nombre=models.CharField(max_length=40)
-    periodo=models.CharField(max_length=40)
-    lugar=models.CharField(max_length=40)
-    horas=models.CharField(max_length=40)
+# class calificacion(models.Model):
+#     clave = models.CharField(max_length=10)
+#     nombre=models.CharField(max_length=40)
+#     periodo=models.CharField(max_length=40)
+#     lugar=models.CharField(max_length=40)
+#     horas=models.CharField(max_length=40)
     
-    def __str__(self):
-        return f"{self.nombre} {self.periodo} {self.lugar} {self.horas} "
+#     def __str__(self):
+#         return f"{self.nombre} {self.periodo} {self.lugar} {self.horas} "
     
+#     class Meta:
+#         verbose_name_plural = 'Calificaciones'
+
+
+class Evidencia(models.Model):
+    evento = models.ForeignKey(Evento, on_delete=models.CASCADE)
+    evidencia = models.BooleanField(default=False)
+    archivo_evidencia = models.ImageField(upload_to='evidencias/', blank=True, null=True)
+
     class Meta:
-        verbose_name_plural = 'Calificaciones'
+        verbose_name_plural = 'Evidencias'
+
+
+    def save(self, *args, **kwargs):
+        """ Marcar `evidencia = True` si se sube un archivo """
+        if self.archivo_evidencia:
+            self.evidencia = True
+        else:
+            self.evidencia = False
+        super().save(*args, **kwargs)

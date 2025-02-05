@@ -5,8 +5,11 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from plancapacitacion.models import RegistroCurso
 
-from .forms import EventoForm
-from .models import Asistencia, Evento, Inscripcion
+from django.core.files.storage import FileSystemStorage #Para archivos y directorios
+
+
+from .forms import EventoForm, EvidenciaForm
+from .models import Asistencia, Evento, Evidencia, Inscripcion
 from catalogos.models import Docente, Lugar, Instructor, GradoAcademico, Periodo
 
 # Create your views here.
@@ -65,6 +68,8 @@ def crearevento(request, evento_id):
             lugar_id = request.POST.get('lugar')
             lugar = get_object_or_404(Lugar, id=lugar_id)
             evento.lugar = lugar
+            if not Evidencia.objects.filter(evento=evento).exists():
+                Evidencia.objects.create(evento=evento)
 
             evento.save()
 
@@ -93,6 +98,9 @@ def eventodeshacer(request, evento_id):
     # Eliminar las inscripciones asociadas al evento
     inscripciones = Inscripcion.objects.filter(evento=evento)
     inscripciones.delete()
+    # Elimina la evidencia que el instructor carga
+    evidencias = Evidencia.objects.filter(evento=evento)
+    evidencias.delete()
     messages.success(request, "Se deshizo el evento.")
 
     # Limpiar los campos de lugar y fechas del evento
@@ -314,11 +322,46 @@ def listacursosasistencia(request):
         'eventos': eventos,
     })
 
+def listacursoscalificacion(request):
+    # Filtrar eventos que tienen lugar, fecha y hora definidos
+    eventos = Evento.objects.filter(
+        lugar__isnull=False, fechaInicio__isnull=False, fechaFin__isnull=False
+    ).order_by('curso__nombre')
+
+    if request.user.rol == 'Instructor':
+        # Filtrar eventos donde el usuario es instructor
+        eventos = eventos.filter(curso__instructor__user=request.user)
+
+    return render(request, 'listacursoscalificacion.html', {
+        'eventos': eventos,
+    })
+
 def detalle_curso_asistencia(request, evento_id):
     evento = get_object_or_404(Evento, id=evento_id)
     inscritos = Inscripcion.objects.filter(evento=evento).select_related('usuario__docente')
     return render(request, 'detallecursoasistencia.html', {'evento': evento, 'inscritos': inscritos})
 
+def detalle_curso_calificacion(request, evento_id):
+    evento = get_object_or_404(Evento, id=evento_id)
+    inscritos = Inscripcion.objects.filter(evento=evento).select_related('usuario__docente')
+    return render(request, 'detallecursocalificacion.html', {'evento': evento, 'inscritos': inscritos})
+
+
+def evidencia(request, evento_id):
+    evento = get_object_or_404(Evento, id=evento_id)
+    evidencia = Evidencia.objects.filter(evento=evento).first()
+
+    if request.method == 'POST':
+        form = EvidenciaForm(request.POST, request.FILES, instance=evidencia)
+        fs = FileSystemStorage()
+        fs.delete(evidencia.archivo_evidencia.name)
+        if form.is_valid():
+            form.save()
+            return redirect('detalle_curso_calificacion', evento_id=evento.id)
+    else:
+        
+        form = EvidenciaForm(instance=evidencia)
+    return render(request, 'evidencia.html', {'evento':evento, 'evidencia':evidencia, 'form': form})
 
 def generar_dias_semana(evento):
     dias_semana = []
