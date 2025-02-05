@@ -24,6 +24,16 @@ class EventosConfig(AppConfig):
                 permisos_eventos = Permission.objects.filter(content_type__app_label='eventos', codename__icontains='evento')
                 permisos_inscripciones = Permission.objects.filter(content_type__app_label='eventos', codename__icontains='inscripcion')
 
+                def limpiar_permisos(grupo):
+                    permisos_actuales = grupo.permissions.filter(content_type__app_label='eventos')
+                    grupo.permissions.remove(*permisos_actuales)
+
+                limpiar_permisos(docente_group)
+                limpiar_permisos(instructor_group)
+                limpiar_permisos(academico_group)
+                limpiar_permisos(capacitacion_group)
+                limpiar_permisos(subdireccion_group)
+
                 # Asignar permisos a los grupos
                 # Grupo Instructor: no puede crear eventos, ve inscripciones de su curso
                 instructor_group.permissions.add(
@@ -47,7 +57,10 @@ class EventosConfig(AppConfig):
                     *permisos_inscripciones.filter(codename__startswith='view'),
                 )
 
-                # Grupo Subdirección Académica: Valida cursos
+                # Grupo Subdirección Académica: Solo ve eventos
+                subdireccion_group.permissions.add(
+                    *permisos_eventos.filter(codename__startswith='view'),
+                )
 
             except Permission.DoesNotExist as e:
                 # Mostrar un error detallado en la consola si algún permiso no existe
