@@ -44,6 +44,7 @@
                         <th>Periodo</th>
                         <th>Horas</th>
                         <th>Instructor</th>
+                        <th>Evento creado</th>
                         <th>Opciones</th>
                     </tr>
                 </thead>
@@ -55,13 +56,22 @@
                         <td>{{ evento.curso.horas }}</td>
                         <td>{{ evento.curso.instructor }}</td>
                         <td>
+                            {% if evento.horaInicio and evento.horaFin %}
+                            <button class="btn btn-secondary btn-sm" disabled>Evento creado</button>
+                            {% else %}<button class="btn btn-secondary btn-sm" disabled>Sin evento</button>{% endif %}</td>
+                        <td>
                             <!-- Opciones -->
-                            <a href="{% url 'crearevento' evento.id %}" class="btn btn-{% if evento.horaInicio and evento.horaFin %}warning{% else %}primary{% endif %} btn-sm">
-                                {% if evento.horaInicio and evento.horaFin %}Modificar{% else %}Crear{% endif %} evento</a>
+                            {% if perms.eventos.change_evento %}
+                                <a href="{% url 'crearevento' evento.id %}" class="btn btn-{% if evento.horaInicio and evento.horaFin %}warning{% else %}primary{% endif %} btn-sm">
+                                    {% if evento.horaInicio and evento.horaFin %}Modificar{% else %}Crear{% endif %} evento</a>
+                            {% endif %}
+
+                            {% if perms.eventos.delete_evento %}
                                 {% if evento.horaInicio and evento.horaFin %}
-                                <a href="{% url 'eventodeshacer' evento.id %}" class="btn btn-danger btn-sm">
-                                Deshacer evento</a>{% endif %}
-                            <a href="{% url 'eventover' evento.id %}" class="btn btn-success btn-sm">Ver</a>
+                                    <a href="{% url 'eventodeshacer' evento.id %}" class="btn btn-danger btn-sm">Deshacer evento</a>{% endif %}
+                            {% endif %}
+                            {% if perms.eventos.view_evento %}
+                            <a href="{% url 'eventover' evento.id %}" class="btn btn-info btn-sm">Ver</a>{% endif %}
                         </td>
                     </tr>
                     {% endfor %}
