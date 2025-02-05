@@ -3,7 +3,8 @@ from .models import Evento
 from .models import Asistencia
 from .models import oficioComision
 from .models import Inscripcion
-from .models import calificacion
+from .models import Evidencia
+# from .models import calificacion
 
 # Register your models here.
 class EventoAdmin(admin.ModelAdmin):
@@ -21,7 +22,12 @@ class oficioComisionAdmin(admin.ModelAdmin):
     list_display = ('fecha', 'nombre', 'lugar', 'horas')
 admin.site.register(oficioComision, oficioComisionAdmin)
 
-class calificacionAdmin(admin.ModelAdmin):
-    list_display = ('nombre', 'periodo', 'lugar', 'horas')
-admin.site.register(calificacion, calificacionAdmin)
+class EvidenciaAdmin(admin.ModelAdmin):
+    list_display = ('evento__curso__nombre','evento__curso__instructor', 'evidencia', 'archivo_evidencia')
+
+admin.site.register(Evidencia, EvidenciaAdmin)
+
+# class calificacionAdmin(admin.ModelAdmin):
+#     list_display = ('nombre', 'periodo', 'lugar', 'horas')
+# admin.site.register(calificacion, calificacionAdmin)
 
