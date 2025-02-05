@@ -19,7 +19,7 @@ urlpatterns = [
     path('invalidar/<int:evento_id>/', views.invalidarinscripcion, name='invalidarinscripcion'),
 
     #Cursos y asistencias
-    path('miscursos/', views.miscursosinstructor, name='miscursos'),
-    path('mis-cursos/<int:curso_id>/', views.detalle_curso, name='detalle_curso'),
+    path('asistencia/', views.listacursosasistencia, name='asistencia'),
+    path('asistencia/<int:evento_id>/', views.detalle_curso_asistencia, name='detalle_curso_asistencia'),
     path('tomar-asistencia/<int:evento_id>/', views.tomar_asistencia, name='tomar-asistencia'),
 ]
