@@ -16,6 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
 from usuarios.views import custom_403_view, custom_404_view, home
 
 urlpatterns = [
@@ -30,3 +31,7 @@ urlpatterns = [
 # Asignar la vista personalizada
 handler403 = custom_403_view
 handler404 = custom_404_view
+
+if settings.DEBUG:
+    from django.conf.urls.static import static
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
