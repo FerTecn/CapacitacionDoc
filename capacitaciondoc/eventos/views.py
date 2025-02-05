@@ -92,21 +92,18 @@ def eventodeshacer(request, evento_id):
 
     # Eliminar las inscripciones asociadas al evento
     inscripciones = Inscripcion.objects.filter(evento=evento)
-    if inscripciones.exists():
-        inscripciones.delete()
-        messages.success(request, "Las inscripciones asociadas al evento han sido eliminadas.")
+    inscripciones.delete()
+    messages.success(request, "Se deshizo el evento.")
 
-        # Limpiar los campos de lugar y fechas del evento
-        evento.lugar = None
-        evento.fechaInicio = None
-        evento.fechaFin = None
-        evento.horaInicio = None
-        evento.horaFin = None
-        evento.save()
+    # Limpiar los campos de lugar y fechas del evento
+    evento.lugar = None
+    evento.fechaInicio = None
+    evento.fechaFin = None
+    evento.horaInicio = None
+    evento.horaFin = None
+    evento.save()
 
-        messages.info(request, "Los campos de lugar y fecha del evento han sido limpiados.")
-    else:
-        messages.info(request, "No hay inscripciones asociadas a este evento.")
+    messages.info(request, "Puedes crear el evento nuevamente.")
 
     # Redirigir a la lista de eventos
     return redirect(reverse('eventolista'))
@@ -232,28 +229,46 @@ def añadirinstructor(request, evento_id):
 @login_required(login_url='signin')
 @permission_required('eventos.view_evento', raise_exception=True)
 def inscripcionlista(request):
+    usuario = request.user
+    # Verificar si el usuario es docente o instructor
+    es_docente = Docente.objects.filter(user=usuario).exists()
+    es_instructor = Instructor.objects.filter(user=usuario).exists()
+
     # Filtrar eventos que tienen lugar, fecha y hora definidos
     eventos_disponibles = Evento.objects.filter(
         lugar__isnull=False, fechaInicio__isnull=False, fechaFin__isnull=False
-    )
+    ).order_by('curso__nombre')
 
-    # Verificar en qué eventos está inscrito el usuario actual
-    inscripciones_usuario = Inscripcion.objects.filter(usuario=request.user)
+    eventos_inscritos = []
+    eventos_instructor = []
 
-    # Dividir eventos en dos listas
-    eventos_inscritos = [inscripcion.evento for inscripcion in inscripciones_usuario]
-    eventos_disponibles = eventos_disponibles.exclude(id__in=[evento.id for evento in eventos_inscritos])
+    if es_docente:
+        # Obtener eventos donde el usuario está inscrito
+        inscripciones_usuario = Inscripcion.objects.filter(usuario=usuario).order_by('evento__curso__nombre')
+        eventos_inscritos = [inscripcion.evento for inscripcion in inscripciones_usuario]
+
+        # Filtrar eventos en los que aún no está inscrito
+        eventos_disponibles = eventos_disponibles.exclude(id__in=[evento.id for evento in eventos_inscritos])
+
+    elif es_instructor:
+        # Filtrar eventos donde el usuario es instructor
+        eventos_instructor = eventos_disponibles.filter(curso__instructor__user=usuario)
 
     return render(request, 'inscripcionlista.html', {
-        'eventos_disponibles': eventos_disponibles,
+        'es_docente': es_docente,
+        'es_instructor': es_instructor,
         'eventos_inscritos': eventos_inscritos,
+        'eventos_instructor': eventos_instructor,
+        'eventos_disponibles': eventos_disponibles,
     })
 
 @login_required(login_url='signin')
 @permission_required('eventos.view_evento', raise_exception=True)
 def vercurso(request, evento_id):
     evento = get_object_or_404(Evento, id=evento_id)
-    return render(request, 'vercurso.html', {'evento': evento})
+    inscritos = Inscripcion.objects.filter(evento=evento).select_related('usuario__docente')
+
+    return render(request, 'vercurso.html', {'evento': evento, 'inscritos': inscritos})
 
 @login_required(login_url='signin')
 @permission_required('eventos.change_inscripcion', raise_exception=True)
@@ -284,47 +299,26 @@ def invalidarinscripcion(request, evento_id):
     return redirect('inscripcionlista')
 
 @login_required(login_url='signin')
-@permission_required('plancapacitacion.view_registrocurso', raise_exception=True)
-def miscursosinstructor(request):
+# @permission_required('plancapacitacion.view_registrocurso', raise_exception=True)
+def listacursosasistencia(request):
+    # Filtrar eventos que tienen lugar, fecha y hora definidos
+    eventos = Evento.objects.filter(
+        lugar__isnull=False, fechaInicio__isnull=False, fechaFin__isnull=False
+    ).order_by('curso__nombre')
+
     if request.user.rol == 'Instructor':
-        # Obtener el instructor a partir del usuario autenticado
-        instructor = get_object_or_404(Instructor, user=request.user)
+        # Filtrar eventos donde el usuario es instructor
+        eventos = eventos.filter(curso__instructor__user=request.user)
 
-        # Obtener los cursos asignados al instructor actual
-        cursos_asignados = RegistroCurso.objects.filter(instructor=instructor)
-        eventos_asignados = Evento.objects.filter(curso__in=cursos_asignados)
+    return render(request, 'listacursosasistencia.html', {
+        'eventos': eventos,
+    })
 
-        return render(request, 'miscursos.html', {
-            'eventos': eventos_asignados,
-            'cursos': cursos_asignados,
-        })
-    else:
-        return redirect('home')
+def detalle_curso_asistencia(request, evento_id):
+    evento = get_object_or_404(Evento, id=evento_id)
+    inscritos = Inscripcion.objects.filter(evento=evento).select_related('usuario__docente')
+    return render(request, 'detallecursoasistencia.html', {'evento': evento, 'inscritos': inscritos})
 
-def detalle_curso(request, curso_id):
-    if request.user.rol == 'Instructor':
-        # Obtener el curso específico
-        curso = get_object_or_404(RegistroCurso, id=curso_id)
-
-        # Obtener los eventos relacionados con ese curso
-        eventos_asignados = Evento.objects.filter(curso=curso)
-
-        # Obtener los docentes inscritos en esos eventos
-        eventos_con_docentes = []
-        for evento in eventos_asignados:
-            docentes_inscritos = Inscripcion.objects.filter(evento=evento)
-            eventos_con_docentes.append({
-                'evento': evento,
-                'docentes': docentes_inscritos
-            })
-
-        return render(request, 'vercurso.html', {
-            'curso': curso,
-            'eventos_asignados': eventos_asignados,
-            'eventos_con_docentes': eventos_con_docentes,
-        })
-    else:
-        return redirect('home')
 
 def generar_dias_semana(evento):
     dias_semana = []
