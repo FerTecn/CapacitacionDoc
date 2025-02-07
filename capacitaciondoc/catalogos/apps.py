@@ -34,20 +34,27 @@ class CatalogosConfig(AppConfig):
                 permisos_director = Permission.objects.filter(content_type__app_label='catalogos', codename__icontains='director')
                 permisos_periodo = Permission.objects.filter(content_type__app_label='catalogos', codename__icontains='periodo')
                 
+                def limpiar_permisos(grupo):
+                    permisos_actuales = grupo.permissions.filter(content_type__app_label='catalogos')
+                    grupo.permissions.remove(*permisos_actuales)
 
-
+                limpiar_permisos(docente_group)
+                limpiar_permisos(instructor_group)
+                limpiar_permisos(academico_group)
+                limpiar_permisos(capacitacion_group)
+                limpiar_permisos(subdireccion_group)
 
                 # Asignar permisos a los grupos
                 # Grupo Instructor: solo puede ver y editar instructores
                 instructor_group.permissions.add(
                     *permisos_instructor.filter(codename__startswith='view'),
-                    *permisos_instructor.filter(codename__startswith='edit')
+                    *permisos_instructor.filter(codename__startswith='change')
                     )
 
                 # Grupo Docente: solo puede ver y editar docentes
                 docente_group.permissions.add(
                     *permisos_docente.filter(codename__startswith='view'),
-                    *permisos_docente.filter(codename__startswith='edit')
+                    *permisos_docente.filter(codename__startswith='change')
                 )
 
                 # Grupo Jefe Académico: puede ver instructores y docentes, pero no editarlos
