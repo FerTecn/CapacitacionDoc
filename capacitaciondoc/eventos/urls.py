@@ -25,7 +25,8 @@ urlpatterns = [
 
     # #Cursos y calificaciones
     path('evidencia/<int:evento_id>/', views.evidencia, name='evidencia'),
+
     path('calificacion/', views.listacursoscalificacion, name='calificacion'),
     path('calificacion/<int:evento_id>/', views.detalle_curso_calificacion, name='detalle_curso_calificacion'),
-    # path('asignar-calificacion/<int:evento_id>/', views.asignar_calificacion, name='asignar_calificacion'),
+    path('asignar-calificacion/<int:evento_id>/', views.asignar_calificacion, name='asignar_calificacion'),
 ]
