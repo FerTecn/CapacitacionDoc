@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}- Consulta de fichas técnicas{% endblock %}
+
+{% block styles %}
+<!-- Custom styles for this page -->
+<link href="../../static/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<!-- Page Heading -->
+<h1 class="h3 mb-2 text-gray-800">Consulta de Fichas técnicas </h1>
+<div class="card">
+    <div class="card-body">
+        Aquí puedes consultar las fichas técnicas de cada curso
+    </div>
+</div><br>
+
+<!-- DataTales Example -->
+<div class="card shadow mb-4">
+    <div class="card-header py-3 d-flex justify-content-between align-items-center">
+        <h4 class="m-0 font-weight-bold text-primary">Lista de Cursos</h4>
+    </div>
+    <div class="card-body">
+        {% if cursos %}
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Periodo</th>
+                        <th>Horas</th>
+                        <th>Instructor</th>
+                        <th>Opciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for curso in cursos %}
+                    <tr id="curso-{{ curso.id }}">
+                        <td>{{curso.nombre}}</td>
+                        <td>{{curso.periodo}}</td>
+                        <td>{{curso.horas}}</td>
+                        <td>{{curso.instructor}}</td>
+                        <td>
+                            <!-- Opciones -->
+                            {% comment %} {% if perms.plancapacitacion.view_registrocurso %} {% endcomment %}
+                            <a href="{% url 'fichatecnicaver' curso.id %}" class="btn btn-info btn-sm">Ver ficha técnica</a>
+                            {% comment %} {% endif %} {% endcomment %}
+                            {% comment %} {% if perms.plancapacitacion.change_registrocurso %}
+                            <a href="{% url 'fichatecnica' curso.id %}" class="btn btn-warning btn-sm">Crear/Modificar ficha técnica</a>{% endif %} {% endcomment %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p>No hay cursos registrados.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<!-- Page level plugins -->
+<script src="{% static 'vendor/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
+
+<!-- Page level custom scripts -->
+<script src="{% static 'js/demo/datatables-demo.js' %}"></script>
+{% endblock %}
