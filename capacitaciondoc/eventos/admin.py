@@ -4,7 +4,7 @@ from .models import Asistencia
 from .models import oficioComision
 from .models import Inscripcion
 from .models import Evidencia
-# from .models import calificacion
+from .models import Calificacion
 
 # Register your models here.
 class EventoAdmin(admin.ModelAdmin):
@@ -27,7 +27,5 @@ class EvidenciaAdmin(admin.ModelAdmin):
 
 admin.site.register(Evidencia, EvidenciaAdmin)
 
-# class calificacionAdmin(admin.ModelAdmin):
-#     list_display = ('nombre', 'periodo', 'lugar', 'horas')
-# admin.site.register(calificacion, calificacionAdmin)
+admin.site.register(Calificacion)
 
