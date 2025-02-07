@@ -29,6 +29,8 @@ class RegistroCurso(models.Model):
         # Asegúrate de que el curso no esté ya en validarCurso
         if not ValidarCurso.objects.filter(curso=self).exists():
             ValidarCurso.objects.create(curso=self)
+        if not FichaTecnica.objects.filter(curso=self).exists():
+            FichaTecnica.objects.create(curso=self)
     
     class Meta:
         verbose_name_plural = 'Registro de cursos'
@@ -44,19 +46,37 @@ class ValidarCurso(models.Model):
         verbose_name_plural = 'Validación de cursos'
 
 class FichaTecnica(models.Model):
-    clave = models.CharField(max_length=10)
-    nombre=models.CharField(max_length=40)
-    instructor=models.CharField(max_length=40)
-    justificacion=models.CharField(max_length=200)
-    objetivo=models.CharField(max_length=200)
-    descripcion=models.CharField(max_length=200)
-    horas=models.CharField(max_length=40)
-    contenido=models.CharField(max_length=200)
-    competencias=models.CharField(max_length=200)
-    departamento=models.CharField(max_length=40)
+    # clave = models.CharField(max_length=10)
+    # nombre=models.CharField(max_length=40)
+    curso = models.ForeignKey(RegistroCurso, on_delete=models.CASCADE, null=True, blank=True)
+    # instructor=models.CharField(max_length=40)
+    introduccion=models.TextField()
+    justificacion=models.TextField()
+    servicio = models.CharField(
+        max_length=20,
+        choices=[
+            ('Curso', 'Curso'), 
+            ('Taller', 'Taller'), 
+        ],
+    )
+    elementosDidacticos = models.CharField(max_length=200)
+    competencias = models.CharField(max_length=200)
+    fuentes = models.TextField()
     
     def __str__(self):
-        return f"{self.nombre} {self.instructor} {self.horas} {self.departamento}"
+        return f"Ficha de {self.curso.nombre} {self.curso.instructor} {self.servicio}"
     
     class Meta:
-        verbose_name_plural = 'Ficha técnica'
+        verbose_name_plural = 'Fichas técnicas'
+
+class ContenidoTematico(models.Model):
+    fichaTecnica = models.ForeignKey(FichaTecnica, verbose_name=("Ficha Técnica"), on_delete=models.CASCADE, null=True, blank=True, related_name="contenidos_tematicos")
+    tema = models.CharField(max_length=200)
+    tiempo = models.IntegerField()
+    actividades = models.TextField()
+
+class CriterioEvaluacion(models.Model):
+    fichaTecnica = models.ForeignKey(FichaTecnica, verbose_name=("Ficha Técnica"), on_delete=models.CASCADE, null=True, blank=True, related_name="criterios_evaluacion")
+    criterio = models.CharField(max_length=200)
+    valor = models.IntegerField()
+    instrumento = models.CharField(max_length=200)
