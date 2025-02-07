@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import RegistroCurso
+from .models import ContenidoTematico, CriterioEvaluacion, RegistroCurso
 from .models import FichaTecnica
 from .models import ValidarCurso
 
@@ -24,5 +24,13 @@ class ValidarCursoAdmin(admin.ModelAdmin):
 admin.site.register(ValidarCurso, ValidarCursoAdmin)
 
 class FichaTecnicaAdmin(admin.ModelAdmin):
-    list_display = ('nombre', 'instructor', 'horas', 'departamento')
+    list_display = ('curso__nombre', 'curso__instructor', 'curso__horas')
 admin.site.register(FichaTecnica, FichaTecnicaAdmin)
+
+class ContenidoTematicoAdmin(admin.ModelAdmin):
+    list_display = ('fichaTecnica__curso__nombre', 'tema')
+admin.site.register(ContenidoTematico, ContenidoTematicoAdmin)
+
+class CriterioEvaluacionAdmin(admin.ModelAdmin):
+    list_display = ('fichaTecnica__curso__nombre', 'criterio', 'valor', 'instrumento')
+admin.site.register(CriterioEvaluacion, CriterioEvaluacionAdmin)
