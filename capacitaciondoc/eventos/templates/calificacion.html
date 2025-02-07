@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block title %}- Registrar calificacion sobre el curso {{ evento.curso.nombre }} {% endblock %}
+
+{% block styles %}
+<!-- Custom styles for this page -->
+<link href="{% static 'vendor/datatables/dataTables.bootstrap4.min.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<!-- Page Heading -->
+<h1 class="h3 mb-2 text-gray-800"><center>Curso</center></h1>
+<p><strong>Nombre del curso: </strong>{{ evento.curso.nombre }}</p>
+<p><strong>Nombre del(a) instructor(a): </strong>{{ evento.curso.instructor }}</p>
+<p><strong>Período: </strong>{{ evento.curso.periodo }}</p>
+<p><strong>Duración: </strong>{{ evento.curso.horas }} horas</p>
+
+{% if messages %}
+    <div class="messages-container">
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Cerrar">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+<!-- DataTales -->
+<form method="POST">
+    {% csrf_token %}
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th>Nombre del inscripcion</th>
+                            <th>Puesto y área de adscripción</th>
+                            <th>Calificación</th>
+                            <th>Comentario</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for inscripcion in inscripciones %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ inscripcion.usuario.first_name }} {{ inscripcion.usuario.last_name_paterno }} {{ inscripcion.usuario.last_name_materno }}</td>
+                                <td>{{ inscripcion.usuario.docente.departamento }}</td>
+                                <td>
+                                    <input type="number" class="form form-control"
+                                        name="calificacion_{{ inscripcion.id }}" 
+                                        step="0.01" 
+                                        min="0" 
+                                        max="100" 
+                                        value="{{ inscripcion.calificacion_set.first.calificacion|default_if_none:'' }}">
+                                </td>
+                                <td>
+                                    <textarea name="comentario_{{ inscripcion.id }}" 
+                                        rows="3" 
+                                        maxlength="800" 
+                                        style="resize: vertical; overflow-y: auto;"
+                                        class="form-control">{{ inscripcion.calificacion_set.first.comentario|default_if_none:'' }}</textarea>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="text-center">
+        <button type="submit" class="btn btn-success">Asignar calificación</button>
+        <a href="{% url 'calificacion' %}" class="btn btn-primary">Regresar</a>
+    </div>
+</form>
+{% endblock %}
+
+{% block scripts %}
+<!-- Page level plugins -->
+<script src="{% static 'vendor/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
+
+<!-- Page level custom scripts -->
+<script src="{% static 'js/demo/datatables-demo.js' %}"></script>
+{% endblock %}
