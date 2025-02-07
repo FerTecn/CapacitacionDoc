@@ -21,7 +21,7 @@
         rel="stylesheet">
 
     <!-- Custom styles for this template-->
-    <link href="{% static 'css/sb-admin-2.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/sb-admin-2.css' %}" rel="stylesheet">
     {% block styles %}
     
     {% endblock %}
@@ -103,8 +103,7 @@
                         <h6 class="collapse-header">Opciones de cursos:</h6>
                         <a class="collapse-item" href="{% url 'registrocursolista' %}">Registro de cursos</a>
                         <a class="collapse-item" href="{% url 'validarcursolista' %}">Validación de cursos</a>
-
-                        <!--<a class="collapse-item" href="">Ficha técnica</a>-->
+                        <a class="collapse-item" href="{% url 'fichatecnica' %}">Ficha técnica</a>
                     </div>
                 </div>
             </li>
