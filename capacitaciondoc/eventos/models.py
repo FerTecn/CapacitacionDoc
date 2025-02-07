@@ -45,7 +45,6 @@ class Asistencia(models.Model):
     class Meta:
         verbose_name_plural = 'Asistencias'
         unique_together = ('inscripcion', 'fecha')
-    #     db_table = 'eventos_asistencia'
 
 class oficioComision(models.Model):
     clave = models.CharField(max_length=10)
@@ -62,19 +61,19 @@ class oficioComision(models.Model):
 
     class Meta:
         verbose_name_plural = 'Inscripciones'
-# class calificacion(models.Model):
-#     clave = models.CharField(max_length=10)
-#     nombre=models.CharField(max_length=40)
-#     periodo=models.CharField(max_length=40)
-#     lugar=models.CharField(max_length=40)
-#     horas=models.CharField(max_length=40)
-    
-#     def __str__(self):
-#         return f"{self.nombre} {self.periodo} {self.lugar} {self.horas} "
-    
-#     class Meta:
-#         verbose_name_plural = 'Calificaciones'
 
+class Calificacion(models.Model):
+    inscripcion = models.ForeignKey(Inscripcion, on_delete=models.CASCADE, null=True, blank=True)
+    calificacion = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)  # Calificación numérica
+    comentario = models.TextField(null=True, blank=True)  # Comentarios adicionales
+    fecha_calificacion = models.DateField(auto_now_add=True)  # Fecha en que se registra la calificación
+
+    def __str__(self):
+        return f"{self.inscripcion.usuario.first_name} {self.inscripcion.usuario.last_name_paterno} - {self.inscripcion.evento.curso.nombre} - {self.calificacion}"
+
+    class Meta:
+        verbose_name_plural = 'Calificaciones'
+        unique_together = ('inscripcion', 'fecha_calificacion')
 
 class Evidencia(models.Model):
     evento = models.ForeignKey(Evento, on_delete=models.CASCADE)
