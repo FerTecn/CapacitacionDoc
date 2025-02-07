@@ -9,7 +9,7 @@ from django.core.files.storage import FileSystemStorage #Para archivos y directo
 
 
 from .forms import EventoForm, EvidenciaForm
-from .models import Asistencia, Evento, Evidencia, Inscripcion
+from .models import Asistencia, Calificacion, Evento, Evidencia, Inscripcion
 from catalogos.models import Docente, Lugar, Instructor, GradoAcademico, Periodo
 
 # Create your views here.
@@ -307,7 +307,7 @@ def invalidarinscripcion(request, evento_id):
     return redirect('inscripcionlista')
 
 @login_required(login_url='signin')
-# @permission_required('plancapacitacion.view_registrocurso', raise_exception=True)
+@permission_required('eventos.view_asistencia', raise_exception=True)
 def listacursosasistencia(request):
     # Filtrar eventos que tienen lugar, fecha y hora definidos
     eventos = Evento.objects.filter(
@@ -322,6 +322,8 @@ def listacursosasistencia(request):
         'eventos': eventos,
     })
 
+@login_required(login_url='signin')
+@permission_required('eventos.view_calificacion', raise_exception=True)
 def listacursoscalificacion(request):
     # Filtrar eventos que tienen lugar, fecha y hora definidos
     eventos = Evento.objects.filter(
@@ -336,25 +338,32 @@ def listacursoscalificacion(request):
         'eventos': eventos,
     })
 
+@login_required(login_url='signin')
+@permission_required('eventos.view_asistencia', raise_exception=True)
 def detalle_curso_asistencia(request, evento_id):
     evento = get_object_or_404(Evento, id=evento_id)
     inscritos = Inscripcion.objects.filter(evento=evento).select_related('usuario__docente')
     return render(request, 'detallecursoasistencia.html', {'evento': evento, 'inscritos': inscritos})
 
+@login_required(login_url='signin')
+@permission_required('eventos.view_calificacion', raise_exception=True)
 def detalle_curso_calificacion(request, evento_id):
     evento = get_object_or_404(Evento, id=evento_id)
     inscritos = Inscripcion.objects.filter(evento=evento).select_related('usuario__docente')
     return render(request, 'detallecursocalificacion.html', {'evento': evento, 'inscritos': inscritos})
 
-
+@login_required(login_url='signin')
+@permission_required('eventos.change_evidencia', raise_exception=True)
 def evidencia(request, evento_id):
     evento = get_object_or_404(Evento, id=evento_id)
     evidencia = Evidencia.objects.filter(evento=evento).first()
 
     if request.method == 'POST':
         form = EvidenciaForm(request.POST, request.FILES, instance=evidencia)
-        fs = FileSystemStorage()
-        fs.delete(evidencia.archivo_evidencia.name)
+        if evidencia.archivo_evidencia:
+            fs = FileSystemStorage()
+            fs.delete(evidencia.archivo_evidencia.name)
+            
         if form.is_valid():
             form.save()
             return redirect('detalle_curso_calificacion', evento_id=evento.id)
@@ -372,6 +381,8 @@ def generar_dias_semana(evento):
         fecha_actual += timedelta(days=1)
     return dias_semana
 
+@login_required(login_url='signin')
+@permission_required('eventos.add_asistencia', raise_exception=True)
 def tomar_asistencia(request, evento_id):
     evento = get_object_or_404(Evento, id=evento_id)
     inscripciones = Inscripcion.objects.filter(evento=evento).select_related('usuario__docente')
@@ -405,4 +416,35 @@ def tomar_asistencia(request, evento_id):
         'evento': evento,
         'asistencias_por_inscripcion': asistencias_por_inscripcion,
         'dias_semana': dias_semana,
+    })
+
+@login_required(login_url='signin')
+@permission_required('eventos.add_calificacion', raise_exception=True)
+def asignar_calificacion(request, evento_id):
+    evento = get_object_or_404(Evento, id=evento_id)
+    inscripciones = Inscripcion.objects.filter(evento=evento, aceptado=True)  # Solo docentes aceptados
+    evidencia = Evidencia.objects.filter(evento=evento, evidencia=True).exists()  # Verifica si hay evidencia
+    
+    if not evidencia:
+        messages.warning(request, "No puedes asignar calificación si no has cargado tu evidencia del curso.")
+        return redirect('detalle_curso_calificacion', evento_id=evento.id)  # Redirigir a la página de detalle del evento
+    
+    if request.method == 'POST':
+        for inscripcion in inscripciones:
+            calificacion_value = request.POST.get(f'calificacion_{inscripcion.id}')
+            comentario_value = request.POST.get(f'comentario_{inscripcion.id}')
+            
+            if calificacion_value:  # Solo crear calificación si se ingresó un valor
+                Calificacion.objects.update_or_create(
+                    inscripcion=inscripcion,
+                    defaults={
+                        'calificacion': calificacion_value,
+                        'comentario': comentario_value,
+                    }
+                )
+        return redirect('detalle_curso_calificacion', evento_id=evento.id)  # Redirigir a la página de detalle del evento
+
+    return render(request, 'calificacion.html', {
+        'evento': evento,
+        'inscripciones': inscripciones,
     })
