@@ -23,6 +23,9 @@ class EventosConfig(AppConfig):
                 # Obtener permisos definidos en los modelos
                 permisos_eventos = Permission.objects.filter(content_type__app_label='eventos', codename__icontains='evento')
                 permisos_inscripciones = Permission.objects.filter(content_type__app_label='eventos', codename__icontains='inscripcion')
+                permisos_asistencias = Permission.objects.filter(content_type__app_label='eventos', codename__icontains='asistencia')
+                permisos_calificaciones = Permission.objects.filter(content_type__app_label='eventos', codename__icontains='calificacion')
+                permisos_evidencias = Permission.objects.filter(content_type__app_label='eventos', codename__icontains='evidencia')
 
                 def limpiar_permisos(grupo):
                     permisos_actuales = grupo.permissions.filter(content_type__app_label='eventos')
@@ -37,7 +40,8 @@ class EventosConfig(AppConfig):
                 # Asignar permisos a los grupos
                 # Grupo Instructor: no puede crear eventos, ve inscripciones de su curso
                 instructor_group.permissions.add(
-                    *permisos_eventos.filter(codename__startswith='view')
+                    *permisos_eventos.filter(codename__startswith='view'),
+                    *permisos_asistencias, *permisos_calificaciones, *permisos_evidencias
                 )
                 
                 # Grupo Docente: puede ver los eventos de los cursos para poder inscribirse y pude hacer su inscripcion
@@ -55,6 +59,7 @@ class EventosConfig(AppConfig):
                 capacitacion_group.permissions.add(
                     *permisos_eventos, 
                     *permisos_inscripciones.filter(codename__startswith='view'),
+                    *permisos_asistencias,
                 )
 
                 # Grupo Subdirección Académica: Solo ve eventos
