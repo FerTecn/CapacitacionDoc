@@ -24,6 +24,16 @@ class PlancapacitacionConfig(AppConfig):
                 permisos_registro_curso = Permission.objects.filter(content_type__app_label='plancapacitacion', codename__icontains='registrocurso')
                 permisos_validados = Permission.objects.filter(content_type__app_label='plancapacitacion', codename__icontains='validarcurso')
 
+                def limpiar_permisos(grupo):
+                    permisos_actuales = grupo.permissions.filter(content_type__app_label='plancapacitacion')
+                    grupo.permissions.remove(*permisos_actuales)
+
+                limpiar_permisos(docente_group)
+                limpiar_permisos(instructor_group)
+                limpiar_permisos(academico_group)
+                limpiar_permisos(capacitacion_group)
+                limpiar_permisos(subdireccion_group)
+
                 # Asignar permisos a los grupos
                 # Grupo Instructor: no puede registrar ni validar cursos
 
