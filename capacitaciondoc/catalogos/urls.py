@@ -29,6 +29,8 @@ urlpatterns = [
     path('instructorver/<int:instructor_id>/', views.instructorver, name='instructorver'),
     path('instructoractualizar/<int:instructor_id>/', views.instructoractualizar, name='instructoractualizar'),
     path('instructoreliminar/<int:instructor_id>/', views.instructoreliminar, name='instructoreliminar'),
+
+    path('instructor/<int:instructor_id>/generar_cv_pdf/', views.generar_cv_pdf, name='generar_cv_pdf'),
     
     #DOCENTES
     path('docentelista/', views.docentelista, name='docentelista'),
