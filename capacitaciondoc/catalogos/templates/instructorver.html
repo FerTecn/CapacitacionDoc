@@ -4,206 +4,223 @@
 {% block title %}Ver Instructor{% endblock %}
 
 {% block content %}
-<div class="container">
-    <h1 class="h3 mb-2 text-gray-800">Información del Instructor</h1><br>
 
-    <!-- Datos personales -->
-    <div id="datos-personales" class="section">
-        <div class="card mb-4">
-            <div class="card-header py-3 text-center bg-primary">
-                <h4 class="m-0 font-weight-bold text-white">DATOS PERSONALES</h4>
-            </div>            
-            <div class="card-body">
-                <div class="form-row">
-                    <div class="form-group col-md-4 align-items-center">
-                        <p><strong style="display: block;">Clave:</strong> {{ instructor.clave }}</p>
-                    </div>
-                    <div class="form-group col-md-4 align-items-center">
-                        <p><strong style="display: block;">Nombre(s)</strong> {{ instructor.user.first_name }}</p>
-                    </div>
-                    <div class="form-group col-md-4 align-items-center">
-                        <p><strong style="display: block;">Apellido Paterno</strong> {{ instructor.user.last_name_paterno }}</p>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group col-md-4 align-items-center">
-                        <p><strong style="display: block;">Apellido Materno</strong> {{ instructor.user.last_name_materno }}</p>
-                    </div>
-                    <div class="form-group col-md-4 align-items-center">
-                        <p><strong style="display: block;">Fecha de nacimiento</strong>{{ instructor.fechaNac}}</p>
-                    </div>
-                    <div class="form-group col-md-4 align-items-center">
-                        <p><strong style="display: block;">CURP</strong>{{ instructor.user.curp}}</p>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group col-md-4 align-items-center">
-                        <p><strong style="display: block;">RFC</strong>{{ instructor.RFC}}</p>
-                    </div>
-                    <div class="form-group col-md-4 align-items-center">
-                        <p><strong style="display: block;">Teléfono</strong>{{ instructor.telefono}}</p>
-                    </div>
-                    <div class="form-group col-md-4 align-items-center">
-                        <p><strong style="display: block;">Email</strong>{{ instructor.user.email}}</p>
-                    </div>
-                </div>
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Información del Instructor</h1>
+    <form action="{% url 'generar_cv_pdf' instructor_id=instructor.id %}" method="get">
+        <button type="submit" class="d-sm-inline-block btn btn-primary btn-icon-split">
+            <span class="icon text-white-50">
+                <i class="fas fa-download"></i>
+            </span>
+            <span class="text">Descargar mi CV</span>
+        </button>
+    </form>
+</div>
+{% if messages %}
+    <div class="messages-container">
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Cerrar">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
-        </div>
+        {% endfor %}
     </div>
-    <hr>
-
-
-
-
+{% endif %}
+<div class="text-center">
     
-    
-
-    <!--Formación academica-->
-    <div id="formacion-academica" class="section">
-        <div class="card mb-4">
-            <div class="card-header py-3 text-center bg-primary">
-                <h4 class="m-0 font-weight-bold text-white">FORMACIÓN ACADÉMICA</h4>
+</div>
+<!-- Datos personales -->
+<div id="datos-personales" class="section">
+    <div class="card mb-4">
+        <div class="card-header py-3 text-center bg-primary">
+            <h4 class="m-0 font-weight-bold text-white">DATOS PERSONALES</h4>
+        </div>            
+        <div class="card-body">
+            <div class="form-row">
+                <div class="form-group col-md-4 align-items-center">
+                    <p><strong style="display: block;">Clave:</strong> {{ instructor.clave }}</p>
+                </div>
+                <div class="form-group col-md-4 align-items-center">
+                    <p><strong style="display: block;">Nombre(s)</strong> {{ instructor.user.first_name }}</p>
+                </div>
+                <div class="form-group col-md-4 align-items-center">
+                    <p><strong style="display: block;">Apellido Paterno</strong> {{ instructor.user.last_name_paterno }}</p>
+                </div>
             </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                        <thead>
-                            <tr>
-                                <th>Institución</th>
-                                <th>Grado académico</th>
-                                <th>Cédula Profesional</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for formacion in formaciones %}
-                            <tr id="formacion-{{ formacion.id }}">
-                                <td>{{ formacion.institucion }}</td>
-                                <td>{{ formacion.grado }}</td>
-                                <td>{{ formacion.cedulaProf }}</td>
-                            </tr>
-                            {% empty %}
-                            <tr>
-                                <td colspan="4">No hay registros de formación académica.</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+            <div class="form-row">
+                <div class="form-group col-md-4 align-items-center">
+                    <p><strong style="display: block;">Apellido Materno</strong> {{ instructor.user.last_name_materno }}</p>
+                </div>
+                <div class="form-group col-md-4 align-items-center">
+                    <p><strong style="display: block;">Fecha de nacimiento</strong>{{ instructor.fechaNac}}</p>
+                </div>
+                <div class="form-group col-md-4 align-items-center">
+                    <p><strong style="display: block;">CURP</strong>{{ instructor.user.curp}}</p>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-4 align-items-center">
+                    <p><strong style="display: block;">RFC</strong>{{ instructor.RFC}}</p>
+                </div>
+                <div class="form-group col-md-4 align-items-center">
+                    <p><strong style="display: block;">Teléfono</strong>{{ instructor.telefono}}</p>
+                </div>
+                <div class="form-group col-md-4 align-items-center">
+                    <p><strong style="display: block;">Email</strong>{{ instructor.user.email}}</p>
                 </div>
             </div>
         </div>
     </div>
-    <hr>
+</div>
+<hr>
 
-    <!--Experiencia laboral-->
-    <div id="experiencia-laboral" class="section">
-        <div class="card mb-4">
-            <div class="card-header py-3 text-center bg-primary">
-                <h4 class="m-0 font-weight-bold text-white">EXPERIENCIA LABORAL</h4>
-            </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                        <thead>
-                            <tr>
-                                <th>Puesto</th>
-                                <th>Empresa</th>
-                                <th>Periodo</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for experiencia in experiencias_laborales %}
-                            <tr id="experiencia-{{ experiencia.id }}">
-                                <td>{{ experiencia.puesto }}</td>
-                                <td>{{ experiencia.empresa }}</td>
-                                <td>{{ experiencia.fecha_inicio }} - {{ experiencia.fecha_fin }}</td>
-                            </tr>
-                            {% empty %}
-                            <tr>
-                                <td colspan="4">No hay registros de experiencias laborales.</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+<!--Formación academica-->
+<div id="formacion-academica" class="section">
+    <div class="card mb-4">
+        <div class="card-header py-3 text-center bg-primary">
+            <h4 class="m-0 font-weight-bold text-white">FORMACIÓN ACADÉMICA</h4>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Institución</th>
+                            <th>Grado académico</th>
+                            <th>Cédula Profesional</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for formacion in formaciones %}
+                        <tr id="formacion-{{ formacion.id }}">
+                            <td>{{ formacion.institucion }}</td>
+                            <td>{{ formacion.grado }}</td>
+                            <td>{{ formacion.cedulaProf }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4">No hay registros de formación académica.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
-    <hr>
+</div>
+<hr>
 
-    
-    <!--Experiencia docente-->
-    <div id="experiencia-docente" class="section">
-        <div class="card mb-4">
-            <div class="card-header py-3 text-center bg-primary">
-                <h4 class="m-0 font-weight-bold text-white">EXPERIENCIA EN DOCENCIA</h4>
-            </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                        <thead>
-                            <tr>
-                                <th>Materia</th>
-                                <th>Periodo</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for experiencia_docente in experiencias_docentes %}
-                            <tr id="experiencia-{{ experiencia.id }}">
-                                <td>{{ experiencia_docente.materia }}</td>
-                                <td>{{ experiencia_docente.periodo }}</td>
-                            </tr>
-                            {% empty %}
-                            <tr>
-                                <td colspan="3">No hay registros de formación académica.</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+<!--Experiencia laboral-->
+<div id="experiencia-laboral" class="section">
+    <div class="card mb-4">
+        <div class="card-header py-3 text-center bg-primary">
+            <h4 class="m-0 font-weight-bold text-white">EXPERIENCIA LABORAL</h4>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Puesto</th>
+                            <th>Empresa</th>
+                            <th>Periodo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for experiencia in experiencias_laborales %}
+                        <tr id="experiencia-{{ experiencia.id }}">
+                            <td>{{ experiencia.puesto }}</td>
+                            <td>{{ experiencia.empresa }}</td>
+                            <td>{{ experiencia.fecha_inicio }} - {{ experiencia.fecha_fin }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4">No hay registros de experiencias laborales.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
-    <hr>
+</div>
+<hr>
 
-    <!--Participacion como instructor-->
-    <div id="participacion-instructor" class="section">
-        <div class="card mb-4">
-            <div class="card-header py-3 text-center bg-primary">
-                <h4 class="m-0 font-weight-bold text-white">PARTICIPACIONES COMO INSTRUCTOR</h4>
-            </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                        <thead>
-                            <tr>
-                                <th>Nombre del curso</th>
-                                <th>Empresa / Institución</th>
-                                <th>Duración (Horas)</th>
-                                <th>Fecha</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for participacion in participaciones %}
-                            <tr id="participacion-{{ participacion.id }}">
-                                <td>{{ participacion.curso }}</td>
-                                <td>{{ participacion.nombreEmpresa }}</td>
-                                <td>{{ participacion.duracionHoras }}</td>
-                                <td>{{ participacion.periodoInicio }} - {{ participacion.periodoFin }}</td>
-                            </tr>
-                            {% empty %}
-                            <tr>
-                                <td colspan="5">No hay registros de formación académica.</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+
+<!--Experiencia docente-->
+<div id="experiencia-docente" class="section">
+    <div class="card mb-4">
+        <div class="card-header py-3 text-center bg-primary">
+            <h4 class="m-0 font-weight-bold text-white">EXPERIENCIA EN DOCENCIA</h4>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Materia</th>
+                            <th>Periodo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for experiencia_docente in experiencias_docentes %}
+                        <tr id="experiencia-{{ experiencia.id }}">
+                            <td>{{ experiencia_docente.materia }}</td>
+                            <td>{{ experiencia_docente.periodo }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="3">No hay registros de formación académica.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
+</div>
+<hr>
 
-    <div class="text-center">
-        <a href="{% url 'instructorlista' %}" class="btn btn-primary">Regresar</a>
+<!--Participacion como instructor-->
+<div id="participacion-instructor" class="section">
+    <div class="card mb-4">
+        <div class="card-header py-3 text-center bg-primary">
+            <h4 class="m-0 font-weight-bold text-white">PARTICIPACIONES COMO INSTRUCTOR</h4>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Nombre del curso</th>
+                            <th>Empresa / Institución</th>
+                            <th>Duración (Horas)</th>
+                            <th>Fecha</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for participacion in participaciones %}
+                        <tr id="participacion-{{ participacion.id }}">
+                            <td>{{ participacion.curso }}</td>
+                            <td>{{ participacion.nombreEmpresa }}</td>
+                            <td>{{ participacion.duracionHoras }}</td>
+                            <td>{{ participacion.periodoInicio }} - {{ participacion.periodoFin }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5">No hay registros de formación académica.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
+</div>
+
+<div class="text-center">
+    <a href="{% url 'instructorlista' %}" class="btn btn-primary">Regresar</a>
 </div>
 {% endblock %}
