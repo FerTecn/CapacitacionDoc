@@ -44,8 +44,11 @@
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center h-auto" href="{% url 'home' %}">
                 <div class="sidebar-brand-icon">
-                    <img src="{% static 'img/logo_sidebar.png' %}"  width="48%" height="auto" alt="Logo">
-                    <img src="{% static 'img/logo_sidebar_ita.png' %}"  width="48%" height="auto" alt="Logo">
+                    <img src="{% static 'img/logo_sidebar.png' %}" class="img-fluid d-none d-md-inline" width="48%" height="auto" alt="Logo">
+                    <img src="{% static 'img/logo_sidebar_ita.png' %}" class="img-fluid d-none d-md-inline" width="48%" height="auto" alt="Logo">
+                    <!-- Para dispositivos móviles -->
+                    <img src="{% static 'img/logo_sidebar.png' %}" class="img-fluid d-md-none" width="100%" height="auto" alt="Logo">
+                    <img src="{% static 'img/logo_sidebar_ita.png' %}" class="img-fluid d-md-none" width="100%" height="auto" alt="Logo">
                 </div><br/>
             </a>
             <div class="d-none d-sm-inline-block sidebar-brand-text text-center mx-3">TecNM Campus Apizaco</div>
