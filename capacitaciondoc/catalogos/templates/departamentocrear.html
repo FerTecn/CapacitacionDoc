@@ -1,80 +1,107 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Añadir Departamento{% endblock %}
+{% block title %}- Añadir Departamento{% endblock %}
 
 {% block content %}
-<div class="container">
+<form method="post">
+    {% csrf_token %}
+    <div class="d-flex justify-content-between mb-3">
+        <a href="{% url 'departamentolista' %}" class="btn btn-secondary btn-icon-split mr-2">
+            <span class="icon text-white-50">
+                <i class="fas fa-arrow-left"></i>
+            </span>
+            <span class="text">Cancelar y volver</span>
+        </a>
+        <button type="submit" class="btn btn-success ml-2">Añadir</button>
+    </div>
     <h1 class="h3 mb-2 text-gray-800">Añadir Departamento</h1>
-    <div class="card">
+    <div class="card mb-4">
         <div class="card-body">
             Rellena el siguiente formulario para añadir un nuevo departamento.
         </div>
-    </div><br>
-    
-    <form method="post">
-        {% csrf_token %}
-        <!-- Datos del departamento -->
-        <div class="card text-center bg-primary text-white">
-            <div class="card-body">
-                <b>"DATOS DEL DEPARTAMENTO"</b>
-            </div>
-        </div><br>
+    </div>
 
-        <div class="form-row">
-            <div class="form-group col-md-3 align-items-center">
-                <label for="{{ form.nomenclatura.id_for_label }}">Nomenclatura</label>
-                {{ form.nomenclatura }}  
-            </div>
-            <div class="form-group col-md-3 align-items-center">
-                <label for="{{ form.numerodepartamento.id_for_label }}">Número de departamento</label>
-                {{ form.numerodepartamento }}  
-            </div>
-            <div class="form-group col-md-6 align-items-center">
-                <label for="{{ form.departamento.id_for_label }}">Departamento</label>
-                {{ form.departamento }}  
-            </div>
+    {% if messages %}
+        <div class="messages-container">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Cerrar">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            {% endfor %}
         </div>
-        <div class="form-row">
-            <div class="form-group col-md-3 align-items-center">
-                <label for="{{ form.telefono.id_for_label }}">Teléfono</label>
-                {{ form.telefono }}  
-            </div>
-            <div class="form-group col-md-5 align-items-center">
-                <label for="{{ form.email.id_for_label }}">Email</label>
-                {{ form.email }}  
-            </div>
-            <div class="form-group col-md-4 align-items-center">
-                <label for="{{ form.paginaWeb.id_for_label }}">Pagina Web</label>
-                {{ form.paginaWeb }}  
-            </div>
-        </div>
-
-        <!-- Datos del departamento -->
-        <div class="card text-center bg-primary text-white">
-            <div class="card-body">
-                <b>"DATOS DEL JEFE DE DEPARTAMENTO"</b>
-            </div>
-        </div><br>
-        <div class="form-row">
-            <div class="form-group col-md-4 align-items-center">
-                <label for="{{ form.nombreJefe.id_for_label }}">Nombre(s)</label>
-                {{ form.nombreJefe }}  
-            </div>
-            <div class="form-group col-md-4 align-items-center">
-                <label for="{{ form.apParternoJefe.id_for_label }}">Apellido Paterno</label>
-                {{ form.apParternoJefe }}  
-            </div>
-            <div class="form-group col-md-4 align-items-center">
-                <label for="{{ form.apMaternoJefe.id_for_label }}">Apellido Materno</label>
-                {{ form.apMaternoJefe }}  
-            </div>
-        </div><br>
+    {% endif %}
         
-        <div class="text-center">
-        <button type="submit" class="btn btn-primary">Añadir</button>
-        <a href="{% url 'departamentolista' %}" class="btn btn-secondary">Cancelar</a>
-        </div> 
-    </form>
-</div>
+    <!-- Datos del departamento -->
+    <div class="card mb-4">
+        <div class="card-header py-3 text-center bg-primary">
+            <h4 class="m-0 font-weight-bold text-white">DATOS DEL DEPARTAMENTO</h4>
+        </div>            
+        <div class="card-body">
+            <div class="form-row">
+                <div class="form-group col-md-3 align-items-center">
+                    <label for="{{ form.nomenclatura.id_for_label }}">{{form.nomenclatura.label_tag}}</label>
+                    {{ form.nomenclatura }}  
+                </div>
+                <div class="form-group col-md-3 align-items-center">
+                    <label for="{{ form.numerodepartamento.id_for_label }}">{{form.numerodepartamento.label_tag}}</label>
+                    {{ form.numerodepartamento }}  
+                </div>
+                <div class="form-group col-md-6 align-items-center">
+                    <label for="{{ form.departamento.id_for_label }}">{{form.departamento.label_tag}}</label>
+                    {{ form.departamento }}  
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-3 align-items-center">
+                    <label for="{{ form.telefono.id_for_label }}">{{form.telefono.label_tag}}</label>
+                    {{ form.telefono }}  
+                </div>
+                <div class="form-group col-md-5 align-items-center">
+                    <label for="{{ form.email.id_for_label }}">{{form.email.label_tag}}</label>
+                    {{ form.email }}  
+                </div>
+                <div class="form-group col-md-4 align-items-center">
+                    <label for="{{ form.paginaWeb.id_for_label }}">{{form.paginaWeb.label_tag}}</label>
+                    {{ form.paginaWeb }}  
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Datos del departamento -->
+    <div class="card mb-4">
+        <div class="card-header py-3 text-center bg-primary">
+            <h4 class="m-0 font-weight-bold text-white">DATOS DEL JEFE DE DEPARTAMENTO</h4>
+        </div>            
+        <div class="card-body">
+            <div class="form-row">
+                <div class="form-group col-md-4 align-items-center">
+                    <label for="{{ form.nombreJefe.id_for_label }}">{{form.nombreJefe.label_tag}}</label>
+                    {{ form.nombreJefe }}  
+                </div>
+                <div class="form-group col-md-4 align-items-center">
+                    <label for="{{ form.apParternoJefe.id_for_label }}">{{form.apParternoJefe.label_tag}}</label>
+                    {{ form.apParternoJefe }}  
+                </div>
+                <div class="form-group col-md-4 align-items-center">
+                    <label for="{{ form.apMaternoJefe.id_for_label }}">{{form.apMaternoJefe.label_tag}}</label>
+                    {{ form.apMaternoJefe }}  
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="d-flex justify-content-between mb-3">
+        <a href="{% url 'departamentolista' %}" class="btn btn-secondary btn-icon-split mr-2">
+            <span class="icon text-white-50">
+                <i class="fas fa-arrow-left"></i>
+            </span>
+            <span class="text">Cancelar y volver</span>
+        </a>
+        <button type="submit" class="btn btn-success ml-2">Añadir</button>
+    </div>
+</form>
 {% endblock %}

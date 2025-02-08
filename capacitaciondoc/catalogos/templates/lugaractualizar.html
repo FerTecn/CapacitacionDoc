@@ -1,34 +1,36 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Actualizar lugar{% endblock %}
+{% block title %}- Actualizar lugar{% endblock %}
 
 {% block content %}
-<div class="container">
+<form method="post">
+    {% csrf_token %}
+    <div class="d-flex justify-content-between mb-3">
+        <a href="{% url 'lugarlista' %}" class="btn btn-secondary btn-icon-split mr-2">
+            <span class="icon text-white-50">
+                <i class="fas fa-arrow-left"></i>
+            </span>
+            <span class="text">Cancelar y volver</span>
+        </a>
+        <button type="submit" class="btn btn-success ml-2">Guardar cambios</button>
+    </div>
     <h1 class="h3 mb-2 text-gray-800">Editar lugar</h1>
-    <div class="card">
+    <div class="card mb-4">
         <div class="card-body">
             Actualiza los datos necesarios:
         </div>
-    </div><br>
+    </div>
 
-    <form method="post">
-        {% csrf_token %}
-        <div class="form-row">
-            <div class="form-group col-md-6">
-                <label for="{{ form.nombreEdificio.id_for_label }}">Nombre del edificio:</label>
-                {{ form.nombreEdificio }}  
-            </div>
-            <div class="form-group col-md-6">
-                <label for="{{ form.ubicacion.id_for_label }}">Ubicacion:</label>
-                {{ form.ubicacion }}  
-            </div>
-        </div><br>
-        
-        <div class='text-center'>
-        <button type="submit" class="btn btn-success">Guardar cambios</button>
-        <a href="{% url 'lugarlista' %}" class="btn btn-secondary">Cancelar</a>
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label for="{{ form.nombreEdificio.id_for_label }}">{{form.nombreEdificio.label_tag}}</label>
+            {{ form.nombreEdificio }}  
         </div>
-    </form>
-</div>
+        <div class="form-group col-md-6">
+            <label for="{{ form.ubicacion.id_for_label }}">{{form.ubicacion.label_tag}}</label>
+            {{ form.ubicacion }}  
+        </div>
+    </div>
+</form>
 {% endblock %}

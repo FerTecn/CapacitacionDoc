@@ -12,11 +12,24 @@
 <!-- Page Heading -->
 <h1 class="h3 mb-2 text-gray-800">Autoridades
 </h1>
-<div class="card">
+<div class="card mb-4">
     <div class="card-body">
         Aquí puedes registrar el director(a)
     </div>
-</div><br>
+</div>
+
+{% if messages %}
+    <div class="messages-container">
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Cerrar">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
 
 <!-- DataTales Example -->
 <div class="card shadow mb-4">
@@ -45,7 +58,7 @@
                         <td>{{director.apPaterno}}</td>
                         <td>{{director.apMaterno}}</td>
                         <td>{{director.puesto}}</td>
-                        <td>{% if director.estatus %}Activo{%else%}Inactivo{% endif %}</td>
+                        <td><button class="btn btn-sm btn-{% if director.estatus %}success{%else%}danger{% endif %}" disabled>{% if director.estatus %}Activo{%else%}Inactivo{% endif %}</button></td>
                         <td>
                             <!-- Opciones -->
                             {% if perms.catalogos.view_director %}

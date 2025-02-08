@@ -1,20 +1,23 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Ver dirigido{% endblock %}
+{% block title %}- Ver dirigido{% endblock %}
 
 {% block content %}
-<div class="container">
-    <h1 class="h3 mb-2 text-gray-800">Información de Dirigido</h1><br>
-
-    <div class="form-row">
-        <div class="form-group col-md-12 align-items-center">
-            <p><strong>Dirigido a:</strong> {{ dirigido.dirigido }}</p>
-        </div>
-    </div><br>
-    
-    <div class="text-center">
-        <a href="{% url 'dirigidolista' %}" class="btn btn-primary">Regresar</a> 
-    </div> 
+<div class="d-flex justify-content-between mb-3">
+    <a href="{% url 'dirigidolista' %}" class="btn btn-secondary btn-icon-split mr-2">
+        <span class="icon text-white-50">
+            <i class="fas fa-arrow-left"></i>
+        </span>
+        <span class="text">Volver</span>
+    </a>
 </div>
+<h1 class="h3 mb-2 text-gray-800">Información de Dirigido</h1><br>
+
+<div class="form-row">
+    <div class="form-group col-md-12 align-items-center">
+        <p><strong>Dirigido a:</strong> {{ dirigido.dirigido }}</p>
+    </div>
+</div>
+
 {% endblock %}

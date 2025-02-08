@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Género a borrar{% endblock %}
+{% block title %}- Género a borrar{% endblock %}
 
 {% block content %}
 <div class="card text-center">
@@ -15,7 +15,7 @@
       <form method="post">
         {% csrf_token %}
         <button type="submit" class="btn btn-danger">Eliminar</button>
-        <a href="{% url 'génerolista' %}" class="btn btn-secondary">Cancelar</a>
+        <a href="{% url 'generolista' %}" class="btn btn-secondary">Cancelar</a>
      </form>
     </div>
   </div>

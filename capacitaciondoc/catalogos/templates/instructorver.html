@@ -1,14 +1,19 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Ver Instructor{% endblock %}
+{% block title %}- Ver Instructor{% endblock %}
 
 {% block content %}
-
-<div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <h1 class="h3 mb-0 text-gray-800">Información del Instructor</h1>
+<!-- Botones superiores -->
+<div class="d-flex justify-content-between mb-3">
+    <a href="{% url 'instructorlista' %}" class="btn btn-secondary btn-icon-split mr-2">
+        <span class="icon text-white-50">
+            <i class="fas fa-arrow-left"></i>
+        </span>
+        <span class="text">Cancelar y volver</span>
+    </a>
     <form action="{% url 'generar_cv_pdf' instructor_id=instructor.id %}" method="get">
-        <button type="submit" class="d-sm-inline-block btn btn-primary btn-icon-split">
+        <button type="submit" class="btn btn-primary btn-icon-split ml-2">
             <span class="icon text-white-50">
                 <i class="fas fa-download"></i>
             </span>
@@ -16,6 +21,7 @@
         </button>
     </form>
 </div>
+<h1 class="h3 mb-0 text-gray-800">Información del Instructor</h1>
 {% if messages %}
     <div class="messages-container">
         {% for message in messages %}
@@ -28,9 +34,6 @@
         {% endfor %}
     </div>
 {% endif %}
-<div class="text-center">
-    
-</div>
 <!-- Datos personales -->
 <div id="datos-personales" class="section">
     <div class="card mb-4">

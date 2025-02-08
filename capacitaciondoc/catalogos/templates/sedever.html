@@ -1,23 +1,25 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Ver Sede{% endblock %}
+{% block title %}- Ver Sede{% endblock %}
 
 {% block content %}
-<div class="container">
-    <h1 class="h3 mb-2 text-gray-800">Información de Sede</h1><br>
+<div class="d-flex justify-content-between mb-3">
+    <a href="{% url 'docentelista' %}" class="btn btn-secondary btn-icon-split mr-2">
+        <span class="icon text-white-50">
+            <i class="fas fa-arrow-left"></i>
+        </span>
+        <span class="text">Volver</span>
+    </a>
+</div>
+<h1 class="h3 mb-2 text-gray-800">Información de Sede</h1><br>
 
-    <div class="form-row">
-        <div class="form-group col-md-4 align-items-center">
-            <p><strong style="display: block;">Clave:</strong> {{ sede.clave }}</p>
-        </div>
-        <div class="form-group col-md-8 align-items-center">
-            <p><strong style="display: block;">Sede:</strong>{{sede.sede}}</p>
-        </div>
-    </div><br>
-
-    <div class="text-center">
-        <a href="{% url 'sedelista' %}" class="btn btn-primary">Regresar</a> 
+<div class="form-row">
+    <div class="form-group col-md-4 align-items-center">
+        <p><strong style="display: block;">Clave:</strong> {{ sede.clave }}</p>
+    </div>
+    <div class="form-group col-md-8 align-items-center">
+        <p><strong style="display: block;">Sede:</strong>{{sede.sede}}</p>
     </div>
 </div>
 {% endblock %}

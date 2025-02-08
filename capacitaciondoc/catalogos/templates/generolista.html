@@ -9,49 +9,60 @@
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-    <!-- Page Heading -->
-    <h1 class="h3 mb-2 text-gray-800">Género</h1>
-    <div class="card">
-        <div class="card-body">
-            Aquí puedes registrar los diferentes Géneros
-        </div>
-    </div><br>
+<!-- Page Heading -->
+<h1 class="h3 mb-2 text-gray-800">Género</h1>
+<div class="card mb-4">
+    <div class="card-body">
+        Aquí puedes registrar los diferentes Géneros
+    </div>
+</div>
 
-    <!-- DataTales Example -->
-    <div class="card shadow mb-4">
-        <div class="card-header py-3 d-flex justify-content-between align-items-center">
-            <h4 class="m-0 font-weight-bold text-primary">Lista de Géneros</h4>
-            {% if perms.catalogos.add_genero %}
-            <a href="{% url 'generocrear' %}" class="btn btn-success mb-3">Añadir</a>{% endif %}
-        </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                    <thead>
-                        <tr>
-                            <th>Género</th>
-                            <th>Opciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for genero in generos %}
-                        <tr id="genero-{{ genero.id }}">
-                            <td>{{genero.genero}}</td>
-                            <td>
-                                <!-- Opciones -->
-                                 {% if perms.catalogos.view_genero %}
-                                <a href="{% url 'generover' genero.id %}" class="btn btn-info btn-sm">Ver</a>{% endif %}
-                                {% if perms.catalogos.change_genero %}
-                                <a href="{% url 'generoactualizar' genero.id %} " class="btn btn-warning btn-sm">Editar</a>{% endif %}
-                                {% if perms.catalogos.delete_genero %}
-                                <a href="{% url 'generoeliminar' genero.id %}" class="btn btn-danger btn-sm">Eliminar</a>{% endif %}
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+{% if messages %}
+    <div class="messages-container">
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Cerrar">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+<!-- DataTales Example -->
+<div class="card shadow mb-4">
+    <div class="card-header py-3 d-flex justify-content-between align-items-center">
+        <h4 class="m-0 font-weight-bold text-primary">Lista de Géneros</h4>
+        {% if perms.catalogos.add_genero %}
+        <a href="{% url 'generocrear' %}" class="btn btn-success mb-3">Añadir</a>{% endif %}
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Género</th>
+                        <th>Opciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for genero in generos %}
+                    <tr id="genero-{{ genero.id }}">
+                        <td>{{genero.genero}}</td>
+                        <td>
+                            <!-- Opciones -->
+                                {% if perms.catalogos.view_genero %}
+                            <a href="{% url 'generover' genero.id %}" class="btn btn-info btn-sm">Ver</a>{% endif %}
+                            {% if perms.catalogos.change_genero %}
+                            <a href="{% url 'generoactualizar' genero.id %} " class="btn btn-warning btn-sm">Editar</a>{% endif %}
+                            {% if perms.catalogos.delete_genero %}
+                            <a href="{% url 'generoeliminar' genero.id %}" class="btn btn-danger btn-sm">Eliminar</a>{% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
 </div>

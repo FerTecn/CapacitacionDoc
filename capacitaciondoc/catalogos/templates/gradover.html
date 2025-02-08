@@ -1,20 +1,22 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Ver grado académico{% endblock %}
+{% block title %}- Ver grado académico{% endblock %}
 
 {% block content %}
-<div class="container">
-    <h1 class="h3 mb-2 text-gray-800">Información de Grado Académico</h1><br>
+<div class="d-flex justify-content-between mb-3">
+    <a href="{% url 'gradolista' %}" class="btn btn-secondary btn-icon-split mr-2">
+        <span class="icon text-white-50">
+            <i class="fas fa-arrow-left"></i>
+        </span>
+        <span class="text">Volver</span>
+    </a>
+</div>
+<h1 class="h3 mb-2 text-gray-800">Información de Grado Académico</h1><br>
 
-    <div class="form-row">
-        <div class="form-group col-md-12 align-items-center">
-            <p><strong>Grado Acádemico:</strong> {{ grado.grado }}</p>
-        </div>
-    </div><br>
-
-    <div class="text-center">
-        <a href="{% url 'gradolista' %}" class="btn btn-primary">Regresar</a> 
+<div class="form-row">
+    <div class="form-group col-md-12 align-items-center">
+        <p><strong>Grado Acádemico:</strong> {{ grado.grado }}</p>
     </div>
 </div>
 {% endblock %}
