@@ -216,10 +216,12 @@ class ExperienciaDocenteForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super().clean()
         materia = cleaned_data.get('materia')
+        periodo = cleaned_data.get('periodo')
 
         # Validar duplicados
         if ExperienciaDocente.objects.filter(
             materia=materia,
+            periodo=periodo
         ).exists():
             raise forms.ValidationError("Ya existe esa experiencia en docencia.")
         return cleaned_data
@@ -246,10 +248,18 @@ class ParticipacionInstructorForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super().clean()
         curso = cleaned_data.get('curso')
+        nombreEmpresa = cleaned_data.get('nombreEmpresa')
+        duracionHoras = cleaned_data.get('duracionHoras')
+        periodoInicio = cleaned_data.get('periodoInicio')
+        periodoFin = cleaned_data.get('periodoFin')
 
         # Validar duplicados
         if ParticipacionInstructor.objects.filter(
             curso=curso,
+            nombreEmpresa=nombreEmpresa,
+            duracionHoras=duracionHoras,
+            periodoInicio=periodoInicio,
+            periodoFin=periodoFin,
         ).exists():
             raise forms.ValidationError("Ya existe esa esa participación.")
         return cleaned_data
@@ -342,6 +352,17 @@ class DepartamentoForm(forms.ModelForm):
     class Meta:
         model= Departamento
         fields = '__all__'
+        labels = {
+            'nomenclatura': 'Nomenclatura',
+            'numerodepartamento': 'Número de departamento',
+            'departamento': 'Departamento',
+            'nombreJefe': 'Nombre(s)',
+            'apParternoJefe': 'Apellido Paterno',
+            'apMaternoJefe': 'Apellido Materno',
+            'telefono': 'Teléfono',
+            'email': 'Correo electrónico del departamento',
+            'paginaWeb': 'Página Web',
+        }
         
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -416,6 +437,13 @@ class DirectorForm(forms.ModelForm):
     class Meta:
         model = Director
         fields = '__all__'
+        labels = {
+            'nombre': 'Nombre(s)',
+            'apPaterno': 'Apellido Paterno',
+            'apMaterno': 'Apellido Materno',
+            'puesto': 'Cargo',
+            'estatus': 'Estatus',
+        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
