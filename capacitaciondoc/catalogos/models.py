@@ -7,7 +7,7 @@ from usuarios.models import CustomUser
 class Instructor(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     clave = models.CharField(max_length=10)
-    fechaNac=models.DateField(null=True, blank=True)
+    fechaNac=models.DateField(null=True)
     RFC = models.CharField(max_length=13, null=True)
     telefono=models.CharField(max_length=10, null=True)    
     
@@ -20,7 +20,7 @@ class Instructor(models.Model):
 class FormacionAcademica(models.Model):
     instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE, related_name='formaciones_academicas')
     institucion = models.CharField(max_length=40)
-    grado = models.ForeignKey('GradoAcademico', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Grado Académico")
+    grado = models.ForeignKey('GradoAcademico', on_delete=models.SET_NULL, null=True, verbose_name="Grado Académico")
 
     cedulaProf = models.CharField(max_length=8, null=True)
 
@@ -31,8 +31,8 @@ class ExperienciaLaboral(models.Model):
     instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE, related_name='experiencias_laborales')
     puesto = models.CharField(max_length=40)
     empresa = models.CharField(max_length=60)
-    fecha_inicio = models.DateField(null=True, blank=True)
-    fecha_fin = models.DateField(null=True, blank=True)
+    fecha_inicio = models.DateField(null=True)
+    fecha_fin = models.DateField(null=True)
 
     def __str__(self):
         return f"{self.puesto} en {self.empresa}"
@@ -50,8 +50,8 @@ class ParticipacionInstructor(models.Model):
     curso = models.CharField(max_length=40)
     nombreEmpresa = models.CharField(max_length=40)
     duracionHoras = models.IntegerField()
-    periodoInicio = models.DateField(null=True, blank=True)
-    periodoFin = models.DateField(null=True, blank=True)
+    periodoInicio = models.DateField(null=True)
+    periodoFin = models.DateField(null=True)
 
     def __str__(self):
         return f"{self.curso} en {self.nombreEmpresa}"
@@ -89,11 +89,11 @@ class Sede(models.Model):
 class Docente(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     clave = models.CharField(max_length=10)
-    fechaNac=models.DateField(null=True, blank=True)
-    genero = models.ForeignKey('Genero', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Género")
+    fechaNac=models.DateField(null=True)
+    genero = models.ForeignKey('Genero', on_delete=models.SET_NULL, null=True, verbose_name="Género")
     RFC=models.CharField(max_length=13, null= True)
     telefono=models.CharField(max_length=10, null=True)
-    departamento = models.ForeignKey('Departamento', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Departamento")
+    departamento = models.ForeignKey('Departamento', on_delete=models.SET_NULL, null=True, verbose_name="Departamento")
         
     def __str__(self):
         return f"{self.user.first_name} {self.user.last_name_paterno} {self.user.last_name_materno} {self.departamento}"
@@ -111,15 +111,15 @@ class Genero(models.Model):
         verbose_name_plural = 'Genero'
 
 class Departamento(models.Model):
-    nomenclatura = models.CharField(max_length=10, null=True, blank=True)
-    numerodepartamento=models.CharField(max_length=54, null=True, blank=True)
+    nomenclatura = models.CharField(max_length=10, null=True)
+    numerodepartamento=models.CharField(max_length=54, null=True)
     departamento=models.CharField(max_length=40)
-    nombreJefe=models.CharField(max_length=54, null=True, blank=True)
-    apParternoJefe=models.CharField(max_length=40, null=True, blank=True)
-    apMaternoJefe=models.CharField(max_length=40, null=True, blank=True)
-    telefono=models.CharField(max_length=40, null=True, blank=True)
-    email=models.CharField(max_length=60, null=True, blank=True)
-    paginaWeb=models.CharField(max_length=100, null=True, blank=True)
+    nombreJefe=models.CharField(max_length=54, null=True)
+    apParternoJefe=models.CharField(max_length=40, null=True)
+    apMaternoJefe=models.CharField(max_length=40, null=True)
+    telefono=models.CharField(max_length=40, null=True)
+    email=models.CharField(max_length=60, null=True)
+    paginaWeb=models.CharField(max_length=100, null=True)
 
     def __str__(self):
         return self.departamento
@@ -128,7 +128,7 @@ class Departamento(models.Model):
         verbose_name_plural = 'Departamentos'
 
 class Periodo(models.Model):
-    clave=models.TextField(max_length=50, blank=True)
+    clave=models.TextField(max_length=50)
     inicioPeriodo=models.DateField()
     finPeriodo=models.DateField()
 
