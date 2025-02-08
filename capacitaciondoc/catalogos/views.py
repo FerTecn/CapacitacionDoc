@@ -48,6 +48,7 @@ def gradocrear(request):
         form = GradoAcForm(request.POST)
         if form.is_valid():
             form.save()
+            messages.success(request, "Grado creado correctamente.")
             return redirect('gradolista') 
     else:
         form = GradoAcForm()
@@ -68,6 +69,7 @@ def gradoactualizar(request, grado_id):
         form = GradoAcForm(request.POST, instance=grado)
         if form.is_valid():
             form.save()
+            messages.success(request, "Grado actualizado correctamente.")
             return redirect('gradolista') 
     else:
         form = GradoAcForm(instance=grado)
@@ -79,6 +81,7 @@ def gradoeliminar(request, grado_id):
     grado = get_object_or_404(GradoAcademico, id=grado_id)
     if request.method == 'POST':
         grado.delete()
+        messages.success(request, f"Grado {grado} eliminado correctamente.")
         return redirect('gradolista')  
     return render(request, 'gradoeliminar.html', {'grado': grado})
 
@@ -97,6 +100,7 @@ def lugarcrear(request):
         form = LugarForm(request.POST)
         if form.is_valid():
             form.save()
+            messages.success(request, "Lugar creado correctamente.")
             return redirect('lugarlista') 
     else:
         form = LugarForm()
@@ -117,6 +121,7 @@ def lugaractualizar(request, lugar_id):
         form = LugarForm(request.POST, instance=lugar)
         if form.is_valid():
             form.save()
+            messages.success(request, "Lugar actualizado correctamente.")
             return redirect('lugarlista') 
     else:
         form = LugarForm(instance=lugar)
@@ -128,6 +133,7 @@ def lugareliminar(request, lugar_id):
     lugar = get_object_or_404(Lugar, id=lugar_id)
     if request.method == 'POST':
         lugar.delete()
+        messages.success(request, f"Lugar {lugar} eliminado correctamente.")
         return redirect('lugarlista')  
     return render(request, 'lugareliminar.html', {'lugar': lugar})
 
@@ -145,6 +151,7 @@ def sedecrear(request):
         form = SedeForm(request.POST)
         if form.is_valid():
             form.save()
+            messages.success(request, "Sede creada correctamente.")
             return redirect('sedelista') 
     else:
         form = SedeForm()
@@ -165,6 +172,7 @@ def sedeactualizar(request, sede_id):
         form = SedeForm(request.POST, instance=sede)
         if form.is_valid():
             form.save()
+            messages.success(request, "Sede actualizada correctamente.")
             return redirect('sedelista') 
     else:
         form = SedeForm(instance=sede)
@@ -176,6 +184,7 @@ def sedeeliminar(request, sede_id):
     sede = get_object_or_404(Sede, id=sede_id)
     if request.method == 'POST':
         sede.delete()
+        messages.success(request, f"Sede {sede} eliminada correctamente.")
         return redirect('sedelista')  
     return render(request, 'sedeeliminar.html', {'sede': sede})
 
@@ -383,7 +392,6 @@ def instructoractualizar(request, instructor_id=None):
                 messages.success(request, "Datos del instructor actualizados correctamente.", extra_tags="datos-personales")
                 return redirect('instructoractualizar', instructor_id=instructor.id)
             else:
-                print(form.errors)
                 messages.error(request, "Corrige los errores en el formulario.")
 
         elif 'formacion_academica' in request.POST:
@@ -395,6 +403,9 @@ def instructoractualizar(request, instructor_id=None):
                 nueva_formacion.save()
                 messages.success(request, "Formación académica agregada correctamente.", extra_tags="formacion-academica")
                 return redirect(f'{request.path}#formacion-academica')
+            else:
+                messages.warning(request, "Corrige los errores en el formulario.")
+                return redirect(f'{request.path}#formacion-academica')
 
         elif 'experiencia_laboral' in request.POST:
             # Agregar una experiencia laboral
@@ -405,6 +416,8 @@ def instructoractualizar(request, instructor_id=None):
                 nueva_experiencia.save()
                 messages.success(request, "Experiencia laboral agregada correctamente.", extra_tags="experiencia-laboral")
                 return redirect(f'{request.path}#experiencia-laboral')
+            else:
+                return redirect(f'{request.path}#experiencia-laboral')
 
         elif 'experiencia_docente' in request.POST:
             # Agregar una experiencia docente
@@ -414,6 +427,8 @@ def instructoractualizar(request, instructor_id=None):
                 nueva_experiencia_docente.instructor = instructor
                 nueva_experiencia_docente.save()
                 messages.success(request, "Experiencia docente agregada correctamente.", extra_tags="experiencia-docente")
+                return redirect(f'{request.path}#experiencia-docente')
+            else:
                 return redirect(f'{request.path}#experiencia-docente')
 
         elif 'participacion_instructor' in request.POST:
@@ -426,7 +441,7 @@ def instructoractualizar(request, instructor_id=None):
                 messages.success(request, "Participación como instructor agregada correctamente.", extra_tags="participacion-instructor")
                 return redirect(f'{request.path}#participacion-instructor')
             else:
-                print(participacion_form.errors)
+                return redirect(f'{request.path}#participacion-instructor')
 
     else:
         # Formularios iniciales para GET
@@ -553,6 +568,7 @@ def docenteactualizar(request, docente_id=None):
         form = ActualizarDocenteForm(request.POST, instance=docente, user_instance=docente.user)
         if form.is_valid():
             form.save()
+            messages.success(request, "Datos actualizados correctamente.")
             return redirect('docentelista') 
     else:
         form = ActualizarDocenteForm(instance=docente,  user_instance=docente.user)
@@ -564,6 +580,7 @@ def docenteeliminar(request, docente_id):
     docente = get_object_or_404(Docente, id=docente_id)
     if request.method == 'POST':
         docente.delete()
+        messages.success(request, "Registro eliminado correctamente.")
         return redirect('docentelista')  
     return render(request, 'docenteeliminar.html', {'docente': docente})
 
@@ -581,6 +598,7 @@ def departamentocrear(request):
         form = DepartamentoForm(request.POST)
         if form.is_valid():
             form.save()
+            messages.success(request, "Departamento creado correctamente.")
             return redirect('departamentolista') 
     else:
         form = DepartamentoForm()
@@ -591,7 +609,8 @@ def departamentocrear(request):
 @permission_required('catalogos.view_departamento', raise_exception=True)
 def departamentover(request, departamento_id):
     departamento= get_object_or_404(Departamento, id=departamento_id)
-    return render(request, 'departamentover.html', {'departamento': departamento})
+    form = DepartamentoForm(instance=departamento)
+    return render(request, 'departamentover.html', {'departamento': departamento, 'form': form})
 
 @login_required(login_url='signin')
 @permission_required('catalogos.change_departamento', raise_exception=True)
@@ -601,6 +620,7 @@ def departamentoactualizar(request, departamento_id):
         form = DepartamentoForm(request.POST, instance=departamento)
         if form.is_valid():
             form.save()
+            messages.success(request, "Datos del departamento actualizados correctamente.")
             return redirect('departamentolista') 
     else:
         form = DepartamentoForm(instance=departamento)
@@ -612,6 +632,7 @@ def departamentoeliminar(request, departamento_id):
     departamento = get_object_or_404(Departamento, id=departamento_id)
     if request.method == 'POST':
         departamento.delete()
+        messages.success(request, f"Departamento {departamento} eliminado correctamente.")
         return redirect('departamentolista')  
     return render(request, 'departamentoeliminar.html', {'departamento': departamento})
 
@@ -629,6 +650,7 @@ def dirigidocrear(request):
         form = DirigidoForm(request.POST)
         if form.is_valid():
             form.save()
+            messages.success(request, "Dirigido creado correctamente.")
             return redirect('dirigidolista') 
     else:
         form = DirigidoForm()
@@ -639,7 +661,8 @@ def dirigidocrear(request):
 @permission_required('catalogos.view_dirigido', raise_exception=True)
 def dirigidover(request, dirigido_id):
     dirigido= get_object_or_404(Dirigido, id=dirigido_id)
-    return render(request, 'dirigidover.html', {'dirigido': dirigido})
+    form = DirigidoForm(instance=dirigido)
+    return render(request, 'dirigidover.html', {'dirigido': dirigido, 'form': form})
 
 @login_required(login_url='signin')
 @permission_required('catalogos.change_dirigido', raise_exception=True)
@@ -649,6 +672,7 @@ def dirigidoactualizar(request, dirigido_id):
         form = DirigidoForm(request.POST, instance=dirigido)
         if form.is_valid():
             form.save()
+            messages.success(request, "Datos del dirigido actualizados correctamente.")
             return redirect('dirigidolista') 
     else:
         form = DirigidoForm(instance=dirigido)
@@ -660,6 +684,7 @@ def dirigidoeliminar(request, dirigido_id):
     dirigido = get_object_or_404(Dirigido, id=dirigido_id)
     if request.method == 'POST':
         dirigido.delete()
+        messages.success(request, f"Dirigido {dirigido} eliminado correctamente.")
         return redirect('dirigidolista')  
     return render(request, 'dirigidoeliminar.html', {'dirigido': dirigido})
 
@@ -677,6 +702,7 @@ def generocrear(request):
         form = GeneroForm(request.POST)
         if form.is_valid():
             form.save()
+            messages.success(request, "Genero creado correctamente.")
             return redirect('generolista') 
     else:
         form = GeneroForm()
@@ -697,6 +723,7 @@ def generoactualizar(request, genero_id):
         form = GeneroForm(request.POST, instance=genero)
         if form.is_valid():
             form.save()
+            messages.success(request, "Datos del genero actualizados correctamente.")
             return redirect('generolista') 
     else:
         form = GeneroForm(instance=genero)
@@ -708,6 +735,7 @@ def generoeliminar(request, genero_id):
     genero = get_object_or_404(Genero, id=genero_id)
     if request.method == 'POST':
         genero.delete()
+        messages.success(request, f"Genero {genero} eliminado correctamente.")
         return redirect('generolista')  
     return render(request, 'generoeliminar.html', {'genero': genero})
 
@@ -725,6 +753,7 @@ def perfilcursocrear(request):
         form = PerfilcursoForm(request.POST)
         if form.is_valid():
             form.save()
+            messages.success(request, "Perfil de curso creado correctamente.")
             return redirect('perfilcursolista') 
     else:
         form = PerfilcursoForm()
@@ -745,6 +774,7 @@ def perfilcursoactualizar(request, perfilCurso_id):
         form = PerfilcursoForm(request.POST, instance=perfilCurso)
         if form.is_valid():
             form.save()
+            messages.success(request, "Datos del perfil de curso actualizados correctamente.")
             return redirect('perfilcursolista') 
     else:
         form = PerfilcursoForm(instance=perfilCurso)
@@ -756,6 +786,7 @@ def perfilcursoeliminar(request, perfilCurso_id):
     perfilCurso = get_object_or_404(PerfilCurso, id=perfilCurso_id)
     if request.method == 'POST':
         perfilCurso.delete()
+        messages.success(request, f"Perfil de curso {perfilCurso} eliminado correctamente.")
         return redirect('perfilcursolista')  
     return render(request, 'perfilcursoeliminar.html', {'perfilCurso': perfilCurso})
 
@@ -773,6 +804,7 @@ def periodocrear(request):
         form = PeriodoForm(request.POST)
         if form.is_valid():
             form.save()
+            messages.success(request, "Periodo creado correctamente.")
             return redirect('periodolista')
     else:
         form = PeriodoForm()
@@ -793,6 +825,7 @@ def periodoactualizar(request, periodo_id):
         form = PeriodoForm(request.POST, instance=periodo)
         if form.is_valid():
             form.save()
+            messages.success(request, "Datos del periodo actualizados correctamente.")
             return redirect('periodolista') 
     else:
         form = PeriodoForm(instance=periodo)
@@ -804,6 +837,7 @@ def periodoeliminar(request, periodo_id):
     periodo = get_object_or_404(Periodo, id=periodo_id)
     if request.method == 'POST':
         periodo.delete()
+        messages.success(request, f"Periodo {periodo} eliminado correctamente.")
         return redirect('periodolista')  
     return render(request, 'periodoeliminar.html', {'periodo': periodo})
 
@@ -821,6 +855,7 @@ def directorcrear(request):
         form = DirectorForm(request.POST)
         if form.is_valid():
             form.save()
+            messages.success(request, "Autoridad creada correctamente.")
             return redirect('directorlista') 
     else:
         form = DirectorForm()
@@ -831,7 +866,8 @@ def directorcrear(request):
 @permission_required('catalogos.view_director', raise_exception=True)
 def directorver(request, director_id):
     director= get_object_or_404(Director, id=director_id)
-    return render(request, 'directorver.html', {'director': director})
+    form = DirectorForm(instance=director)
+    return render(request, 'directorver.html', {'director': director, 'form': form})
 
 @login_required(login_url='signin')
 @permission_required('catalogos.change_director', raise_exception=True)
@@ -841,6 +877,7 @@ def directoractualizar(request, director_id):
         form = DirectorForm(request.POST, instance=director)
         if form.is_valid():
             form.save()
+            messages.success(request, "Autoridad actualizada correctamente.")
             return redirect('directorlista')
     else:
         form = DirectorForm(instance=director)
