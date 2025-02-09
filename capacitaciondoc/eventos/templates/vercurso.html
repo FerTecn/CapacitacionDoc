@@ -10,70 +10,93 @@
 
 {% block content %}
 <!-- Encabezado de página -->
+<div class="d-flex justify-content-between mb-3">
+    <a href="{% url 'inscripcionlista' %}" class="btn btn-secondary btn-icon-split mr-2">
+        <span class="icon text-white-50">
+            <i class="fas fa-arrow-left"></i>
+        </span>
+        <span class="text">Volver</span>
+    </a>
+</div>
 <h1 class="h3 mb-2 text-gray-800">Información del curso e inscritos</h1>
-    <div class="card mb-4">
-        <div class="card-header bg-primary text-white text-center">
-            <h4 class="m-0 font-weight-bold text-white">Datos del curso</h4>
+<div class="card mb-4">
+    <div class="card-header bg-primary text-white text-center">
+        <h4 class="m-0 font-weight-bold text-white">Datos del curso</h4>
+    </div>
+    <div class="card-body">
+        <div class="form-row">
+            <div class="form-group col-md-4 align-items-center">
+                <p><strong style="display: block;">Clave</strong> {{ evento.curso.clave }}</p>
+            </div>
+            <div class="form-group col-md-8 align-items-center">
+                <p><strong style="display: block;">Nombre del curso</strong> {{ evento.curso.nombre }}</p>
+            </div>
         </div>
-        <div class="card-body">
-            <div class="form-row">
-                <div class="form-group col-md-4 align-items-center">
-                    <p><strong style="display: block;">Clave</strong> {{ evento.curso.clave }}</p>
-                </div>
-                <div class="form-group col-md-8 align-items-center">
-                    <p><strong style="display: block;">Nombre del curso</strong> {{ evento.curso.nombre }}</p>
-                </div>
+        <div class="form-row">
+            <div class="form-group col-md-12 align-items-center">
+                <p><strong style="display: block;">Objetivo</strong> {{ evento.curso.objetivo }}</p>
             </div>
-            <div class="form-row">
-                <div class="form-group col-md-12 align-items-center">
-                    <p><strong style="display: block;">Objetivo</strong> {{ evento.curso.objetivo }}</p>
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group col-md-4 align-items-center">
-                    <p><strong style="display: block;">Período del curso</strong> {{ evento.curso.periodo }}</p>
-                </div>
-                <div class="form-group col-md-6 align-items-center">
-                    <p><strong style="display: block;">Sede</strong> {{ evento.curso.sede }}</p>
-                </div>
-                <div class="form-group col-md-2 align-items-center">
-                    <p><strong style="display: block;">Horas</strong> {{ evento.curso.horas }}</p>
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group col-md-4 align-items-center">
-                    <p><strong style="display: block;">Instructor</strong> {{ evento.curso.instructor }}</p>
-                </div>
-                <div class="form-group col-md-2 align-items-center">
-                    <p><strong style="display: block;">Dirigido a</strong> {{ evento.curso.dirigido }}</p>
-                </div>
-                <div class="form-group col-md-3 align-items-center">
-                    <p><strong style="display: block;">Perfil de Curso</strong> {{ evento.curso.perfilCurso }}</p>
-                </div>
-                
-            </div>
-            <hr>
-            <div class="form-row">
-                <div class="form-group col-md-3 align-items-center">
-                    <p><strong style="display: block;">Lugar</strong>{{ evento.lugar}}</p>
-                </div>
-                <div class="form-group col-md-6">
-                    <p><strong>Fecha del curso</strong></p>
-                    {{ evento.fechaInicio }} - {{ evento.fechaFin }}
-                </div>
-                <div class="form-group col-md-3">
-                    <p><strong>Horario del curso</strong></p>
-                    {{ evento.horaInicio }} <span class="mx-2">a</span> {{ evento.horaFin }}
+        </div>
+        
+        <div class="card mb-4">
+            <!-- Card Header - Accordion -->
+            <a href="#collapseCardEvento" class="d-block card-header py-3" data-toggle="collapse"
+                role="button" aria-expanded="true" aria-controls="collapseCardEvento">
+                <h6 class="m-0 font-weight-bold text-primary text-center">Ver más</h6>
+            </a>
+            <!-- Card Content - Collapse -->
+            <div class="collapse" id="collapseCardEvento">
+                <div class="card-body">
+                    <div class="form-row">
+                        <div class="form-group col-md-4 align-items-center">
+                            <p><strong style="display: block;">Período del curso</strong> {{ evento.curso.periodo }}</p>
+                        </div>
+                        <div class="form-group col-md-6 align-items-center">
+                            <p><strong style="display: block;">Sede</strong> {{ evento.curso.sede }}</p>
+                        </div>
+                        <div class="form-group col-md-2 align-items-center">
+                            <p><strong style="display: block;">Horas</strong> {{ evento.curso.horas }}</p>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-4 align-items-center">
+                            <p><strong style="display: block;">Instructor</strong> {{ evento.curso.instructor }}</p>
+                        </div>
+                        <div class="form-group col-md-2 align-items-center">
+                            <p><strong style="display: block;">Dirigido a</strong> {{ evento.curso.dirigido }}</p>
+                        </div>
+                        <div class="form-group col-md-3 align-items-center">
+                            <p><strong style="display: block;">Perfil de Curso</strong> {{ evento.curso.perfilCurso }}</p>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-3 align-items-center">
+                            <p><strong style="display: block;">Lugar</strong>{{ evento.lugar}}</p>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <p><strong>Fecha del curso</strong></p>
+                            {{ evento.fechaInicio }} - {{ evento.fechaFin }}
+                        </div>
+                        <div class="form-group col-md-3">
+                            <p><strong>Horario del curso</strong></p>
+                            {{ evento.horaInicio }} <span class="mx-2">a</span> {{ evento.horaFin }}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-    {% if request.user.rol != "Docente" %}
-    <div class="card shadow mb-4">
-        <div class="card-header bg-primary text-white text-center">
-            <h4 class="m-0 font-weight-bold text-white">Docentes inscritos en este curso</h4>
-        </div>
+{% if request.user.rol != "Docente" %}
+<div class="card mb-4">
+    <!-- Card Header - Accordion -->
+    <a href="#collapseCardInscritos" class="d-block card-header py-3 bg-primary text-center" data-toggle="collapse"
+        role="button" aria-expanded="true" aria-controls="collapseCardInscritos">
+        <h4 class="m-0 font-weight-bold text-white">Docentes Inscritos en el curso</h4>
+    </a>
+    <!-- Card Content - Collapse -->
+    <div class="collapse" id="collapseCardInscritos">
         <div class="card-body">
             <div class="table-responsive">
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
@@ -101,10 +124,16 @@
             </div>
         </div>
     </div>
-    {% endif %}
-    <div class="text-center">
-        <a href="{% url 'inscripcionlista' %}" class="btn btn-primary">Regresar</a>
-    </div>
+</div>
+{% endif %}
+<div class="d-flex justify-content-between mb-3">
+    <a href="{% url 'inscripcionlista' %}" class="btn btn-secondary btn-icon-split mr-2">
+        <span class="icon text-white-50">
+            <i class="fas fa-arrow-left"></i>
+        </span>
+        <span class="text">Volver</span>
+    </a>
+</div>
 
 {% endblock %}
 
