@@ -7,6 +7,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from eventos.models import Evento
 from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib import messages
 
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.units import cm
@@ -29,7 +30,8 @@ def registrocursolista(request):
 @permission_required('plancapacitacion.view_registrocurso', raise_exception=True)
 def registrocursover(request, curso_id):
     curso = get_object_or_404(RegistroCurso, id=curso_id)
-    return render(request, 'registrocursover.html', {'curso': curso})
+    form = CursoForm(instance=curso)
+    return render(request, 'registrocursover.html', {'curso': curso, 'form':form})
 
 @login_required(login_url='signin')
 @permission_required('plancapacitacion.change_registrocurso', raise_exception=True)
@@ -39,6 +41,7 @@ def registrocursoactualizar(request, curso_id):
         form = CursoForm(request.POST, instance=curso)
         if form.is_valid():
             form.save()
+            messages.success(request, "Curso actualizado correctamente.")
             return redirect('registrocursolista')  #Regresa a la lista de los cursos
     else:
         form = CursoForm(instance=curso)
@@ -50,6 +53,7 @@ def registrocursoeliminar(request, curso_id):
     curso = get_object_or_404(RegistroCurso, id=curso_id)
     if request.method == 'POST':
         curso.delete()
+        messages.success(request, "Curso eliminado correctamente.")
         return redirect('registrocursolista')  
     return render(request, 'registrocursoeliminar.html', {'curso': curso})
 
@@ -60,6 +64,7 @@ def registrocursocrear(request):
         form = CursoForm(request.POST)
         if form.is_valid():
             form.save()
+            messages.success(request, "Curso creado correctamente.")
             return redirect('registrocursolista') 
     else:
         form = CursoForm()
@@ -80,7 +85,8 @@ def validarcursolista(request):
 def validarver(request, validar_id):
     validar = get_object_or_404(ValidarCurso, id=validar_id)
     curso = validar.curso  # El curso asociado al registro de validación
-    return render(request, 'validarver.html', {'curso': curso})
+    form = CursoForm(instance=curso)
+    return render(request, 'validarver.html', {'curso': curso, 'form': form})
 
 @login_required(login_url='signin')
 @permission_required('plancapacitacion.change_validarcurso', raise_exception=True)
@@ -91,6 +97,7 @@ def aceptar_curso(request, curso_id):
     if not Evento.objects.filter(curso=curso).exists():
         curso.aceptado = True
         curso.save()
+        messages.success(request, "El curso se ha validado correctamente.")
         Evento.objects.create(curso=curso)
     
     # Redirigir de vuelta a la lista de cursos
@@ -107,7 +114,7 @@ def invalidar_curso(request, curso_id):
     
     # Eliminar el evento
     Evento.objects.filter(curso=curso).delete()
-
+    messages.success(request, "El curso ha sido invalidado.")
     return HttpResponseRedirect(reverse('validarcursolista'))
 
 def cursosfichas(request):
