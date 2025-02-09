@@ -4,58 +4,59 @@
 {% block title %}Ver curso{% endblock %}
 
 {% block content %}
-<div class="container">
-    <h1 class="h3 mb-2 text-gray-800">Datos del Curso</h1><br>
-
-    <div class="form-row">
-        <div class="form-group col-md-4 align-items-center">
-            <p><strong style="display: block;">Clave</strong> {{ curso.clave }}</p>
-        </div>
-        <div class="form-group col-md-8 align-items-center">
-            <p><strong style="display: block;">Nombre del curso</strong> {{ curso.nombre}}</p>
-        </div>
+<div class="d-flex justify-content-between mb-3">
+    <a href="{% url 'validarcursolista' %}" class="btn btn-secondary btn-icon-split mr-2">
+        <span class="icon text-white-50">
+            <i class="fas fa-arrow-left"></i>
+        </span>
+        <span class="text">Cancelar y volver</span>
+    </a>
+</div>
+<h1 class="h3 mb-2 text-gray-800">Datos del Curso</h1><br>
+<div class="form-row">
+    <div class="form-group col-md-4 align-items-center">
+        <p><strong style="display: block;">{{form.clave.label_tag}}</strong> {{ curso.clave }}</p>
     </div>
-    <div class="form-row">
-        <div class="form-group col-md-12 align-items-center">
-            <p><strong style="display: block;">Objetivo</strong> {{ curso.objetivo }}</p>
-        </div>
+    <div class="form-group col-md-8 align-items-center">
+        <p><strong style="display: block;">{{form.nombre.label_tag}}</strong> {{ curso.nombre}}</p>
     </div>
-    <div class="form-row">
-        <div class="form-group col-md-4 align-items-center">
-            <p><strong style="display: block;">Período del curso</strong> {{ curso.periodo }}</p>
-        </div>
-        <div class="form-group col-md-6 align-items-center">
-            <p><strong style="display: block;">Sede</strong> {{ curso.sede }}</p>
-        </div>
-        <div class="form-group col-md-2 align-items-center">
-            <p><strong style="display: block;">Horas</strong> {{ curso.horas }}</p>
-        </div>
+</div>
+<div class="form-row">
+    <div class="form-group col-md-12 align-items-center">
+        <p><strong style="display: block;">{{form.objetivo.label_tag}}</strong> {{ curso.objetivo }}</p>
     </div>
-    <div class="form-row">
-        <div class="form-group col-md-4 align-items-center">
-            <p><strong style="display: block;">Instructor</strong> {{ curso.instructor }}</p>
-        </div>
-        <div class="form-group col-md-4 align-items-center">
-            <p><strong style="display: block;">Dirigido a</strong> {{ curso.dirigido }}</p>
-        </div>
-        <div class="form-group col-md-4 align-items-center">
-            <p><strong style="display: block;">Perfil de Curso</strong> {{ curso.perfilCurso }}</p>
-        </div>
+</div>
+<div class="form-row">
+    <div class="form-group col-md-4 align-items-center">
+        <p><strong style="display: block;">{{form.periodo.label_tag}}</strong> {{ curso.periodo }}</p>
     </div>
-    <div class="form-row">
-        <div class="form-group col-md-2 align-items-center">
-            <p><strong>Estatus</strong> 
-                {% if curso.aceptado %}
-                    Aceptado
-                {% else %}
-                    Rechazado
-                {% endif %}
-            </p>
-        </div>
-    </div><br>
-
-    <div class='text-center'>
-    <a href="{% url 'validarcursolista' %}" class="btn btn-primary">Regresar</a> 
+    <div class="form-group col-md-6 align-items-center">
+        <p><strong style="display: block;">{{form.sede.label_tag}}</strong> {{ curso.sede }}</p>
+    </div>
+    <div class="form-group col-md-2 align-items-center">
+        <p><strong style="display: block;">{{form.horas.label_tag}}</strong> {{ curso.horas }}</p>
+    </div>
+</div>
+<div class="form-row">
+    <div class="form-group col-md-4 align-items-center">
+        <p><strong style="display: block;">{{form.instructor.label_tag}}</strong> {{ curso.instructor }}</p>
+    </div>
+    <div class="form-group col-md-4 align-items-center">
+        <p><strong style="display: block;">{{form.dirigido.label_tag}}</strong> {{ curso.dirigido }}</p>
+    </div>
+    <div class="form-group col-md-4 align-items-center">
+        <p><strong style="display: block;">{{form.perfilCurso.label_tag}}</strong> {{ curso.perfilCurso }}</p>
+    </div>
+</div>
+<div class="form-row">
+    <div class="form-group col-md-2 align-items-center">
+        <p><strong>Estatus</strong> 
+            {% if curso.aceptado %}
+            <button class="btn btn-success btn-sm" disabled>Aceptado</button>
+            {% else %}
+            <button class="btn btn-danger btn-sm" disabled>Rechazado</button>
+            {% endif %}
+        </p>
     </div>
 </div>
 {% endblock %}
