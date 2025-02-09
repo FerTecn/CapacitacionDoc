@@ -366,6 +366,7 @@ def evidencia(request, evento_id):
             
         if form.is_valid():
             form.save()
+            messages.success(request, "Evidencia cargada exitosamente.")
             return redirect('detalle_curso_calificacion', evento_id=evento.id)
     else:
         
