@@ -1,8 +1,7 @@
 from django.shortcuts import render, render, get_object_or_404, redirect
-
-from catalogos.models import Instructor
+from catalogos.models import Director
 from .models import FichaTecnica, RegistroCurso, ValidarCurso
-from .forms import CursoForm
+from .forms import ContenidoTematicoFormSet, CriterioEvaluacionFormSet, CursoForm, FichaTecnicaForm
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from eventos.models import Evento
@@ -16,6 +15,7 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Table, TableStyle, 
 from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.enums import TA_JUSTIFY, TA_CENTER
+
 
 from io import BytesIO
 
@@ -137,8 +137,49 @@ def fichatecnicaver(request, curso_id):
         'criterios_evaluacion': criterios_evaluacion,
     })
 
-def generarfichatecnica(request, ficha_id):
-    ficha = get_object_or_404(FichaTecnica, id=ficha_id)
+def fichatecnicacrear(request, curso_id):
+    curso = get_object_or_404(RegistroCurso, id=curso_id)
+    ficha, created = FichaTecnica.objects.get_or_create(curso=curso)
+
+    if request.method == 'POST':
+        form = FichaTecnicaForm(request.POST, instance=ficha)
+        contenido_tematico_formset = ContenidoTematicoFormSet(request.POST, instance=ficha, prefix='contenidos')
+        criterio_evaluacion_formset = CriterioEvaluacionFormSet(request.POST, instance=ficha, prefix='criterios')
+      
+
+        if form.is_valid() and contenido_tematico_formset.is_valid() and criterio_evaluacion_formset.is_valid():
+            ficha = form.save()
+
+            contenido_tematico_formset.save()
+            criterio_evaluacion_formset.save()
+
+            messages.success(request, "Se guardó la información de la ficha técnica correctamente.")
+            return redirect('fichatecnica')
+        else:
+            print(f'{form.errors} ')
+            print(f'{contenido_tematico_formset.errors} contenido')
+            print(f'{criterio_evaluacion_formset.errors} criterio')
+            messages.warning(request, "Por favor, corregir los errores en el formulario.")
+            
+        
+    else:
+        form = FichaTecnicaForm(instance=ficha)
+        contenido_tematico_formset = ContenidoTematicoFormSet(instance=ficha, prefix='contenidos')
+        criterio_evaluacion_formset = CriterioEvaluacionFormSet(instance=ficha, prefix='criterios')
+
+
+    # Renderizar el formulario si no es una solicitud POST
+    return render(request, 'fichatecnicacrear.html', {
+        'form': form, 
+        'contenido_tematico_formset': contenido_tematico_formset, 
+        'criterio_evaluacion_formset': criterio_evaluacion_formset,
+        'curso': curso,
+    })
+
+def fichatecnicapdf(request, curso_id):
+    curso = get_object_or_404(RegistroCurso, id=curso_id)
+    ficha = get_object_or_404(FichaTecnica, curso=curso)
+    jefe = get_object_or_404(Director, puesto="Jefe de Desarrollo Académico")
 
     buffer = BytesIO()
     doc = SimpleDocTemplate(buffer, pagesize=letter,
@@ -192,7 +233,7 @@ def generarfichatecnica(request, ficha_id):
 
     # **Datos generales**
     Story.append(Paragraph(f"<b>Instituto Tecnológico de Apizaco</b>", style_bold))
-    Story.append(Paragraph(f"<b>Nombre del servicio:</b> {ficha.servicio}", style_normal))
+    Story.append(Paragraph(f"<b>Nombre del servicio:</b> {ficha.curso.nombre}", style_normal))
     Story.append(Paragraph(f"<b>Instructor(a):</b> {ficha.curso.instructor}", style_normal))
     Story.append(Spacer(1, 12))
 
@@ -252,12 +293,15 @@ def generarfichatecnica(request, ficha_id):
 
     # Nuevas filas para las firmas y sello
     data = [
+        [ficha.curso.instructor, "", f"{jefe.nombre} {jefe.apPaterno} {jefe.apMaterno}"],
         ["Nombre y Firma del Facilitador", "Sello", "Nombre y Firma del\n Jefe de Desarrollo Académico"],
     ]
     table = Table(data, [200, 100, 200])
     table.setStyle(TableStyle([
         ("ALIGN", (0, 0), (-1, -1), "CENTER"),
-        ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+        ("FONTNAME", (0, 1), (-1, 1), "Helvetica-Bold"),
+        ('LINEBELOW', (0,0), (0,0), 1, colors.black),
+        ('LINEBELOW', (2,0), (2,0), 1, colors.black),
         ("BOTTOMPADDING", (0, 0), (-1, 0), 8),
         ("VALIGN", (0, 0), (-1, -1), "TOP"),
     ]))
