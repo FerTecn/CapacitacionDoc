@@ -1,0 +1,178 @@
+{% load static %}
+
+{% block sidebar %}
+<ul class="navbar-nav sidebar sidebar-light bg-light accordion" id="accordionSidebar">
+
+    <!-- Sidebar - Brand -->
+    <a class="sidebar-brand d-flex align-items-center justify-content-center h-auto" href="{% url 'home' %}">
+        <div class="sidebar-brand-icon">
+            <img src="{% static 'img/logo_sidebar.png' %}" class="img-fluid d-none d-md-inline" width="48%" height="auto" alt="Logo">
+            <img src="{% static 'img/logo_sidebar_ita.png' %}" class="img-fluid d-none d-md-inline" width="48%" height="auto" alt="Logo">
+            <!-- Para dispositivos móviles -->
+            <img src="{% static 'img/logo_sidebar.png' %}" class="img-fluid d-md-none" width="100%" height="auto" alt="Logo">
+            <img src="{% static 'img/logo_sidebar_ita.png' %}" class="img-fluid d-md-none" width="100%" height="auto" alt="Logo">
+        </div><br/>
+    </a>
+    <div class="d-none d-sm-inline-block sidebar-brand-text text-center mx-3">TecNM Campus Apizaco</div>
+
+    <!-- Divider -->
+    <hr class="sidebar-divider my-0">
+
+    <!-- Nav Item - Home -->
+    <li class="nav-item {% if request.path == '/' %}active{% endif %}">
+        <a class="nav-link" href="{% url 'home' %}">
+            <i class="fas fa-fw fa-home"></i>
+            <span>Inicio</span></a>
+    </li>
+
+    <!-- Nav Item - Datos personales si rol es Docente o Instructor -->
+    {% if request.user.rol == "Docente" or request.user.rol == "Instructor" %}
+    <li class="nav-item {% if '/catalogos' in request.path %}active{% endif %}">
+        <a class="nav-link" href="{% if request.user.rol == 'Docente' %}{% url 'docentelista' %}{% elif request.user.rol == 'Instructor' %}{% url 'instructorlista' %}{% endif %}">
+            <i class="fas fa-fw fa-user"></i>
+            <span>Mis datos de {{ request.user.rol }}</span></a>
+    </li>
+    {% endif %}
+
+    <!-- Divider -->
+    <hr class="sidebar-divider">
+
+    <!-- Nav Item - Catálogos Collapse Menu si los roles NO SON Docente o Instructor-->
+    {% if request.user.rol != "Docente" and request.user.rol != "Instructor" %}
+    <li class="nav-item {% if '/catalogos' in request.path %}active{% endif %}">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseOne"
+            aria-expanded="true" aria-controls="collapseOne">
+            <i class="fas fa-fw fa-folder"></i>
+            <span>Catálogos</span>
+        </a>
+        <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">Todos los catálogos:</h6>
+                <a class="collapse-item" href="{% url 'instructorlista' %}">Instructores</a>
+                <a class="collapse-item" href="{% url 'docentelista' %}">Docentes</a>
+                <a class="collapse-item" href="{% url 'departamentolista' %}">Departamentos</a>
+                <a class="collapse-item" href="{% url 'dirigidolista' %}">Dirigidos a</a>
+                <a class="collapse-item" href="{% url 'generolista' %}">Género</a>
+                <a class="collapse-item" href="{% url 'gradolista' %}">Grado académico</a>
+                <a class="collapse-item" href="{% url 'sedelista' %}">Sedes</a>
+                <a class="collapse-item" href="{% url 'lugarlista' %}">Lugar</a>
+                <a class="collapse-item" href="{% url 'perfilcursolista' %}">Perfil de curso</a>
+                <a class="collapse-item" href="{% url 'periodolista' %}">Periodo</a>
+                <a class="collapse-item" href="{% url 'directorlista' %}">Autoridades</a>
+            </div>
+        </div>
+    </li>
+    {% endif %}
+
+    <!-- Nav Item - Plan de Capacitaciones Collapse Menu -->
+    <li class="nav-item {% if '/plancapacitacion' in request.path %}active{% endif %}">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
+            aria-expanded="true" aria-controls="collapseTwo">
+            <i class="fas fa-chalkboard-teacher"></i>
+            <span>Plan de capacitación</span>
+        </a>
+        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo"
+            data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">Opciones de cursos:</h6>
+                <a class="collapse-item" href="{% url 'registrocursolista' %}">Registro de cursos</a>
+                <a class="collapse-item" href="{% url 'validarcursolista' %}">Validación de cursos</a>
+                <a class="collapse-item" href="{% url 'fichatecnica' %}">Ficha técnica</a>
+            </div>
+        </div>
+    </li>
+
+    <!-- Divider -->
+    <hr class="sidebar-divider">
+
+    <!-- Nav Item - Eventos Collapse Menu -->
+    <li class="nav-item {% if '/eventos' in request.path %}active{% endif %}">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseThree"
+            aria-expanded="true" aria-controls="collapseThree">
+            <i class="fas fa-fw fa-calendar-day"></i>
+            <span>Eventos</span>
+        </a>
+        <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">Eventos:</h6>
+                <a class="collapse-item" href="{% url 'eventolista' %}">Eventos</a>
+                <a class="collapse-item" href="blank.html">Oficio de comisión</a>
+                <a class="collapse-item" href="{% url 'inscripcionlista' %}">Inscipciones</a>
+                <h6 class="collapse-header">Gestión de mis cursos:</h6>
+                <a class="collapse-item" href="{% url 'asistencia' %}">Asistencia</a>
+                <a class="collapse-item" href="{% url 'calificacion' %}">Calificación</a>
+            </div>
+        </div>
+    </li>
+
+    <!-- Nav Item - Encuesta Collapse Menu -->
+    <li class="nav-item {% if '/encuesta' in request.path %}active{% endif %}">
+        <a class="nav-link" href="{% url 'encuesta' %}">
+            <i class="fas fa-fw fa-poll"></i>
+            <span>Encuesta de satisfacción</span></a>
+    </li>
+
+    <!-- Nav Item - Reportes Collapse Menu -->
+    <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#colla"
+            aria-expanded="true" aria-controls="colla">
+            <i class="fas fa-fw fa-file-pdf"></i>
+            <span>Reportes</span>
+        </a>
+        <div id="colla" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <a class="collapse-item" href="">Verificación de constancias</a>
+                <a class="collapse-item" href="">Consulta de constancia</a>
+            </div>
+        </div>
+    </li>
+
+    <!-- Divider -->
+    <hr class="sidebar-divider d-none d-md-block">
+
+    <!-- Sidebar Toggler (Sidebar) -->
+    <div class="text-center d-none d-md-inline">
+        <button class="rounded-circle border-0" id="sidebarToggle"></button>
+    </div>
+</ul>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const sidebar = document.getElementById("accordionSidebar");
+        const sidebarToggle = document.getElementById("sidebarToggle");
+
+        // Función para alternar el estado del sidebar
+        function toggleSidebar() {
+            sidebar.classList.toggle("toggled");
+            document.querySelector(".sidebar").classList.toggle("toggled");
+
+            // Guardar estado en localStorage
+            localStorage.setItem("sidebarState", sidebar.classList.contains("toggled") ? "toggled" : "untoggled");
+        }
+
+        // Obtener estado guardado en localStorage
+        const savedState = localStorage.getItem("sidebarState");
+
+        // Si el usuario tiene preferencia guardada, aplicarla
+        if (savedState === "toggled") {
+            sidebar.classList.add("toggled");
+            document.querySelector(".sidebar").classList.add("toggled");
+        } else {
+            sidebar.classList.remove("toggled");
+            document.querySelector(".sidebar").classList.remove("toggled");
+        }
+
+        // Forzar sidebar cerrado en dispositivos móviles
+        if (window.innerWidth < 768) {
+            sidebar.classList.add("toggled");
+            document.querySelector(".sidebar").classList.add("toggled");
+            localStorage.setItem("sidebarState", "toggled");
+        }
+
+        // Evento para cambiar el estado cuando se presiona el botón
+        sidebarToggle.addEventListener("click", toggleSidebar);
+    });
+</script>
+
+
+{% endblock %}
