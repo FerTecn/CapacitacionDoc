@@ -1,0 +1,280 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}- Crear ficha técnica {{ ficha.curso.nombre }}{% endblock %}
+{% block styles %}
+<style>
+    {% comment %} Ocultamos el input y su etiqueta de eliminar, ya que es necesario pero no debemos verlo {% endcomment %}
+    input[name*="-DELETE"] {
+        display: none;
+    }
+    label[for*="-DELETE"] {
+        display: none;
+    }
+</style>    
+{% endblock styles %}
+{% block content %}
+
+{% if messages %}
+    {% for message in messages %}
+        {% if "ficha" in message.extra_tags %}
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        {% endif %}
+    {% endfor %}
+{% endif %}
+
+<form method="post">
+    {% csrf_token %}
+    {{ contenido_tematico_formset.management_form }}
+    {{ criterio_evaluacion_formset.management_form }}
+
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white text-center">
+            <h4 class="m-0 font-weight-bold text-white">Ficha técnica</h4>
+        </div>
+        <div class="card-body">
+            <div class="form-row">
+                <div class="form-group col-md-4 ">
+                    <b>Instituto Tecnológico de Apizaco</b>
+                </div>
+                <div class="form-group col-md-4 ">
+                    <b>Nombre del servicio:</b>
+                    {{ curso.nombre }}
+                </div>
+                <div class="form-group col-md-4 ">
+                    <b>Instructor:</b>
+                    {{ curso.instructor }}
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-12 ">
+                    <b>{{ form.introduccion.label_tag }}</b>
+                    {{ form.introduccion }}
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-12 ">
+                    <b>{{ form.justificacion.label_tag }}</b>
+                    {{ form.justificacion }}
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-12 ">
+                    <b>Objetivo:</b>
+                    {{ curso.objetivo }}
+                </div>
+            </div>
+            <b>Descripción del servicio:</b>
+            <div class="form-row">
+                <div class="form-group col-md-4 ">
+                    <b>{{ form.servicio.label_tag }}</b>
+                    {{ form.servicio }}
+                </div>
+                <div class="form-group col-md-4 ">
+                    <b>Duración:</b>
+                    {{ curso.horas }} horas.
+                </div>
+            </div>
+            <b>Contenido Temático del curso:</b>
+            <div id="contenidos-formset">
+                {% for form in contenido_tematico_formset %}
+                    <div class="contenido-form">
+                        <div class="form-row border rounded p-4 mb-4 ">
+                            {{ form.id }}
+                            <div class="form-group col-md-4 ">
+                                <b>{{ form.tema.label_tag }}</b>
+                                {{ form.tema }}
+                            </div>
+                            <div class="form-group col-md-4 ">
+                                <b>{{ form.tiempo.label_tag }}</b>
+                                {{ form.tiempo }}
+                            </div>
+                            <div class="form-group col-md-4 ">
+                                <b>{{ form.actividades.label_tag }}</b>
+                                {{ form.actividades }}
+                            </div>
+                            {{ form.DELETE }}  <!-- Campo oculto DELETE -->
+                            <div class="form-group col-md-12 text-center">
+                                <button type="button" class="btn btn-danger eliminar-contenido">
+                                    <i class="fas fa-trash"></i> Eliminar
+                                </button>
+                            </div>
+                        </div>
+                        {% comment %} {{ form.as_p }} {% endcomment %}
+                        
+                        
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="text-center">
+                <button type="button" id="agregar-contenido" class="btn btn-success ">
+                    <i class="fas fa-plus"></i> Agregar otro contenido
+                </button>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-md-12 ">
+                    <b>{{ form.elementosDidacticos.label_tag }}</b>
+                    {{ form.elementosDidacticos }}
+                </div>
+            </div>
+            
+            <b>Criterios de evaluación:</b>
+            <div id="criterios-formset">
+                {% for form in criterio_evaluacion_formset %}
+                    <div class="criterio-form">
+                        <div class="form-row border rounded p-4 mb-4 ">
+                            {{ form.id }}
+                            <div class="form-group col-md-4 ">
+                                <b>{{ form.criterio.label_tag }}</b>
+                                {{ form.criterio }}
+                            </div>
+                            <div class="form-group col-md-4 ">
+                                <b>{{ form.valor.label_tag }}</b>
+                                {{ form.valor }}
+                            </div>
+                            <div class="form-group col-md-4 ">
+                                <b>{{ form.instrumento.label_tag }}</b>
+                                {{ form.instrumento }}
+                            </div>
+                            {{ form.DELETE }}  <!-- Campo oculto DELETE -->
+                            <div class="form-group col-md-12 text-center">
+                                <button type="button" class="btn btn-danger eliminar-criterio">
+                                    <i class="fas fa-trash"></i> Eliminar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="text-center">
+                <button type="button" id="agregar-criterio" class="btn btn-success ">
+                    <i class="fas fa-plus"></i> Agregar Criterio
+                </button>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-md-12 ">
+                    <b>{{ form.competencias.label_tag }}</b>
+                    {{ form.competencias }}
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-12 ">
+                    <b>{{ form.fuentes.label_tag }}</b>
+                    {{ form.fuentes }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    {% comment %} {{ form.as_p }} {% endcomment %}
+
+    
+    
+
+    <!-- Añadir los formularios de contenido temático y criterios de evaluación -->
+    {% comment %} <div id="contenidos-formset">
+        {% for form in contenido_tematico_formset %}
+            <div class="contenido-form">
+                {{ form.as_p }}
+                {{ form.DELETE }}  <!-- Campo oculto DELETE -->
+                <button type="button" class="btn btn-danger btn-sm eliminar-contenido">
+                    <i class="fas fa-trash"></i> Eliminar
+                </button>
+            </div>
+        {% endfor %}
+    </div> {% endcomment %}
+{% comment %} 
+    <button type="button" id="agregar-contenido" class="btn btn-success btn-sm">
+        <i class="fas fa-plus"></i> Agregar otro contenido
+    </button>
+
+    <div id="criterios-formset">
+        {% for form in criterio_evaluacion_formset %}
+            <div class="criterio-form">
+                {{ form.as_p }}
+                {{ form.DELETE }}  <!-- Campo oculto DELETE -->
+                <button type="button" class="btn btn-danger btn-sm eliminar-criterio">
+                    <i class="fas fa-trash"></i> Eliminar
+                </button>
+            </div>
+        {% endfor %}
+    </div>
+
+    <button type="button" id="agregar-criterio" class="btn btn-success btn-sm">
+        <i class="fas fa-plus"></i> Agregar Criterio
+    </button> {% endcomment %}
+
+    <button type="submit" class="btn btn-primary">Guardar Ficha</button>
+</form>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        function updateTotalForms(containerId, totalFormsId) {
+            document.getElementById(totalFormsId).value = document.getElementById(containerId).querySelectorAll('.contenido-form, .criterio-form').length;
+        }
+
+        function addDeleteButton(formElement, className) {
+            const deleteButton = formElement.querySelector(className);
+            const deleteInput = formElement.querySelector('input[name*="-DELETE"]');
+
+            deleteButton.addEventListener('click', function () {
+                if (deleteInput) {
+                    deleteInput.checked = true; // Marcarlo para eliminación en Django
+                }
+                formElement.style.display = "none"; // Ocultar en el DOM pero sin eliminar
+                updateTotalForms(formElement.parentElement.id, `id_${formElement.parentElement.id}-TOTAL_FORMS`);
+            });
+        }
+
+        /*** Agregar Contenido Temático ***/
+        document.getElementById('agregar-contenido')?.addEventListener('click', function() {
+            const formsetContainer = document.getElementById('contenidos-formset');
+            const totalForms = document.getElementById('id_contenidos-TOTAL_FORMS');
+            const formCount = parseInt(totalForms.value);
+
+            const newForm = formsetContainer.querySelector('.contenido-form').cloneNode(true);
+            newForm.innerHTML = newForm.innerHTML.replace(/-\d+-/g, `-${formCount}-`);
+
+            newForm.querySelectorAll('input, textarea').forEach(input => input.value = '');
+            const deleteInput = newForm.querySelector('input[name*="-DELETE"]');
+            if (deleteInput) deleteInput.checked = false; // Asegurar que no se marque para borrar
+
+            addDeleteButton(newForm, '.eliminar-contenido');
+            formsetContainer.appendChild(newForm);
+            totalForms.value = formCount + 1;
+        });
+
+        /*** Agregar Criterios de Evaluación ***/
+        document.getElementById('agregar-criterio')?.addEventListener('click', function() {
+            const formsetContainer = document.getElementById('criterios-formset');
+            const totalForms = document.getElementById('id_criterios-TOTAL_FORMS');
+            const formCount = parseInt(totalForms.value);
+
+            const newForm = formsetContainer.querySelector('.criterio-form').cloneNode(true);
+            newForm.innerHTML = newForm.innerHTML.replace(/-\d+-/g, `-${formCount}-`);
+
+            newForm.querySelectorAll('input, textarea').forEach(input => input.value = '');
+            const deleteInput = newForm.querySelector('input[name*="-DELETE"]');
+            if (deleteInput) deleteInput.checked = false;
+
+            addDeleteButton(newForm, '.eliminar-criterio');
+            formsetContainer.appendChild(newForm);
+            totalForms.value = formCount + 1;
+        });
+
+        /*** Habilitar eliminación en los elementos existentes ***/
+        document.querySelectorAll('.contenido-form').forEach(form => addDeleteButton(form, '.eliminar-contenido'));
+        document.querySelectorAll('.criterio-form').forEach(form => addDeleteButton(form, '.eliminar-criterio'));
+    });
+</script>
+{% endblock %}
