@@ -4,8 +4,6 @@ from catalogos.models import Periodo
 from catalogos.models import Sede
 from catalogos.models import Dirigido
 from catalogos.models import PerfilCurso
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 
 # Create your models here.
 class RegistroCurso(models.Model):
@@ -46,10 +44,7 @@ class ValidarCurso(models.Model):
         verbose_name_plural = 'Validación de cursos'
 
 class FichaTecnica(models.Model):
-    # clave = models.CharField(max_length=10)
-    # nombre=models.CharField(max_length=40)
     curso = models.ForeignKey(RegistroCurso, on_delete=models.CASCADE, null=True, blank=True)
-    # instructor=models.CharField(max_length=40)
     introduccion=models.TextField()
     justificacion=models.TextField()
     servicio = models.CharField(
@@ -59,8 +54,8 @@ class FichaTecnica(models.Model):
             ('Taller', 'Taller'), 
         ],
     )
-    elementosDidacticos = models.CharField(max_length=200)
-    competencias = models.CharField(max_length=200)
+    elementosDidacticos = models.TextField()
+    competencias = models.TextField()
     fuentes = models.TextField()
     
     def __str__(self):
