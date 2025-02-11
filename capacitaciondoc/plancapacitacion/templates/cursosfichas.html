@@ -11,11 +11,24 @@
 {% block content %}
 <!-- Page Heading -->
 <h1 class="h3 mb-2 text-gray-800">Consulta de Fichas técnicas </h1>
-<div class="card">
+<div class="card mb-4">
     <div class="card-body">
         Aquí puedes consultar las fichas técnicas de cada curso
     </div>
-</div><br>
+</div>
+
+{% if messages %}
+    <div class="messages-container">
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Cerrar">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
 
 <!-- DataTales Example -->
 <div class="card shadow mb-4">
@@ -45,7 +58,17 @@
                         <td>
                             <!-- Opciones -->
                             {% comment %} {% if perms.plancapacitacion.view_registrocurso %} {% endcomment %}
-                            <a href="{% url 'fichatecnicaver' curso.id %}" class="btn btn-info btn-sm">Ver ficha técnica</a>
+                            {% with ficha=curso.fichatecnica_set.first %}
+                                {% if ficha %}
+                                    {% if ficha.contenidos_tematicos.all and ficha.criterios_evaluacion.all %}
+                                        <a href="{% url 'generarficha' curso.id %}" class="btn btn-info btn-sm">Descargar ficha técnica</a>
+                                    {% endif %}
+                                    <a href="{% url 'fichatecnicacrear' curso.id %}" class="btn btn-warning btn-sm">Modificar Ficha Técnica</a>
+                                {% else %}
+                                    <a href="{% url 'fichatecnicacrear' curso.id %}" class="btn btn-success btn-sm">Crear Ficha Técnica</a>
+                                {% endif %}
+                            {% endwith %}
+                            <a href="{% url "generar_constancia" curso.id %}" class="btn btn-success btn-sm">Crear cons</a>
                             {% comment %} {% endif %} {% endcomment %}
                             {% comment %} {% if perms.plancapacitacion.change_registrocurso %}
                             <a href="{% url 'fichatecnica' curso.id %}" class="btn btn-warning btn-sm">Crear/Modificar ficha técnica</a>{% endif %} {% endcomment %}
