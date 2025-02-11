@@ -17,6 +17,7 @@ urlpatterns = [
 
     path('fichatecnica/', views.cursosfichas, name='fichatecnica'),
     path('fichatecnica/<int:curso_id>/', views.fichatecnicaver, name='fichatecnicaver'),
-    path('descargar-ficha/<int:ficha_id>/', views.generarfichatecnica, name='generarficha'),
+    path('fichatecnica/datos/<int:curso_id>/', views.fichatecnicacrear, name='fichatecnicacrear'),
+    path('descargar-ficha/<int:curso_id>/', views.fichatecnicapdf, name='generarficha'),
 
 ]
