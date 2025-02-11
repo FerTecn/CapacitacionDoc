@@ -13,7 +13,7 @@
             </span>
             <span class="text">Cancelar y volver</span>
         </a>
-        <button type="submit" class="btn btn-success ml-2">Cargar evidencia</button>
+        <button type="submit" class="btn btn-success ml-2" name="guardar">Cargar evidencia</button>
     </div>
     <div class="form-row">
         <div class="form-group col-md-4 align-items-center">
@@ -32,20 +32,17 @@
             <div class="form-row">
                 <div class="form-group col-md-6 align-items-center">
                     <p><strong style="display: block;">Evidencia anterior:</strong></p>
-                    <div class="card" style="width: 100%; height: 20rem">
-                        <div class="card-body">
-
-                        {% if evidencia.archivo_evidencia %}
-                            <img src="{{ evidencia.archivo_evidencia.url }}" class="rounded" style="width: 100%; height: 100%; object-fit: contain;" alt="Evidencia del curso {{evento.curso.nombre}}">
+                    <div class="border rounded" style="width: 100%; height: 22rem">
+                        {% if evidencia and evidencia.archivo_evidencia %}
+                            <img src="{{ evidencia.archivo_evidencia.url }}" style="width: 100%; height: 100%; object-fit: contain;" alt="Evidencia del curso {{evento.curso.nombre}}">
                         {% else %}
-                            No hay evidencia
+                            <div class="text-center mt-4">No hay evidencia</div>
                         {% endif %}
-                        </div>
                     </div>
                 </div>
                 <div class="form-group col-md-6 align-items-center">
                     <p><strong style="display: block;">{% if evidencia.archivo_evidencia %}Reemplazar evidencia: {% else %}Cargar evidencia:{% endif %}</strong></p>
-                    
+                    <p class="font-italic">Para reemplazar la evidencia, primero elija un archivo y después presione en Cargar evidencia</p>
                     <!-- Input file oculto -->
                     <input type="file" name="archivo_evidencia" id="imagen-input" class="d-none">
         
@@ -54,6 +51,13 @@
         
                     <!-- Mostrar nombre del archivo seleccionado -->
                     <span id="nombre-archivo" class="text-muted">No se eligió ningún archivo</span>
+                    <hr>
+
+                    {% if evidencia and evidencia.archivo_evidencia %}
+                        <p><strong style="display: block;">Borrar evidencia:</strong></p>
+                        <p class="font-italic">Si desea borrar la evidencia, solo presione Borrar Evidencia</p>
+                            <button type="submit" name="borrar" class="btn btn-danger mx-2 btn-block">Borrar Evidencia</button>
+                        {% endif %}
                 </div>
                 
             </div>
@@ -67,7 +71,7 @@
             </span>
             <span class="text">Cancelar y volver</span>
         </a>
-        <button type="submit" class="btn btn-success ml-2">Cargar evidencia</button>
+        <button type="submit" class="btn btn-success ml-2" name="guardar">Cargar evidencia</button>
     </div>
     
 </form>
