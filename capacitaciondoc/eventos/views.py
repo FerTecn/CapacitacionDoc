@@ -1,16 +1,15 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 from django.shortcuts import render, redirect, reverse
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
-from plancapacitacion.models import RegistroCurso
 
 from django.core.files.storage import FileSystemStorage #Para archivos y directorios
 
 
 from .forms import EventoForm, EvidenciaForm
 from .models import Asistencia, Calificacion, Evento, Evidencia, Inscripcion
-from catalogos.models import Docente, Lugar, Instructor, GradoAcademico, Periodo
+from catalogos.models import Docente, Lugar, Instructor, GradoAcademico
 
 # Create your views here.
 @login_required(login_url='signin')
@@ -68,8 +67,6 @@ def crearevento(request, evento_id):
             lugar_id = request.POST.get('lugar')
             lugar = get_object_or_404(Lugar, id=lugar_id)
             evento.lugar = lugar
-            if not Evidencia.objects.filter(evento=evento).exists():
-                Evidencia.objects.create(evento=evento)
 
             evento.save()
 
@@ -360,16 +357,36 @@ def evidencia(request, evento_id):
 
     if request.method == 'POST':
         form = EvidenciaForm(request.POST, request.FILES, instance=evidencia)
-        if evidencia.archivo_evidencia:
-            fs = FileSystemStorage()
-            fs.delete(evidencia.archivo_evidencia.name)
-            
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Evidencia cargada exitosamente.")
-            return redirect('detalle_curso_calificacion', evento_id=evento.id)
+
+        if 'guardar' in request.POST:  # Si se presionó el botón "Guardar"
+            if form.is_valid():
+                nueva_evidencia = request.FILES.get('archivo_evidencia', None)
+
+                # Si hay una nueva evidencia, eliminar la anterior (si existe)
+                if nueva_evidencia:
+                    if evidencia and evidencia.archivo_evidencia:
+                        fs = FileSystemStorage()
+                        fs.delete(evidencia.archivo_evidencia.name)
+                elif evidencia and not nueva_evidencia:
+                    # Si no hay nueva evidencia, mantener la existente
+                    form.instance.archivo_evidencia = evidencia.archivo_evidencia
+
+                # Guardar el formulario
+                evidencia = form.save(commit=False)
+                evidencia.evento = evento
+                evidencia.save()
+
+                messages.success(request, "Evidencia guardada exitosamente.")
+                return redirect('detalle_curso_calificacion', evento_id=evento.id)
+
+        elif 'borrar' in request.POST:  # Si se presionó el botón "Borrar"
+            if evidencia and evidencia.archivo_evidencia:
+                fs = FileSystemStorage()
+                fs.delete(evidencia.archivo_evidencia.name)
+                evidencia.delete()
+                messages.success(request, "Evidencia borrada exitosamente.")
+                return redirect('detalle_curso_calificacion', evento_id=evento.id)
     else:
-        
         form = EvidenciaForm(instance=evidencia)
     return render(request, 'evidencia.html', {'evento':evento, 'evidencia':evidencia, 'form': form})
 
