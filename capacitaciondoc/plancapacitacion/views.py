@@ -331,6 +331,7 @@ def fichatecnicapdf(request, curso_id):
 def oficioslista(request):
     departamentos = Departamento.objects.all()
     docentes = None
+    departamento_seleccionado = None
     if request.method == "GET" and "departamento_id" in request.GET:
         departamento_id = request.GET.get("departamento_id")
         departamento_seleccionado = get_object_or_404(Departamento, id=departamento_id)
