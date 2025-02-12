@@ -68,10 +68,6 @@
                                     <a href="{% url 'fichatecnicacrear' curso.id %}" class="btn btn-success btn-sm">Crear Ficha Técnica</a>
                                 {% endif %}
                             {% endwith %}
-                            <a href="{% url "generar_constancia" curso.id %}" class="btn btn-success btn-sm">Crear cons</a>
-                            {% comment %} {% endif %} {% endcomment %}
-                            {% comment %} {% if perms.plancapacitacion.change_registrocurso %}
-                            <a href="{% url 'fichatecnica' curso.id %}" class="btn btn-warning btn-sm">Crear/Modificar ficha técnica</a>{% endif %} {% endcomment %}
                         </td>
                     </tr>
                     {% endfor %}
