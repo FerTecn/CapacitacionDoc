@@ -19,5 +19,7 @@ urlpatterns = [
     path('fichatecnica/<int:curso_id>/', views.fichatecnicaver, name='fichatecnicaver'),
     path('fichatecnica/datos/<int:curso_id>/', views.fichatecnicacrear, name='fichatecnicacrear'),
     path('descargar-ficha/<int:curso_id>/', views.fichatecnicapdf, name='generarficha'),
+    path('oficio_comision', views.oficioslista, name='oficioslista'),
+    path('descargar_oficio/<int:docente_id>/<int:departamento_id>/', views.descargar_oficio, name='descargar_oficio'),
 
 ]
