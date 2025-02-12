@@ -4,153 +4,153 @@
 {% block title %}- Consulta de ficha tecnica del curso {{ficha.curso.nombre }}{% endblock %}
 
 {% block content %}
-<div class="container">
-    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800">Consulta de ficha técnica</h1>
-        <form action="{% url 'generarficha' ficha_id=ficha.id %}" method="get">
-            <button type="submit" class="d-sm-inline-block btn btn-primary btn-icon-split">
-                <span class="icon text-white-50">
-                    <i class="fas fa-download"></i>
-                </span>
-                <span class="text">Descargar Ficha Técnica</span>
-            </button>
-        </form>
-    </div>
-    {% if messages %}
-        <div class="messages-container">
-            {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                    {{ message }}
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Cerrar">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-            {% endfor %}
-        </div>
-    {% endif %}
 
-    <div id="datos-personales" class="section">
-        <div class="card mb-4">
-            <div class="card-header py-3 text-center bg-primary">
-                <h4 class="m-0 font-weight-bold text-white">Ficha técnica</h4>
-            </div>            
-            <div class="card-body">
-                <div class="form-row">
-                    <div class="form-group col-md-4 align-items-center">
-                        <p><strong style="display: block;">Instituto Tecnológico de Apizaco</strong></p>
-                    </div>
-                    <div class="form-group col-md-4 align-items-center">
-                        <p><strong style="display: block;">Nombre del servicio: </strong> {{ ficha.curso.nombre }}</p>
-                    </div>
-                    <div class="form-group col-md-4 align-items-center">
-                        <p><strong style="display: block;">Instructor(a): </strong> {{ ficha.curso.instructor }}</p>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group col-md-12 align-items-center">
-                        <p><strong style="display: block;">Introducción: </strong> {{ ficha.introduccion }}</p>
-                    </div>
-                    
-                </div>
-                <div class="form-row">
-                    <div class="form-group col-md-12 align-items-center">
-                        <p><strong style="display: block;">Justificación: </strong>{{ ficha.justificacion }}</p>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group col-md-12 align-items-center">
-                        <p><strong style="display: block;">Objetivo General: </strong>{{ ficha.curso.objetivo }}</p>
-                    </div>
-                </div>
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Consulta de ficha técnica</h1>
+    <form action="{% url 'generarficha' ficha_id=ficha.id %}" method="get">
+        <button type="submit" class="d-sm-inline-block btn btn-primary btn-icon-split">
+            <span class="icon text-white-50">
+                <i class="fas fa-download"></i>
+            </span>
+            <span class="text">Descargar Ficha Técnica</span>
+        </button>
+    </form>
+</div>
+{% if messages %}
+    <div class="messages-container">
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Cerrar">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
-        </div>
+        {% endfor %}
     </div>
-    <hr>
+{% endif %}
 
-    <div id="formacion-academica" class="section">
-        <div class="card mb-4">
-            <div class="card-header py-3 text-center bg-primary">
-                <h4 class="m-0 font-weight-bold text-white">Descripción del Servicio</h4>
-            </div>
-            <div class="card-body">
-                <div class="form-row">
-                    <div class="form-group col-md-6 align-items-center">
-                        <p><strong style="display: block;">Tipo de servicio: </strong>{{ ficha.servicio }}</p>
-                    </div>
-                    <div class="form-group col-md-6 align-items-center">
-                        <p><strong style="display: block;">Duración en horas del curso: </strong>{{ ficha.curso.horas }}</p>
-                    </div>
+<div id="datos-personales" class="section">
+    <div class="card mb-4">
+        <div class="card-header py-3 text-center bg-primary">
+            <h4 class="m-0 font-weight-bold text-white">Ficha técnica</h4>
+        </div>            
+        <div class="card-body">
+            <div class="form-row">
+                <div class="form-group col-md-4 align-items-center">
+                    <p><strong style="display: block;">Instituto Tecnológico de Apizaco</strong></p>
                 </div>
-                <div class="table-responsive">
-                    <p><strong style="display: block;">Contenido temático: </strong>{{ ficha.curso.horas }}</p>
-                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                        <thead>
-                            <tr>
-                                <th>Temas/Subtemas</th>
-                                <th>Tiempo Programado</th>
-                                <th>Actividades</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for contenido in contenidos_tematicos %}
-                            <tr id="contenido-{{ contenido.id }}">
-                                <td>{{ contenido.tema }}</td>
-                                <td>{{ contenido.tiempo }}</td>
-                                <td>{{ contenido.actividades }}</td>
-                            </tr>
-                            {% empty %}
-                            <tr>
-                                <td colspan="4">No hay registros de formación académica.</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                <div class="form-group col-md-4 align-items-center">
+                    <p><strong style="display: block;">Nombre del servicio: </strong> {{ ficha.curso.nombre }}</p>
+                </div>
+                <div class="form-group col-md-4 align-items-center">
+                    <p><strong style="display: block;">Instructor(a): </strong> {{ ficha.curso.instructor }}</p>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-12 align-items-center">
+                    <p><strong style="display: block;">Introducción: </strong> {{ ficha.introduccion }}</p>
+                </div>
+                
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-12 align-items-center">
+                    <p><strong style="display: block;">Justificación: </strong>{{ ficha.justificacion }}</p>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-12 align-items-center">
+                    <p><strong style="display: block;">Objetivo General: </strong>{{ ficha.curso.objetivo }}</p>
                 </div>
             </div>
         </div>
-    </div>
-    <hr>
-
-    <div id="formacion-academica" class="section">
-        <div class="card mb-4">
-            <div class="card-body">
-                <div class="form-row">
-                    <div class="form-group col-md-12 align-items-center">
-                        <p><strong style="display: block;">Elementos didácticos para el desarrollo del curso: </strong>{{ ficha.elementosDidacticos }}</p>
-                    </div>
-                </div>
-                <div class="table-responsive">
-                    <p><strong style="display: block;">Criterio de evaluación: </strong>{{ ficha.curso.horas }}</p>
-                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                        <thead>
-                            <tr>
-                                <th>No.</th>
-                                <th>Criterio</th>
-                                <th>Valor</th>
-                                <th>Instrumento de evaluación</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for criterio in criterios_evaluacion %}
-                            <tr id="contenido-{{ contenido.id }}">
-                                <td>{{ forloop.counter }}</td>
-                                <td>{{ criterio.criterio }}</td>
-                                <td>{{ criterio.valor }}</td>
-                                <td>{{ criterio.instrumento }}</td>
-                            </tr>
-                            {% empty %}
-                            <tr>
-                                <td colspan="4">No hay registros de formación académica.</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="text-center">
-        <a href="{% url 'fichatecnica' %}" class="btn btn-primary">Regresar</a>
     </div>
 </div>
+<hr>
+
+<div id="formacion-academica" class="section">
+    <div class="card mb-4">
+        <div class="card-header py-3 text-center bg-primary">
+            <h4 class="m-0 font-weight-bold text-white">Descripción del Servicio</h4>
+        </div>
+        <div class="card-body">
+            <div class="form-row">
+                <div class="form-group col-md-6 align-items-center">
+                    <p><strong style="display: block;">Tipo de servicio: </strong>{{ ficha.servicio }}</p>
+                </div>
+                <div class="form-group col-md-6 align-items-center">
+                    <p><strong style="display: block;">Duración en horas del curso: </strong>{{ ficha.curso.horas }}</p>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <p><strong style="display: block;">Contenido temático: </strong>{{ ficha.curso.horas }}</p>
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Temas/Subtemas</th>
+                            <th>Tiempo Programado</th>
+                            <th>Actividades</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for contenido in contenidos_tematicos %}
+                        <tr id="contenido-{{ contenido.id }}">
+                            <td>{{ contenido.tema }}</td>
+                            <td>{{ contenido.tiempo }}</td>
+                            <td>{{ contenido.actividades }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4">No hay registros de formación académica.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<hr>
+
+<div id="formacion-academica" class="section">
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="form-row">
+                <div class="form-group col-md-12 align-items-center">
+                    <p><strong style="display: block;">Elementos didácticos para el desarrollo del curso: </strong>{{ ficha.elementosDidacticos }}</p>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <p><strong style="display: block;">Criterio de evaluación: </strong>{{ ficha.curso.horas }}</p>
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th>Criterio</th>
+                            <th>Valor</th>
+                            <th>Instrumento de evaluación</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for criterio in criterios_evaluacion %}
+                        <tr id="contenido-{{ contenido.id }}">
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ criterio.criterio }}</td>
+                            <td>{{ criterio.valor }}</td>
+                            <td>{{ criterio.instrumento }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4">No hay registros de formación académica.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="text-center">
+    <a href="{% url 'fichatecnica' %}" class="btn btn-primary">Regresar</a>
+</div>
+
 {% endblock %}
