@@ -9,7 +9,7 @@ from django.core.files.storage import FileSystemStorage #Para archivos y directo
 
 from .forms import EventoForm, EvidenciaForm
 from .models import Asistencia, Calificacion, Evento, Evidencia, Inscripcion
-from catalogos.models import Docente, Lugar, Instructor, GradoAcademico
+from catalogos.models import Docente, Lugar, Instructor, GradoAcademico, ValorCalificacion
 
 # Create your views here.
 @login_required(login_url='signin')
@@ -442,27 +442,42 @@ def asignar_calificacion(request, evento_id):
     evento = get_object_or_404(Evento, id=evento_id)
     inscripciones = Inscripcion.objects.filter(evento=evento, aceptado=True)  # Solo docentes aceptados
     evidencia = Evidencia.objects.filter(evento=evento, evidencia=True).exists()  # Verifica si hay evidencia
+    valores_calificacion = ValorCalificacion.objects.all()  # Obtiene todas las opciones de calificación
     
     if not evidencia:
         messages.warning(request, "No puedes asignar calificación si no has cargado tu evidencia del curso.")
         return redirect('detalle_curso_calificacion', evento_id=evento.id)  # Redirigir a la página de detalle del evento
     
     if request.method == 'POST':
+        todas_seleccionadas = True  # Bandera para controlar si todas las calificaciones están seleccionadas
+
         for inscripcion in inscripciones:
             calificacion_value = request.POST.get(f'calificacion_{inscripcion.id}')
-            comentario_value = request.POST.get(f'comentario_{inscripcion.id}')
             
-            if calificacion_value:  # Solo crear calificación si se ingresó un valor
+            if not calificacion_value:  # Si no se seleccionó calificación, marca como no seleccionada
+                todas_seleccionadas = False
+                messages.warning(request, f'Por favor, seleccione una calificación para {inscripcion.usuario.first_name} {inscripcion.usuario.last_name_paterno}.')
+
+            else:
+                calificacion_obj = ValorCalificacion.objects.get(id=calificacion_value)
                 Calificacion.objects.update_or_create(
                     inscripcion=inscripcion,
-                    defaults={
-                        'calificacion': calificacion_value,
-                        'comentario': comentario_value,
-                    }
+                    defaults={'calificacion': calificacion_obj}
                 )
-        return redirect('detalle_curso_calificacion', evento_id=evento.id)  # Redirigir a la página de detalle del evento
 
+        if todas_seleccionadas:
+            messages.success(request, "Calificaciones asignadas correctamente.")
+            return redirect('detalle_curso_calificacion', evento_id=evento.id)  # Redirigir a la página de detalle del evento
+
+        # Si no todas las calificaciones fueron seleccionadas, no redirigir
+        return render(request, 'calificacion.html', {
+            'evento': evento,
+            'inscripciones': inscripciones,
+            'valores_calificacion': valores_calificacion,
+        })
+    
     return render(request, 'calificacion.html', {
         'evento': evento,
         'inscripciones': inscripciones,
+        'valores_calificacion': valores_calificacion,  # Pasar las opciones de calificación a la plantilla
     })
