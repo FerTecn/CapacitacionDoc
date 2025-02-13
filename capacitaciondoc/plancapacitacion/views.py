@@ -24,6 +24,7 @@ from reportlab.pdfbase import pdfmetrics
 
 from io import BytesIO
 import os
+import re
 
 # Create your views here.
 @login_required(login_url='signin')
@@ -182,6 +183,20 @@ def fichatecnicacrear(request, curso_id):
         'curso': curso,
     })
 
+def procesar_texto(texto):
+    # Reemplazar saltos de línea (\n) por <br/>
+    texto = texto.replace("\n", "<br/>")
+    
+    # Reemplazar dobles saltos de línea (\n\n) por un salto de párrafo <p></p>
+    texto = re.sub(r'(\n\s*\n)', r'</p><p>', texto)
+    
+    # Asegurarnos de que el texto comience y termine dentro de <p> tags
+    if not texto.startswith('<p>'):
+        texto = '<p>' + texto
+    if not texto.endswith('</p>'):
+        texto = texto + '</p>'
+
+    return texto
 def fichatecnicapdf(request, curso_id):
     curso = get_object_or_404(RegistroCurso, id=curso_id)
     ficha = get_object_or_404(FichaTecnica, curso=curso)
@@ -245,17 +260,17 @@ def fichatecnicapdf(request, curso_id):
 
     # **1) Introducción**
     Story.append(Paragraph(f"<b>1) Introducción:</b>", style_bold))
-    Story.append(Paragraph(ficha.introduccion, style_normal))
+    Story.append(Paragraph(procesar_texto(ficha.introduccion), style_normal))
     Story.append(Spacer(1, 12))
 
     # **2) Justificación**
     Story.append(Paragraph(f"<b>2) Justificación:</b>", style_bold))
-    Story.append(Paragraph(ficha.justificacion, style_normal))
+    Story.append(Paragraph(procesar_texto(ficha.justificacion), style_normal))
     Story.append(Spacer(1, 12))
 
     # **3) Objetivo**
     Story.append(Paragraph(f"<b>3) Objetivo:</b>", style_bold))
-    Story.append(Paragraph(ficha.curso.objetivo, style_normal))
+    Story.append(Paragraph(procesar_texto(ficha.curso.objetivo), style_normal))
     Story.append(Spacer(1, 12))
 
     # **4) Descripción del Servicio**
@@ -268,7 +283,11 @@ def fichatecnicapdf(request, curso_id):
     
     data = [["Temas/Subtemas", "Tiempo Programado", "Actividades de Aprendizaje"]]
     for contenido in ficha.contenidos_tematicos.all():
-        data.append([contenido.tema, contenido.tiempo, contenido.actividades])
+        data.append([
+            Paragraph(str(contenido.tema), style_normal),
+            Paragraph(str(contenido.tiempo), style_normal),
+            Paragraph(procesar_texto(contenido.actividades), style_normal)
+        ])
 
     crear_tabla(data, [200, 100, 170])
     
@@ -281,7 +300,12 @@ def fichatecnicapdf(request, curso_id):
     # ** Tabla Criterios de evaluación
     data = [["No", "Criterio", "Valor", "Instrumento de Evaluación"]]
     for index, criterio in enumerate(ficha.criterios_evaluacion.all(), start=1):
-        data.append([index, criterio.criterio, criterio.valor, criterio.instrumento])
+        data.append([
+            Paragraph(str(index), style_normal),
+            Paragraph(str(criterio.criterio), style_normal), 
+            Paragraph(str(criterio.valor), style_normal),
+            Paragraph(str(criterio.instrumento), style_normal)
+        ])
     
     crear_tabla(data, [20, 200, 50, 200])
 
