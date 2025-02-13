@@ -4,7 +4,7 @@ from .models import (
     ExperienciaDocente, ExperienciaLaboral, FormacionAcademica, 
     GradoAcademico, Lugar, ParticipacionInstructor, Sede, 
     Instructor, Docente, Director,
-    Departamento, Dirigido, Genero, PerfilCurso, Periodo)
+    Departamento, Dirigido, Genero, PerfilCurso, Periodo, ValorCalificacion)
 
 #GRADO ACADEMICO
 class GradoAcForm(forms.ModelForm):
@@ -443,6 +443,21 @@ class DirectorForm(forms.ModelForm):
             'apMaterno': 'Apellido Materno',
             'puesto': 'Cargo',
             'estatus': 'Estatus',
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs.update({
+                'class': 'form-control',
+            })
+
+class ValorCalificacionForm(forms.ModelForm):
+    class Meta:
+        model = ValorCalificacion
+        fields = '__all__'
+        labels = {
+            'valorCalificacion': 'Valor de Calificación',
         }
 
     def __init__(self, *args, **kwargs):
