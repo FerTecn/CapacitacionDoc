@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}- Añadir Valor{% endblock %}
+
+{% block content %}
+<form method="post">
+    {% csrf_token %}
+    <div class="d-flex justify-content-between mb-3">
+        <a href="{% url 'valorcalificacionlista' %}" class="btn btn-secondary btn-icon-split mr-2">
+            <span class="icon text-white-50">
+                <i class="fas fa-arrow-left"></i>
+            </span>
+            <span class="text">Cancelar y volver</span>
+        </a>
+        <button type="submit" class="btn btn-success ml-2">Añadir</button>
+    </div>
+    <h1 class="h3 mb-2 text-gray-800">Añadir Valor de calificación</h1>
+    <div class="card mb-4">
+        <div class="card-body">
+            Rellena el siguiente formulario para añadir un nuevo valor de calificación.
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group col-md-8">
+            {{form.valorCalificacion.label_tag}}
+            {{ form.valorCalificacion }}  
+        </div>
+    </div>
+</form>
+{% endblock %}
