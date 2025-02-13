@@ -50,10 +50,9 @@ class ContenidoTematicoForm(forms.ModelForm):
             'actividades': 'Actividades',
         }
         widgets = {
-            'tema': forms.DateInput(attrs={'class': 'form-control'}),
+            'tema': forms.Textarea(attrs={'class': 'form-control', 'style': 'height: 100px;'}),
             'tiempo': forms.NumberInput(attrs={'class': 'form-control'}),
             'actividades': forms.Textarea(attrs={'class': 'form-control ', 'style': 'height: 100px;'}),
-           
         }
 
 class CriterioEvaluacionForm(forms.ModelForm):
