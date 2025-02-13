@@ -1,6 +1,7 @@
 from django.contrib import admin
 
 from .models import (
+    ValorCalificacion,
     ExperienciaDocente, 
     ExperienciaLaboral, 
     FormacionAcademica, 
@@ -22,6 +23,7 @@ admin.site.register(FormacionAcademica)
 admin.site.register(ExperienciaLaboral)
 admin.site.register(ExperienciaDocente)
 admin.site.register(ParticipacionInstructor)
+admin.site.register(ValorCalificacion)
     
 class InstructorAdmin(admin.ModelAdmin):
     list_display = ('user', 'clave', 'fechaNac', 'genero', 'RFC', 'telefono')
