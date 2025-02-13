@@ -180,3 +180,13 @@ class Director(models.Model):
     apMaterno=models.CharField(max_length=40)
     puesto=models.CharField(max_length=40)
     estatus=models.BooleanField()
+
+class ValorCalificacion(models.Model):
+    valorCalificacion =  models.CharField(max_length=40)
+
+    def __str__(self):
+        return self.valorCalificacion
+    
+    class Meta:
+        verbose_name_plural = 'Valores de Calificación'
+        verbose_name = 'Valor de Calificación'
