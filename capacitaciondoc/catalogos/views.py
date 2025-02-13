@@ -14,6 +14,7 @@ from reportlab.lib.styles import getSampleStyleSheet
 from io import BytesIO
 
 from .models import (
+    ValorCalificacion,
     ExperienciaDocente, 
     ExperienciaLaboral, 
     FormacionAcademica, 
@@ -23,7 +24,7 @@ from .models import (
     GradoAcademico, Lugar, Sede, Departamento,
     Dirigido, Genero, PerfilCurso ,Periodo, Director)
 
-from .forms import GradoAcForm, LugarForm, SedeForm, DirectorForm
+from .forms import GradoAcForm, LugarForm, SedeForm, DirectorForm, ValorCalificacionForm
 from .forms import (
     AgregarDocenteForm, ActualizarDocenteForm, 
     DepartamentoForm, DirigidoForm, GeneroForm, PerfilcursoForm, PeriodoForm)
@@ -891,3 +892,47 @@ def directoractualizar(request, director_id):
 #         director.delete()
 #         return redirect('directorlista')  
 #     return render(request, 'directoreliminar.html', {'director': director})
+
+@login_required(login_url='signin')
+@permission_required('catalogos.view_valorcalificacion', raise_exception=True)
+def valorcalificacionlista(request):
+    valores = ValorCalificacion.objects.all()
+    return render(request, 'valorcalificacionlista.html', {'valores': valores})
+
+@login_required(login_url='signin')
+@permission_required('catalogos.add_valorcalificacion', raise_exception=True)
+def valorcalificacioncrear(request):
+    if request.method == 'POST':
+        form = ValorCalificacionForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Valor de calificación creado correctamente.")
+            return redirect('valorcalificacionlista') 
+    else:
+        form = ValorCalificacionForm()
+
+    return render(request, 'valorcalificacionagregar.html', {'form': form})
+
+@login_required(login_url='signin')
+@permission_required('catalogos.change_valorcalificacion', raise_exception=True)
+def valorcalificacionactualizar(request, valor_id):
+    valor = get_object_or_404(ValorCalificacion, id=valor_id)
+    if request.method == 'POST':
+        form = ValorCalificacionForm(request.POST, instance=valor)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Valor de calificación actualizado correctamente.")
+            return redirect('valorcalificacionlista')
+    else:
+        form = ValorCalificacionForm(instance=valor)
+    return render(request, 'valorcalificacionactualizar.html', {'form': form, 'valor': valor})
+
+@login_required(login_url='signin')
+@permission_required('catalogos.delete_valorcalificacion', raise_exception=True)
+def valorcalificacioneliminar(request, valor_id):
+    valor = get_object_or_404(ValorCalificacion, id=valor_id)
+    if request.method == 'POST':
+        valor.delete()
+        messages.success(request, f"Valor de calificación {valor} eliminado correctamente.")
+        return redirect('valorcalificacionlista')  
+    return render(request, 'valorcalificacioneliminar.html', {'valor': valor})
