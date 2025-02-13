@@ -2,7 +2,7 @@
 {% load static %}
 {% load custom_filters %}
 
-{% block title %}- Registrar calificacion sobre el curso {{ evento.curso.nombre }} {% endblock %}
+{% block title %}- Registrar calificación sobre el curso {{ evento.curso.nombre }} {% endblock %}
 
 {% block styles %}
 <!-- Custom styles for this page -->
@@ -52,7 +52,6 @@
                             <th>Nombre del inscripcion</th>
                             <th>Puesto y área de adscripción</th>
                             <th>Calificación</th>
-                            <th>Comentario</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -62,19 +61,14 @@
                                 <td>{{ inscripcion.usuario.first_name }} {{ inscripcion.usuario.last_name_paterno }} {{ inscripcion.usuario.last_name_materno }}</td>
                                 <td>{{ inscripcion.usuario.docente.departamento }}</td>
                                 <td>
-                                    <input type="number" class="form form-control"
-                                        name="calificacion_{{ inscripcion.id }}" 
-                                        step="0.01" 
-                                        min="0" 
-                                        max="100" 
-                                        value="{{ inscripcion.calificacion_set.first.calificacion|default_if_none:'' }}">
-                                </td>
-                                <td>
-                                    <textarea name="comentario_{{ inscripcion.id }}" 
-                                        rows="3" 
-                                        maxlength="800" 
-                                        style="resize: vertical; overflow-y: auto;"
-                                        class="form-control">{{ inscripcion.calificacion_set.first.comentario|default_if_none:'' }}</textarea>
+                                    <select class="form form-control {% if messages and 'Por favor, seleccione una calificación' in message %}is-invalid{% endif %}" name="calificacion_{{ inscripcion.id }}">
+                                        <option value="" disabled selected>Seleccione una calificación</option>
+                                        {% for valor in valores_calificacion %}
+                                            <option value="{{ valor.id }}" {% if inscripcion.calificacion_set.first.calificacion.id == valor.id %}selected{% endif %}>
+                                                {{ valor.valorCalificacion }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
                                 </td>
                             </tr>
                         {% endfor %}
