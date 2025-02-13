@@ -1,7 +1,7 @@
 import os
 from django.db import models
 from django.conf import settings
-from catalogos.models import Docente, Lugar, Instructor
+from catalogos.models import Docente, Lugar, Instructor, ValorCalificacion
 from plancapacitacion.models import RegistroCurso
 
 
@@ -63,9 +63,8 @@ class oficioComision(models.Model):
         verbose_name_plural = 'Inscripciones'
 
 class Calificacion(models.Model):
-    inscripcion = models.ForeignKey(Inscripcion, on_delete=models.CASCADE, null=True, blank=True)
-    calificacion = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)  # Calificación numérica
-    comentario = models.TextField(null=True, blank=True)  # Comentarios adicionales
+    inscripcion = models.ForeignKey(Inscripcion, on_delete=models.CASCADE, null=True)
+    calificacion = models.ForeignKey(ValorCalificacion, on_delete=models.SET_NULL, null=True)  # Calificación seleccionada
     fecha_calificacion = models.DateField(auto_now_add=True)  # Fecha en que se registra la calificación
 
     def __str__(self):
