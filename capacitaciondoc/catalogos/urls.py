@@ -80,4 +80,10 @@ urlpatterns = [
     path('directorver/<int:director_id>/', views.directorver, name='directorver'),
     path('directoractualizar/<int:director_id>/', views.directoractualizar, name='directoractualizar'),
     # path('directoreliminar/<int:director_id>/', views.directoreliminar, name='directoreliminar'),
+
+    # VALORES CALIFICACION
+    path('valorcalificacionlista/', views.valorcalificacionlista, name='valorcalificacionlista'),
+    path('valorcalificacioncrear/', views.valorcalificacioncrear, name='valorcalificacioncrear'),
+    path('valorcalificacionactualizar/<int:valor_id>/', views.valorcalificacionactualizar, name='valorcalificacionactualizar'),
+    path('valorcalificacioneliminar/<int:valor_id>/', views.valorcalificacioneliminar, name='valorcalificacioneliminar'),
 ]
