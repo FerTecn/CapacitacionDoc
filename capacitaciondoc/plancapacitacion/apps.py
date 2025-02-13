@@ -40,8 +40,10 @@ class PlancapacitacionConfig(AppConfig):
                 # Grupo Docente: no puede registrar ni validar cursos
 
                 # Grupo Jefe Académico: registra, modifica, crea y elimina los cursos
+                #Ve las validaciones de los cursos
                 academico_group.permissions.add(
-                    *permisos_registro_curso
+                    *permisos_registro_curso,
+                    *permisos_validados.filter(codename__startswith='view'),
                 )
 
                 # Grupo Jefe Capacitación: solo puede ver los cursos y ver los cursos validados
@@ -52,6 +54,7 @@ class PlancapacitacionConfig(AppConfig):
                 # Grupo Subdirección Académica: Valida cursos
                 subdireccion_group.permissions.add(
                     *permisos_registro_curso, *permisos_validados #Es necesario el permiso de registrocurso ya que para validar se lista los cursos sin validar y se modifica el campo aceptado de RegistroCurso
+                    
                 )
 
             except Permission.DoesNotExist as e:
@@ -60,3 +63,4 @@ class PlancapacitacionConfig(AppConfig):
         
         # Conectar la señal post_migrate
         post_migrate.connect(configurar_grupos_y_permisos, sender=self)
+

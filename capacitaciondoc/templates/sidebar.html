@@ -65,27 +65,53 @@
     {% endif %}
 
     <!-- Nav Item - Plan de Capacitaciones Collapse Menu -->
-    <li class="nav-item {% if '/plancapacitacion' in request.path %}active{% endif %}">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
-            aria-expanded="true" aria-controls="collapseTwo">
-            <i class="fas fa-chalkboard-teacher"></i>
-            <span>Plan de capacitación</span>
-        </a>
-        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo"
-            data-parent="#accordionSidebar">
-            <div class="bg-white py-2 collapse-inner rounded">
-                <h6 class="collapse-header">Opciones de cursos:</h6>
-                <a class="collapse-item" href="{% url 'registrocursolista' %}">Registro de cursos</a>
-                <a class="collapse-item" href="{% url 'validarcursolista' %}">Validación de cursos</a>
-                <a class="collapse-item" href="{% url 'fichatecnica' %}">Ficha técnica</a>
+
+    {% if request.user.rol != "Docente" %} <!-- Para que no se muestre a Docente-->
+
+    <!-- Para Jefe de Capacitación, Jefe Académico y Subdirección -->
+    {% if request.user.rol == "Jefe de Capacitación" or request.user.rol == "Jefe Académico" or request.user.rol == "Subdirección" %}
+        <li class="nav-item {% if '/plancapacitacion' in request.path %}active{% endif %}">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
+                aria-expanded="true" aria-controls="collapseTwo">
+                <i class="fas fa-chalkboard-teacher"></i>
+                <span>Plan de capacitación</span>
+            </a>
+            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <h6 class="collapse-header">Opciones de cursos:</h6>
+                    <!-- Para Jefe de Capacitación -->
+                    {% if request.user.rol == "Jefe de Capacitación" %}
+                        <a class="collapse-item" href="{% url 'registrocursolista' %}">Registro de cursos</a>
+                        <a class="collapse-item" href="{% url 'validarcursolista' %}">Validación de cursos</a>
+                    {% endif %}
+                    
+                    <!-- Para Jefe Académico y Subdirección -->
+                    {% if request.user.rol == "Jefe Académico" or request.user.rol == "Subdirección" %}
+                        <a class="collapse-item" href="{% url 'registrocursolista' %}">Registro de cursos</a>
+                        <a class="collapse-item" href="{% url 'validarcursolista' %}">Validación de cursos</a>
+                    {% endif %}
+                </div>
             </div>
-        </div>
-    </li>
+        </li>
+    {% endif %}
+    
+    <!-- Para Instructor, mostrar solo Ficha Técnica fuera del menú de Plan de Capacitación -->
+    {% if request.user.rol == "Instructor" %}
+        <li class="nav-item {% if '/fichatecnica' in request.path %}active{% endif %}">
+            <a class="nav-link" href="{% url 'fichatecnica' %}">
+                <i class="fas fa-file-alt"></i>
+                <span>Ficha técnica</span>
+            </a>
+        </li>
+    {% endif %}
+    {% endif %}
 
     <!-- Divider -->
     <hr class="sidebar-divider">
 
     <!-- Nav Item - Eventos Collapse Menu -->
+    <!-- Eventos para Instructor -->
+    {% if request.user.rol == "Instructor" %}
     <li class="nav-item {% if '/eventos' in request.path %}active{% endif %}">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseThree"
             aria-expanded="true" aria-controls="collapseThree">
@@ -94,25 +120,73 @@
         </a>
         <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
-                <h6 class="collapse-header">Eventos:</h6>
-                <a class="collapse-item" href="{% url 'eventolista' %}">Eventos</a>
-                <a class="collapse-item" href="{% url "oficioslista" %}">Oficio de comisión</a>
-                <a class="collapse-item" href="{% url 'inscripcionlista' %}">Inscipciones</a>
                 <h6 class="collapse-header">Gestión de mis cursos:</h6>
+                <a class="collapse-item" href="{% url 'inscripcionlista' %}">Mis cursos</a>
                 <a class="collapse-item" href="{% url 'asistencia' %}">Asistencia</a>
                 <a class="collapse-item" href="{% url 'calificacion' %}">Calificación</a>
             </div>
         </div>
     </li>
 
+    <!-- Eventos para Docente -->
+    {% elif request.user.rol == "Docente" %}
+    <li class="nav-item {% if '/eventos' in request.path %}active{% endif %}">
+        <a class="nav-link collapsed" href="{% url 'inscripcionlista' %}">
+            <i class="fas fa-fw fa-calendar-day"></i>
+            <span>Inscripciones</span>
+        </a>
+    </li>
+
+    <!-- Eventos para Jefe de Capacitación -->
+    {% elif request.user.rol == "Jefe de Capacitación" %}
+    <li class="nav-item {% if '/eventos' in request.path %}active{% endif %}">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseThree"
+            aria-expanded="true" aria-controls="collapseThree">
+            <i class="fas fa-fw fa-calendar-day"></i>
+            <span>Eventos</span>
+        </a>
+        <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">Generar:</h6>
+                <a class="collapse-item" href="{% url 'eventolista' %}">Eventos</a>
+                <h6 class="collapse-header">Gestión de los cursos:</h6>
+                <a class="collapse-item" href="{% url 'asistencia' %}">Asistencia</a>
+            </div>
+        </div>
+    </li>
+
+    <!-- Eventos para Jefe Académico -->
+    {% elif request.user.rol == "Jefe Académico" %}
+    <li class="nav-item {% if '/eventos' in request.path %}active{% endif %}">
+        <a class="nav-link collapsed" href="{% url "oficioslista" %}">
+            <i class="fas fa-fw fa-calendar-day"></i>
+            <span>Oficio de comisión</span>
+        </a>
+    </li>
+    {% endif %}
+
+
     <!-- Nav Item - Encuesta Collapse Menu -->
+    {% if request.user.rol != "Instructor" and request.user.rol != "Jefe Académico" and request.user.rol != "Subdirección" %}
     <li class="nav-item {% if '/encuesta' in request.path %}active{% endif %}">
         <a class="nav-link" href="{% url 'encuesta' %}">
             <i class="fas fa-fw fa-poll"></i>
             <span>Encuesta de satisfacción</span></a>
     </li>
-
+    {% endif %}
+    
     <!-- Nav Item - Reportes Collapse Menu -->
+    <!-- Rol de Docente e instructor -->
+    {% if request.user.rol == "Docente" or request.user.rol == "Instructor" %}
+    <li class="nav-item">
+        <a class="nav-link" href="">
+            <i class="fas fa-fw fa-file-pdf"></i>
+            <span>Mis constancias</span>
+        </a>
+    </li>
+
+    <!-- Rol de Jefe de capacitación puede ver todo -->
+    {% elif request.user.rol == "Jefe de Capacitación" %}
     <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#colla"
             aria-expanded="true" aria-controls="colla">
@@ -122,10 +196,27 @@
         <div id="colla" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <a class="collapse-item" href="">Verificación de constancias</a>
-                <a class="collapse-item" href="{% url "reportes" %}">Consulta de constancia</a>
+                <a class="collapse-item" href="">Consulta de constancia</a>
             </div>
         </div>
     </li>
+
+    <!-- Rol de Subdirección y Jefe Académico (Se oculta)-->
+    {% elif request.user.rol != "Subdirección" and request.user.rol != "Jefe Académico" %}
+    <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#colla"
+            aria-expanded="true" aria-controls="colla">
+            <i class="fas fa-fw fa-file-pdf"></i>
+            <span>Reportes</span>
+        </a>
+        <div id="colla" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <a class="collapse-item" href="">Verificación de constancias</a>
+                <a class="collapse-item" href="">Consulta de constancia</a>
+            </div>
+        </div>
+    </li>
+    {% endif %}
 
     <!-- Divider -->
     <hr class="sidebar-divider d-none d-md-block">

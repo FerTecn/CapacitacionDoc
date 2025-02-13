@@ -67,10 +67,10 @@
                             <a href="{% url 'validarver' validar.id %}" class="btn btn-info btn-sm">Ver</a>{% endif %}
                             <!-- Al dar clic en Aceptar se vuelve true y cambia a aceptado, asi mismo se bloquea el botón-->
                             {% if validar.curso.aceptado %}
-                                {% if perms.plancapacitacion.change_registrocurso %}
+                                {% if perms.plancapacitacion.change_registrocurso and request.user.rol != "Jefe Académico" %}
                                     <a href="{% url 'invalidar_curso' validar.curso.id %}" class="btn btn-warning btn-sm">Invalidar</a>{% endif %}
                             {% else %}
-                                {% if perms.plancapacitacion.change_registrocurso %}
+                                {% if perms.plancapacitacion.change_registrocurso and request.user.rol != "Jefe Académico" %}
                                     <a href="{% url 'aceptar_curso' validar.id %}" class="btn btn-primary btn-sm">Aceptar</a>{% endif %}
                             {% endif %}
                         </td>

@@ -60,7 +60,16 @@ class CatalogosConfig(AppConfig):
                 # Grupo Jefe Académico: puede ver instructores y docentes, pero no editarlos
                 academico_group.permissions.add(
                     *permisos_instructor.filter(codename__startswith='view'),
-                    *permisos_docente.filter(codename__startswith='view')
+                    *permisos_docente.filter(codename__startswith='view'),
+                    *permisos_departamento.filter(codename__startswith='view'),
+                    *permisos_dirigido.filter(codename__startswith='view'),
+                    *permisos_genero.filter(codename__startswith='view'),
+                    *permisos_grado_academico.filter(codename__startswith='view'),
+                    *permisos_sede.filter(codename__startswith='view'),
+                    *permisos_lugar.filter(codename__startswith='view'),
+                    *permisos_perfil_curso.filter(codename__startswith='view'),
+                    *permisos_periodo.filter(codename__startswith='view'),
+                    *permisos_director.filter(codename__startswith='view'),
                 )
 
                 # Grupo Jefe Capacitación: puede ver, agregar, modificar y eliminar instructores y docentes
