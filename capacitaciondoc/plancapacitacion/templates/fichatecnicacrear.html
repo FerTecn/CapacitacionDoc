@@ -84,22 +84,22 @@
             <div id="contenidos-formset">
                 {% for form in contenido_tematico_formset %}
                     <div class="contenido-form">
-                        <div class="form-row border rounded p-4 mb-4 ">
+                        <div class="form-row border rounded p-4 mb-4 bg-light">
                             {{ form.id }}
                             <div class="form-group col-md-4 ">
                                 <b>{{ form.tema.label_tag }}</b>
                                 {{ form.tema }}
                             </div>
-                            <div class="form-group col-md-4 ">
+                            <div class="form-group col-md-2 ">
                                 <b>{{ form.tiempo.label_tag }}</b>
                                 {{ form.tiempo }}
                             </div>
-                            <div class="form-group col-md-4 ">
+                            <div class="form-group col-md-5 ">
                                 <b>{{ form.actividades.label_tag }}</b>
                                 {{ form.actividades }}
                             </div>
                             {{ form.DELETE }}  <!-- Campo oculto DELETE -->
-                            <div class="form-group col-md-12 text-center">
+                            <div class="form-group col-md-1 text-center">
                                 <button type="button" class="btn btn-danger eliminar-contenido">
                                     <i class="fas fa-trash"></i> Eliminar
                                 </button>
@@ -128,13 +128,13 @@
             <div id="criterios-formset">
                 {% for form in criterio_evaluacion_formset %}
                     <div class="criterio-form">
-                        <div class="form-row border rounded p-4 mb-4 ">
+                        <div class="form-row border rounded p-4 mb-4 bg-light">
                             {{ form.id }}
                             <div class="form-group col-md-4 ">
                                 <b>{{ form.criterio.label_tag }}</b>
                                 {{ form.criterio }}
                             </div>
-                            <div class="form-group col-md-4 ">
+                            <div class="form-group col-md-2 ">
                                 <b>{{ form.valor.label_tag }}</b>
                                 {{ form.valor }}
                             </div>
@@ -143,7 +143,7 @@
                                 {{ form.instrumento }}
                             </div>
                             {{ form.DELETE }}  <!-- Campo oculto DELETE -->
-                            <div class="form-group col-md-12 text-center">
+                            <div class="form-group col-md-2 text-center">
                                 <button type="button" class="btn btn-danger eliminar-criterio">
                                     <i class="fas fa-trash"></i> Eliminar
                                 </button>
@@ -172,45 +172,6 @@
             </div>
         </div>
     </div>
-
-    
-    {% comment %} {{ form.as_p }} {% endcomment %}
-
-    
-    
-
-    <!-- Añadir los formularios de contenido temático y criterios de evaluación -->
-    {% comment %} <div id="contenidos-formset">
-        {% for form in contenido_tematico_formset %}
-            <div class="contenido-form">
-                {{ form.as_p }}
-                {{ form.DELETE }}  <!-- Campo oculto DELETE -->
-                <button type="button" class="btn btn-danger btn-sm eliminar-contenido">
-                    <i class="fas fa-trash"></i> Eliminar
-                </button>
-            </div>
-        {% endfor %}
-    </div> {% endcomment %}
-{% comment %} 
-    <button type="button" id="agregar-contenido" class="btn btn-success btn-sm">
-        <i class="fas fa-plus"></i> Agregar otro contenido
-    </button>
-
-    <div id="criterios-formset">
-        {% for form in criterio_evaluacion_formset %}
-            <div class="criterio-form">
-                {{ form.as_p }}
-                {{ form.DELETE }}  <!-- Campo oculto DELETE -->
-                <button type="button" class="btn btn-danger btn-sm eliminar-criterio">
-                    <i class="fas fa-trash"></i> Eliminar
-                </button>
-            </div>
-        {% endfor %}
-    </div>
-
-    <button type="button" id="agregar-criterio" class="btn btn-success btn-sm">
-        <i class="fas fa-plus"></i> Agregar Criterio
-    </button> {% endcomment %}
 
     <button type="submit" class="btn btn-primary">Guardar Ficha</button>
 </form>
