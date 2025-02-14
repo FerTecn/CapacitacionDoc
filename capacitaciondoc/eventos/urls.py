@@ -29,4 +29,10 @@ urlpatterns = [
     path('calificacion/', views.listacursoscalificacion, name='calificacion'),
     path('calificacion/<int:evento_id>/', views.detalle_curso_calificacion, name='detalle_curso_calificacion'),
     path('asignar-calificacion/<int:evento_id>/', views.asignar_calificacion, name='asignar_calificacion'),
+
+    # Oficio de comisión
+    path('oficio_comision', views.oficioslista, name='oficioslista'),
+    path('oficiocrear/<int:docente_id>/', views.oficiocrear, name='oficiocrear'),
+    path('oficioactualziar/<int:oficio_id>/', views.oficioactualizar, name='oficioactualizar'),
+    path('descargar_oficio/<int:oficio_id>/', views.descargar_oficio, name='descargar_oficio'),
 ]

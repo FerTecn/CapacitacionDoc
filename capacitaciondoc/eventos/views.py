@@ -1,15 +1,32 @@
-from datetime import timedelta
+from datetime import datetime, timedelta
+from django.conf import settings
 from django.shortcuts import render, redirect, reverse
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
+from django.http import HttpResponseRedirect, HttpResponse
 
 from django.core.files.storage import FileSystemStorage #Para archivos y directorios
 
 
-from .forms import EventoForm, EvidenciaForm
-from .models import Asistencia, Calificacion, Evento, Evidencia, Inscripcion
-from catalogos.models import Docente, Lugar, Instructor, GradoAcademico, ValorCalificacion
+from .forms import DepartamentoForm, EventoForm, EvidenciaForm, OficioComisionForm
+from .models import Asistencia, Calificacion, Evento, Evidencia, Inscripcion, OficioComision
+from catalogos.models import Departamento, Docente, Lugar, Instructor, GradoAcademico, ValorCalificacion
+
+from reportlab.lib.pagesizes import letter
+from reportlab.lib.units import cm
+from reportlab.lib.enums import TA_JUSTIFY, TA_CENTER, TA_RIGHT
+from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.pdfbase import pdfmetrics
+from reportlab.platypus import BaseDocTemplate, PageTemplate, Paragraph, Table, TableStyle, Spacer, Image, Frame
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib import colors
+
+from io import BytesIO
+import os
+import re
 
 # Create your views here.
 @login_required(login_url='signin')
@@ -481,3 +498,248 @@ def asignar_calificacion(request, evento_id):
         'inscripciones': inscripciones,
         'valores_calificacion': valores_calificacion,  # Pasar las opciones de calificación a la plantilla
     })
+
+def oficioslista(request):
+    departamentos = Departamento.objects.all()
+    docentes = None
+    departamento_seleccionado = None
+    oficios = OficioComision.objects.all()
+
+    # Crear un diccionario para mapear cada docente con su oficio
+    oficios_dict = {oficio.docente.id: oficio for oficio in oficios}
+
+    form = DepartamentoForm(request.GET or None)
+    if form.is_valid() and form.cleaned_data["departamento"]:
+        departamento_seleccionado = form.cleaned_data["departamento"]
+        docentes = Docente.objects.filter(departamento=departamento_seleccionado)
+
+    return render(request, "oficioslista.html", {
+        "departamentos": departamentos, 
+        "docentes": docentes, 
+        'departamento_seleccionado':departamento_seleccionado,
+        'oficios': oficios,
+        'oficios_dict': oficios_dict,
+        'form': form
+        })
+
+def oficiocrear(request, docente_id):
+    docente = get_object_or_404(Docente, id=docente_id)
+    if request.method == 'POST':
+        form = OficioComisionForm(request.POST)
+        if form.is_valid():
+            oficio = form.save(commit=False)
+            oficio.docente = docente
+            oficio.nomenclatura = docente.departamento.nomenclatura
+            oficio.save()
+            messages.success(request, "Oficio creado correctamente.")
+            return redirect('oficioslista') 
+    else:
+        form = OficioComisionForm()
+    
+    return render(request, "oficiocrear.html", {'docente': docente, 'form': form})
+
+def oficioactualizar(request, oficio_id):
+    oficio = get_object_or_404(OficioComision, id=oficio_id)
+    docente = oficio.docente
+    if request.method == 'POST':
+        form = OficioComisionForm(request.POST, instance=oficio)
+        if form.is_valid():
+            oficio = form.save(commit=False)
+            oficio.nomenclatura = docente.departamento.nomenclatura
+            oficio.save()
+            messages.success(request, "Oficio actualizado correctamente.")
+            return redirect('oficioslista') 
+    else:
+        form = OficioComisionForm(instance=oficio)
+    
+    return render(request, "oficioactualizar.html", {'oficio': oficio, 'form': form, 'docente': docente})
+
+def descargar_oficio(request, oficio_id):
+    oficio = get_object_or_404(OficioComision, id=oficio_id)
+    docente = oficio.docente
+    inscripciones = Inscripcion.objects.filter(usuario=docente.user).order_by('evento__fechaInicio')
+    departamento = docente.departamento
+
+    buffer = BytesIO()
+    doc = BaseDocTemplate(buffer, pagesize=letter,
+                            leftMargin=2 * cm, rightMargin=2 * cm,
+                            topMargin=1 * cm, bottomMargin=1 * cm)
+
+    font_path_regular = os.path.join(settings.BASE_DIR, 'static', 'fonts', 'Montserrat-Regular.ttf')
+    font_path_bold = os.path.join(settings.BASE_DIR, 'static', 'fonts', 'Montserrat-Bold.ttf')
+    font_path_italic = os.path.join(settings.BASE_DIR, 'static', 'fonts', 'Montserrat-Italic.ttf')
+    if os.path.exists(font_path_regular):
+        pdfmetrics.registerFont(TTFont('Montserrat-Regular', font_path_regular))
+
+    if os.path.exists(font_path_bold):
+        pdfmetrics.registerFont(TTFont('Montserrat-Bold', font_path_bold))
+    
+    if os.path.exists(font_path_italic):
+        pdfmetrics.registerFont(TTFont('Montserrat-Italic', font_path_italic))
+
+
+    styles = getSampleStyleSheet()
+
+    style_normal = ParagraphStyle(
+        'MontserratNormal',
+        parent=styles['Normal'],
+        fontName='Montserrat-Regular', 
+        fontSize=10,
+        spaceAfter=8,
+        alignment=TA_JUSTIFY,
+        allowHtml=True 
+    )
+    
+    style_bold = ParagraphStyle(
+        'MontserratNormal',
+        parent=styles['Normal'],
+        fontName='Montserrat-Bold', 
+        fontSize=10,
+        spaceAfter=8,
+    )
+
+    style_italic = ParagraphStyle(
+        'MontserratItalic',
+        parent=styles['Normal'],
+        fontName='Montserrat-Italic', 
+        fontSize=10,
+        spaceAfter=8,
+    )
+
+    style_right = ParagraphStyle(
+        'MontserratNormal',
+        parent=styles['Normal'],
+        fontName='Montserrat-Regular', 
+        fontSize=10,
+        spaceAfter=8,
+        alignment=TA_RIGHT
+    )
+
+    # Definir el contenido del PDF
+    Story = []
+
+    # Agregar un encabezado con el logo
+    def encabezado(canvas, doc):
+        logo_path = os.path.join(settings.MEDIA_ROOT, 'docs', 'header.jpg')
+        canvas.drawImage(logo_path, 2 * cm, 25 * cm, width= 17.5 * cm, height=50, preserveAspectRatio=True)
+    
+    def pie_pagina(canvas, doc):
+        pieimg_path = os.path.join(settings.MEDIA_ROOT, 'docs', 'footer.jpg')
+        canvas.drawImage(pieimg_path, 1 * cm, 1 * cm, width= 19 * cm, height=100, preserveAspectRatio=True)
+    
+    # Definir un marco para el contenido
+    frame = Frame(doc.leftMargin, doc.bottomMargin, doc.width, doc.height - 2 * cm, id='normal')
+
+    # Crear una plantilla de página con encabezado y pie de página
+    plantilla = PageTemplate(id='plantilla', frames=frame, onPage=encabezado, onPageEnd=pie_pagina)
+    doc.addPageTemplates([plantilla])
+
+    # Encabezado alineado a la derecha
+    fecha_formateada = format_date(oficio.fecha)
+
+    encabezado_data = [
+        ["Apizaco, Tlaxcala, ", f"{fecha_formateada}"],
+        
+    ]
+
+    table = Table(encabezado_data, colWidths=[390, 100])
+    table.setStyle(TableStyle([
+        ("ALIGN", (0, 0), (-1, -1), "RIGHT"),
+        ("FONTNAME", (0, 0), (-1, -1), "Montserrat-Regular"),
+        ("BACKGROUND", (1, 0), (1, 0), colors.black),  # FONDO NEGRO PARA LA FECHA
+        ("TEXTCOLOR", (1, 0), (1, 0), colors.white),  # LETRAS BLANCAS EN LA FECHA
+    ]))
+
+    Story.append(table)
+    Story.append(Spacer(1, 1))
+    oficio = Paragraph(f"Oficio No. {oficio.nomenclatura}-{oficio.no_oficio}/{oficio.fecha.year}", style_right)
+    asunto = Paragraph('Asunto: COMISIÓN',style_right)
+    Story.append(oficio)
+    Story.append(Spacer(1, 12))
+    Story.append(asunto)
+    Story.append(Spacer(1, 12))
+    
+
+    presente = f'''
+        {docente.user.first_name} {docente.user.last_name_paterno} {docente.user.last_name_materno}<br/>
+        DOCENTE DEL DEPTO. DE {docente.departamento}<br/>
+        PRESENTE
+    '''.upper()
+    destinatario = Paragraph(presente, style_bold)
+    Story.append(destinatario)
+    Story.append(Spacer(1,1))
+
+    text = f'''
+        Con base en su desarrollo profesional en el desempeño de sus funciones y aunado a su alto sentido de responsabilidad, 
+        se le <b>COMISIONA</b> a participar en los siguientes <b>cursos y/o actividades intersemestrales</b>, 
+        durante el preiodo comprendido del
+        {format_date(inscripciones[0].evento.curso.periodo.inicioPeriodo)} al {format_date(inscripciones[0].evento.curso.periodo.finPeriodo)}:
+    '''
+    
+    redaccion = Paragraph(text, style_normal)
+    Story.append(redaccion)
+    Story.append(Spacer(1,12))
+
+    data = [
+        [Paragraph('FECHA',style_bold), Paragraph('CURSO/ACTIVIDAD', style_bold), Paragraph('LUGAR', style_bold), Paragraph('HORARIO', style_bold)]
+    ]
+    for inscripcion in inscripciones:
+        hora_inicio = inscripcion.evento.horaInicio.strftime("%H:%M") if inscripcion.evento.horaInicio else "N/A"
+        hora_fin = inscripcion.evento.horaFin.strftime("%H:%M") if inscripcion.evento.horaFin else "N/A"
+        data.append([
+            Paragraph(f"{format_date(inscripcion.evento.fechaInicio)} al {format_date(inscripcion.evento.fechaFin)}", style_normal),
+            Paragraph(inscripcion.evento.curso.nombre, style_normal), 
+            Paragraph(f'{inscripcion.evento.lugar}', style_normal), 
+            Paragraph(f'{hora_inicio} a {hora_fin} hrs.',style_normal),
+        ])
+    table = Table(data, [100, 200, 80, 110])
+    table.setStyle(TableStyle([
+            ("TEXTCOLOR", (0, 0), (-1, 0), colors.black),
+            ("ALIGN", (0, 0), (-1, -1), "LEFT"),
+            ("BOTTOMPADDING", (0, 0), (-1, 0), 8),
+            ("GRID", (0, 0), (-1, -1), 1, colors.black),
+            ("VALIGN", (0, 0), (-1, -1), "TOP"),
+        ]))
+    Story.append(table)
+    Story.append(Spacer(1, 12))
+
+    text = 'Sin otro particular por el momento y deséandole el mayor de los éxitos, me despido de usted.'
+    despido = Paragraph(text, style_normal)
+    Story.append(despido)
+    Story.append(Spacer(1,12))
+
+    att = Paragraph('ATENTAMENTE', style_bold)
+    Story.append(att)
+    Story.append(Spacer(1,-8))
+    textend = f"Excelencia en Educación Tecnológica.<br/>Pensar para Servir, Servir para Triunfar."
+    lema = Paragraph(textend, style_italic)
+    Story.append(lema)
+    Story.append(Spacer(1,60))
+
+    
+    jefe_dep = Paragraph(f'{departamento.nombreJefe} {departamento.apParternoJefe} {departamento.apMaternoJefe}'.upper(), style_bold)
+    cargo = Paragraph(f'JEFE DEL DPTO. DE {departamento.departamento}'.upper(), style_bold)
+    Story.append(jefe_dep)
+    Story.append(Spacer(1,-6))
+    Story.append(cargo)
+    Story.append(Spacer(1,12))
+
+    # Crear el documento PDF
+    doc.build(Story)
+
+    buffer.seek(0)
+    filename = f"Oficio-Comision-{docente.user.first_name}.pdf"
+    response = HttpResponse(buffer, content_type="application/pdf")
+    response['Content-Disposition'] = f'inline; filename="{filename}"'
+
+    return response
+
+def format_date(fecha):
+    meses = {
+        "January": "Enero", "February": "Febrero", "March": "Marzo", "April": "Abril",
+        "May": "Mayo", "June": "Junio", "July": "Julio", "August": "Agosto",
+        "September": "Septiembre", "October": "Octubre", "November": "Noviembre", "December": "Diciembre"
+    }
+    
+    mes = meses[fecha.strftime("%B")]
+    return fecha.strftime(f"%d-{mes}-%Y")
