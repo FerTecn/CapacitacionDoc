@@ -7,67 +7,82 @@ from reportlab.lib.pagesizes import letter
 from reportlab.lib.utils import ImageReader
 import os
 from django.conf import settings
+from reportlab.pdfgen import canvas
+from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.pdfbase import pdfmetrics
+from PIL import Image
+import os
+from django.conf import settings
+
+# Construye la ruta absoluta de las fuentes
+montserrat_regular_path = os.path.join(settings.BASE_DIR, "static/fonts/Montserrat-Regular.ttf")
+montserrat_bold_path = os.path.join(settings.BASE_DIR, "static/fonts/Montserrat-Bold.ttf")
+
+print(os.path.exists(montserrat_regular_path))  # Debería imprimir True si la fuente está en la ubicación correcta
+
+# Registra las fuentes con ReportLab
+pdfmetrics.registerFont(TTFont('Montserrat', montserrat_regular_path))
+pdfmetrics.registerFont(TTFont('Montserrat-Bold', montserrat_bold_path))
+
+def procesar_imagen_png(ruta_imagen):
+    """Convierte un PNG con transparencia a un formato compatible con ReportLab."""
+    img = Image.open(ruta_imagen)
+    if img.mode in ("RGBA", "LA"):
+        fondo = Image.new("RGBA", img.size, (255, 255, 255, 0))
+        fondo.paste(img, mask=img.split()[3])
+        return ImageReader(fondo)
+    return ImageReader(img)
 
 def generar_constancia(request, evento_id):
     user = request.user
-    # Obtener el evento específico
     evento = get_object_or_404(Evento, id=evento_id)
     curso = evento.curso
-    instructor = evento.instructor
-
-    # Configurar los datos necesarios para la constancia
+    
     datos = {
-        "nombre_curso": curso.nombre,
+        "nombre_receptor": f"{user.first_name} {user.last_name}",
+        "nombre_curso": curso.nombre.upper(),
         "fecha_inicio": evento.fechaInicio.strftime("%d de %B de %Y"),
         "fecha_fin": evento.fechaFin.strftime("%d de %B de %Y"),
-        "horas": curso.horas,
-        "nombre_instructor": f"{user.first_name} {user.last_name_paterno}",
+        "duracion": f"{curso.horas} horas",
+        "fecha_emision": evento.fechaFin.strftime("%d de %B de %Y"),
         "ruta_fondo": os.path.join(settings.MEDIA_ROOT, 'fondos', 'fondo_constancia.jpg'),
         "ruta_logo": os.path.join(settings.MEDIA_ROOT, 'logos', 'logo_tecnm.png'),
         "ruta_firma": os.path.join(settings.MEDIA_ROOT, 'firmas', 'firma_director.png'),
         "ruta_sello": os.path.join(settings.MEDIA_ROOT, 'sellos', 'sello_tecnm.png'),
     }
-
-    # Crear el PDF
+    
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="constancia_{evento_id}.pdf"'
-
-    # Crear el canvas de ReportLab
-    p = canvas.Canvas(response, pagesize=letter)
-    width, height = letter
-
-    # Agregar el fondo (si existe)
-    if datos["ruta_fondo"] and os.path.exists(datos["ruta_fondo"]):
-        fondo = ImageReader(datos["ruta_fondo"])
-        p.drawImage(fondo, 0, 0, width=width, height=height)
-
-    # Agregar el logo (si existe)
-    if datos["ruta_logo"] and os.path.exists(datos["ruta_logo"]):
-        logo = ImageReader(datos["ruta_logo"])
-        p.drawImage(logo, 50, height - 150, width=100, height=100)
-
-    # Agregar la firma (si existe)
-    if datos["ruta_firma"] and os.path.exists(datos["ruta_firma"]):
-        firma = ImageReader(datos["ruta_firma"])
-        p.drawImage(firma, width - 150, 50, width=100, height=50)
-
-    # Agregar el sello (si existe)
-    if datos["ruta_sello"] and os.path.exists(datos["ruta_sello"]):
-        sello = ImageReader(datos["ruta_sello"])
-        p.drawImage(sello, width - 150, 150, width=100, height=100)
-
-    # Agregar texto
-    p.setFont("Helvetica", 12)
-    p.drawString(100, height - 200, f"Constancia de participación en el curso: {datos['nombre_curso']}")
-    p.drawString(100, height - 220, f"Impartido por: {datos['nombre_instructor']}")
-    p.drawString(100, height - 240, f"Fecha de inicio: {datos['fecha_inicio']}")
-    p.drawString(100, height - 260, f"Fecha de término: {datos['fecha_fin']}")
-    p.drawString(100, height - 280, f"Duración: {datos['horas']} horas")
-
-    # Finalizar el PDF
-    p.showPage()
-    p.save()
-
+    c = canvas.Canvas(response, pagesize=letter)
+    ancho, alto = letter
+    
+    if os.path.exists(datos["ruta_fondo"]):
+        fondo = procesar_imagen_png(datos["ruta_fondo"])
+        c.drawImage(fondo, 0, 0, width=ancho, height=alto)
+    
+    if os.path.exists(datos["ruta_logo"]):
+        logo = procesar_imagen_png(datos["ruta_logo"])
+        c.drawImage(logo, (ancho - 200) / 2, alto - 100, width=200, height=50)
+    
+    c.setFont("Montserrat-Bold", 24)
+    c.drawCentredString(ancho / 2, alto - 200, "RECONOCIMIENTO")
+    c.setFont("Montserrat-Bold", 18)
+    c.drawCentredString(ancho / 2, alto - 250, datos["nombre_receptor"].upper())
+    c.setFont("Montserrat", 14)
+    c.drawCentredString(ancho / 2, alto - 300, f"Por participar en el curso: {datos['nombre_curso']}")
+    c.drawCentredString(ancho / 2, alto - 320, f"Realizado del {datos['fecha_inicio']} al {datos['fecha_fin']}")
+    c.drawCentredString(ancho / 2, alto - 340, f"Con duración de {datos['duracion']}")
+    
+    if os.path.exists(datos["ruta_firma"]):
+        firma = procesar_imagen_png(datos["ruta_firma"])
+        c.drawImage(firma, ancho / 2 - 50, 100, width=100, height=50)
+    
+    if os.path.exists(datos["ruta_sello"]):
+        sello = procesar_imagen_png(datos["ruta_sello"])
+        c.drawImage(sello, ancho - 180, 80, width=100, height=100)
+    
+    c.showPage()
+    c.save()
     return response
 
 def lista_cursos(request):
