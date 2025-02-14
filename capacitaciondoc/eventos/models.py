@@ -46,21 +46,17 @@ class Asistencia(models.Model):
         verbose_name_plural = 'Asistencias'
         unique_together = ('inscripcion', 'fecha')
 
-class oficioComision(models.Model):
-    clave = models.CharField(max_length=10)
-    fecha=models.CharField(max_length=40)
-    nombre=models.CharField(max_length=40)
-    lugar=models.CharField(max_length=40)
-    horas=models.CharField(max_length=40)
+class OficioComision(models.Model):
+    no_oficio = models.CharField(max_length=40)
+    nomenclatura = models.CharField(max_length=20)
+    fecha=models.DateField()
+    docente = models.ForeignKey(Docente, on_delete=models.SET_NULL, null=True)
     
     def __str__(self):
-        return f"{self.fecha} {self.nombre} {self.lugar} {self.horas} "
+        return f"{self.no_oficio} - {self.docente} - {self.fecha}"
     
     class Meta:
         verbose_name_plural = 'Oficios de comisión'
-
-    class Meta:
-        verbose_name_plural = 'Inscripciones'
 
 class Calificacion(models.Model):
     inscripcion = models.ForeignKey(Inscripcion, on_delete=models.CASCADE, null=True)
