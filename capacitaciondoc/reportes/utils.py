@@ -1,13 +1,3 @@
-from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse
-from eventos.models import Evento
-from catalogos.models import Instructor
-from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import letter
-from reportlab.lib.utils import ImageReader
-import os
-from django.conf import settings
-
 def generar_constancia(request, evento_id):
     # Obtener el evento específico
     evento = get_object_or_404(Evento, id=evento_id)
@@ -68,32 +58,3 @@ def generar_constancia(request, evento_id):
     p.save()
 
     return response
-
-def lista_cursos(request):
-    # Obtener el usuario actualmente logueado
-    usuario_actual = request.user
-
-    # Verificar si el usuario es un instructor
-    if hasattr(usuario_actual, 'instructor'):
-        # Obtener el instructor asociado al usuario
-        instructor = usuario_actual.instructor
-
-        # Obtener los eventos en los que el instructor está impartiendo cursos
-        eventos = Evento.objects.filter(instructor=instructor)
-
-        # Obtener las inscripciones relacionadas con esos eventos
-        cursos_impartidos = []
-        for evento in eventos:
-            cursos_impartidos.append({
-                'nombre': evento.curso.nombre,
-                'fecha_inicio': evento.fechaInicio,
-                'fecha_fin': evento.fechaFin,
-                'horas': evento.curso.horas,
-                'evento_id': evento.id,
-            })
-
-    else:
-        # Si el usuario no es un instructor, no mostrar cursos
-        cursos_impartidos = []
-
-    return render(request, 'lista_cursos.html', {'cursos_impartidos': cursos_impartidos})

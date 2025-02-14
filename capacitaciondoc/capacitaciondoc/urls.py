@@ -27,7 +27,7 @@ urlpatterns = [
     path('plancapacitacion/', include('plancapacitacion.urls')),
     path('eventos/', include('eventos.urls')),
     path('encuesta/', include('encuesta.urls')),
-    #path('reportes/', include('reportes.urls')),
+    path('reportes/', include('reportes.urls')),
 ]
 # Asignar la vista personalizada
 handler403 = custom_403_view
