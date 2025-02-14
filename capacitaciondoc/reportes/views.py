@@ -9,6 +9,7 @@ import os
 from django.conf import settings
 
 def generar_constancia(request, evento_id):
+    user = request.user
     # Obtener el evento específico
     evento = get_object_or_404(Evento, id=evento_id)
     curso = evento.curso
@@ -20,7 +21,7 @@ def generar_constancia(request, evento_id):
         "fecha_inicio": evento.fechaInicio.strftime("%d de %B de %Y"),
         "fecha_fin": evento.fechaFin.strftime("%d de %B de %Y"),
         "horas": curso.horas,
-        "nombre_instructor": f"{instructor.user.first_name} {instructor.user.last_name_paterno}",
+        "nombre_instructor": f"{user.first_name} {user.last_name_paterno}",
         "ruta_fondo": os.path.join(settings.MEDIA_ROOT, 'fondos', 'fondo_constancia.jpg'),
         "ruta_logo": os.path.join(settings.MEDIA_ROOT, 'logos', 'logo_tecnm.png'),
         "ruta_firma": os.path.join(settings.MEDIA_ROOT, 'firmas', 'firma_director.png'),
@@ -79,7 +80,7 @@ def lista_cursos(request):
         instructor = usuario_actual.instructor
 
         # Obtener los eventos en los que el instructor está impartiendo cursos
-        eventos = Evento.objects.filter(instructor=instructor)
+        eventos = Evento.objects.filter() #instructor=instructor
 
         # Obtener las inscripciones relacionadas con esos eventos
         cursos_impartidos = []
