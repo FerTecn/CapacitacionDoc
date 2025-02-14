@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}- Actualizar oficio{% endblock %}
+
+{% block content %}
+<form method="post">
+    {% csrf_token %}
+    <div class="d-flex justify-content-between mb-3">
+        <a href="{% url 'oficioslista' %}" class="btn btn-secondary btn-icon-split mr-2">
+            <span class="icon text-white-50">
+                <i class="fas fa-arrow-left"></i>
+            </span>
+            <span class="text">Cancelar y volver</span>
+        </a>
+        <button type="submit" class="btn btn-success ml-2">Guardar cambios</button>
+    </div>
+
+
+    <h1 class="h3 mb-2 text-gray-800">Actualizar oficio de comisión</h1>
+    <div class="card mb-4">
+        <div class="card-body">
+            Moficica la información necesaria del oficio de comisión del docente <strong>{{ docente.user.first_name }} {{ docente.user.last_name_paterno}}</strong>.
+        </div>
+    </div>
+
+    
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <b>{{ form.no_oficio.label_tag }}</b> <br/>
+                <i>Solo ingresa el número de oficio sin la nomenclatura ni el año.</i>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">{{ docente.departamento.nomenclatura }}-</span>
+                    </div>
+                    {{ form.no_oficio }}
+                    <div class="input-group-append">
+                        <span class="input-group-text" id="anio-oficio">{{ oficio.fecha.year }}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group col-md-6">
+                <b>{{ form.fecha.label_tag }}</b>
+                {{ form.fecha }}
+            </div>
+        </div>
+
+    <div class="d-flex justify-content-between mb-3">
+        <a href="{% url 'oficioslista' %}" class="btn btn-secondary btn-icon-split mr-2">
+            <span class="icon text-white-50">
+                <i class="fas fa-arrow-left"></i>
+            </span>
+            <span class="text">Cancelar y volver</span>
+        </a>
+        <button type="submit" class="btn btn-success ml-2">Añadir</button>
+    </div>
+
+</form>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const noOficioField = document.getElementById("id_no_oficio"); // Campo 'No. de oficio'
+        const fechaField = document.getElementById("id_fecha"); // Campo 'Fecha'
+        const anioOficioSpan = document.getElementById("anio-oficio"); // Span donde se muestra el año
+
+        // Función para actualizar el 'No. de oficio' con el año de la fecha
+        function actualizarNoOficio() {
+            if (fechaField.value) {
+                // Extraer el año de la fecha
+                const fecha = new Date(fechaField.value);
+                const year = fecha.getFullYear();
+                
+                // Actualizar el texto del span con el año
+                anioOficioSpan.textContent = `/ ${year}`;
+            }
+        }
+
+        // Agregar un evento de 'change' a la fecha
+        fechaField.addEventListener("change", actualizarNoOficio);
+    });
+</script>
+{% endblock %}
