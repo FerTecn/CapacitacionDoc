@@ -4,89 +4,110 @@
 {% block title %}- Datos del evento{% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-    <h1 class="h3 mb-2 text-gray-800">Datos del Evento</h1>
-    <form method="post">
-        {% csrf_token %}
-        <!-- Mostrar errores -->
-        {% if error %}
-            <div class="alert alert-danger">{{ error }}</div>
-        {% endif %}
 
-        <div class="form-row">
-            <div class="form-group col-md-4 align-items-center">
-                <p><strong style="display: block;">Clave:</strong> {{ evento.curso.clave }}</p>
-            </div>
-            <div class="form-group col-md-8 align-items-center">
-                <p><strong style="display: block;">Nombre del curso:</strong> {{ evento.curso.nombre }}</p>
-            </div>
+<h1 class="h3 mb-2 text-gray-800">Datos del Evento</h1>
+<form method="post">
+    {% csrf_token %}
+    <!-- Mostrar errores -->
+    {% if form.errors %}
+        <div class="alert alert-danger">
+            <ul>
+                {% for field, errors in form.errors.items %}
+                    {% for error in errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+            </ul>
         </div>
-        <div class="form-row">
-            <div class="form-group col-md-12 align-items-center">
-                <p><strong style="display: block;">Objetivo:</strong> {{ evento.curso.objetivo }}</p>
-            </div>
-        </div>
-
-        <div class="form-row">
-            <div class="form-group col-md-4 align-items-center">
-                <p><strong style="display: block;">Período del curso:</strong> {{ evento.curso.periodo }}</p>
-            </div>
-            <div class="form-group col-md-6 align-items-center">
-                <p><strong style="display: block;">Sede:</strong> {{ evento.curso.sede }}</p>
-            </div>
-            <div class="form-group col-md-2 align-items-center">
-                <!-- Horas -->
-                <p>
-                    <label for="id_horas"><strong style="display: block;">Horas:</strong></label>
-                    <input type="number" id="id_horas" name="horas" class="form-control" style="max-width: 80%;"
-                            value="{{ evento.curso.horas }}" min="1" required>
-                </p>
-            </div>
-        </div>
-
-        <div class="form-row">
-            <!-- Mostrar instructor y botón para cambiar -->
-            <div class="form-group col-md-4">
-                <p><strong>Instructor:</strong> {{ evento.curso.instructor }}</p>
-                <a href="{% url 'cambiarinstructor' evento_id=evento.id %}" class="btn btn-warning">Cambiar Instructor</a>
-            </div>
-            <div class="form-group col-md-2">
-                <p><strong style="display: block;">Dirigido a:</strong> {{ evento.curso.dirigido }}</p>
-            </div>
-            <div class="form-group col-md-3">
-                <p><strong style="display: block;">Perfil de Curso:</strong> {{ evento.curso.perfilCurso }}</p>
-            </div>
-            <div class="form-group col-md-3">
-                <p><strong>{{ form.lugar.label_tag}}</strong></p>
-                {{ form.lugar }}
-                <!-- Botón debajo del select -->
-                <a href="{% url 'lugarcrearnuevo' %}" class="btn btn-success mt-2">Añadir nuevo lugar</a>
-            </div>
-        </div>
-        <div class="form-row">
-            <div class="form-group col-md-3">
-                <p><strong>{{ form.fechaInicio.label_tag }}</strong></p>
-                {{ form.fechaInicio }}
-            </div>
-            <div class="form-group col-md-3">
-                <p><strong>{{ form.fechaFin.label_tag }}</strong></p>
-                {{ form.fechaFin }}
-            </div>
-            <div class="form-group col-md-6">
-                <p><strong>Horario de:</strong></p>
-                <div class="d-flex align-items-center">
-                {{ form.horaInicio }} <span class="mx-2">a</span> {{ form.horaFin }}
+    {% endif %}
+    {% if messages %}
+        <div class="messages-container">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Cerrar">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="form-row">
+        <div class="form-group col-md-4 align-items-center">
+            <p><strong style="display: block;">Clave:</strong> {{ evento.curso.clave }}</p>
+        </div>
+        <div class="form-group col-md-8 align-items-center">
+            <p><strong style="display: block;">Nombre del curso:</strong> {{ evento.curso.nombre }}</p>
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-12 align-items-center">
+            <p><strong style="display: block;">Objetivo:</strong> {{ evento.curso.objetivo }}</p>
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group col-md-4 align-items-center">
+            <p><strong style="display: block;">Período del curso:</strong> {{ evento.curso.periodo }}</p>
+                
+                <i>{{evento.curso.periodo.inicioPeriodo}} {{evento.curso.periodo.finPeriodo}}</i>
+        </div>
+        <div class="form-group col-md-6 align-items-center">
+            <p><strong style="display: block;">Sede:</strong> {{ evento.curso.sede }}</p>
+        </div>
+        <div class="form-group col-md-2 align-items-center">
+            <!-- Horas -->
+            <p>
+                <label for="id_horas"><strong style="display: block;">Horas:</strong></label>
+                <input type="number" id="id_horas" name="horas" class="form-control" style="max-width: 80%;"
+                        value="{{ evento.curso.horas }}" min="1" required>
+            </p>
+        </div>
+    </div>
+
+    <div class="form-row">
+        <!-- Mostrar instructor y botón para cambiar -->
+        <div class="form-group col-md-4">
+            <p><strong>Instructor:</strong> {{ evento.curso.instructor }}</p>
+            <a href="{% url 'cambiarinstructor' evento_id=evento.id %}" class="btn btn-warning">Cambiar Instructor</a>
+        </div>
+        <div class="form-group col-md-2">
+            <p><strong style="display: block;">Dirigido a:</strong> {{ evento.curso.dirigido }}</p>
+        </div>
+        <div class="form-group col-md-3">
+            <p><strong style="display: block;">Perfil de Curso:</strong> {{ evento.curso.perfilCurso }}</p>
+        </div>
+        <div class="form-group col-md-3">
+            <p><strong>{{ form.lugar.label_tag}}</strong></p>
+            {{ form.lugar }}
+            <!-- Botón debajo del select -->
+            <a href="{% url 'lugarcrearnuevo' %}" class="btn btn-success mt-2">Añadir nuevo lugar</a>
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-3">
+            <p><strong>{{ form.fechaInicio.label_tag }}</strong></p>
+            {{ form.fechaInicio }}
+        </div>
+        <div class="form-group col-md-3">
+            <p><strong>{{ form.fechaFin.label_tag }}</strong></p>
+            {{ form.fechaFin }}
+        </div>
+        <div class="form-group col-md-6">
+            <p><strong>Horario de:</strong></p>
+            <div class="d-flex align-items-center">
+            {{ form.horaInicio }} <span class="mx-2">a</span> {{ form.horaFin }}
             </div>
         </div>
+    </div>
 
-        
-        <div class='text-center'>
-            <button type="submit" class="btn btn-primary">Guardar</button>
-            <a href="{% url 'eventolista' %}" class="btn btn-secondary">Cancelar</a>
-        </div> 
-    </form>
-</div>
+    
+    <div class='text-center'>
+        <button type="submit" class="btn btn-primary">Guardar</button>
+        <a href="{% url 'eventolista' %}" class="btn btn-secondary">Cancelar</a>
+    </div> 
+</form>
 
 {% comment %} <div class="container">
     <h1 class="h3 mb-2 text-gray-800">Datos del Evento</h1>
