@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import Evento
 from .models import Asistencia
-from .models import oficioComision
+from .models import OficioComision
 from .models import Inscripcion
 from .models import Evidencia
 from .models import Calificacion
@@ -18,9 +18,14 @@ admin.site.register(Inscripcion, InscripcionAdmin)
 
 admin.site.register(Asistencia)
 
-class oficioComisionAdmin(admin.ModelAdmin):
-    list_display = ('fecha', 'nombre', 'lugar', 'horas')
-admin.site.register(oficioComision, oficioComisionAdmin)
+class OficioComisionAdmin(admin.ModelAdmin):
+    def get_full_no_oficio(self, obj):
+        return f"{obj.docente.departamento.nomenclatura}-{obj.no_oficio}/{obj.fecha.year}" if obj else "no_oficio"
+    get_full_no_oficio.short_description = 'No. de oficio'
+
+    list_display = ('get_full_no_oficio', 'docente', 'fecha')
+
+admin.site.register(OficioComision, OficioComisionAdmin)
 
 class EvidenciaAdmin(admin.ModelAdmin):
     list_display = ('evento__curso__nombre','evento__curso__instructor', 'evidencia', 'archivo_evidencia')
