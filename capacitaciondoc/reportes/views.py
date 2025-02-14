@@ -44,16 +44,24 @@ def generar_constancia(request, evento_id):
         "fecha_emision": evento.fechaFin.strftime("%d de %B de %Y"),
         "firmante": "Yesica Imelda Saavedra Benítez",  # Cambia según el firmante real
         "cargo_firmante": "Directora",  # Cambia según el cargo real
-        "ruta_fondo": os.path.join(settings.MEDIA_ROOT, 'fondos', 'fondo_constancia.jpg'),
-        "ruta_logo": os.path.join(settings.MEDIA_ROOT, 'logos', 'logo_tecnm.png'),
-        "ruta_firma": os.path.join(settings.MEDIA_ROOT, 'firmas', 'firma_director.png'),
-        "ruta_sello": os.path.join(settings.MEDIA_ROOT, 'sellos', 'sello_tecnm.png'),
+        "ruta_logo" : os.path.join(settings.BASE_DIR, "static/img/constancia/logo_tecnm.png"),
+        "ruta_firma" : os.path.join(settings.BASE_DIR, "static/img/constancia/firma_director.png"),
+        "ruta_sello" : os.path.join(settings.BASE_DIR, "static/img/constancia/sello_tecnm.png"),
+        "ruta_fondo" : "",
+
+        # "ruta_fondo": os.path.join(settings.MEDIA_ROOT, 'fondos', 'fondo_constancia.jpg'),
+        # "ruta_logo": os.path.join(settings.MEDIA_ROOT, 'logos', 'logo_tecnm.png'),
+        # "ruta_firma": os.path.join(settings.MEDIA_ROOT, 'firmas', 'firma_director.png'),
+        # "ruta_sello": os.path.join(settings.MEDIA_ROOT, 'sellos', 'sello_tecnm.png'),
     }
 
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="constancia_{evento_id}.pdf"'
     c = canvas.Canvas(response, pagesize=letter)
     ancho, alto = letter
+
+    if not os.path.exists(datos["ruta_logo"]):
+        print(f"Error: No se encontró la imagen {datos['ruta_logo']}")
 
     # Fondo del certificado
     if os.path.exists(datos["ruta_fondo"]):
