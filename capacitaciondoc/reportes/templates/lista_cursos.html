@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} - Lista de Cursos{% endblock %}
+
+{% block content %}
+    <h1 class="h3 mb-2 text-gray-800">Cursos que estás impartiendo</h1>
+    <p class="mb-4">Aquí puedes ver los cursos que estás impartiendo y generar constancias.</p>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Lista de Cursos</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Nombre del Curso</th>
+                            <th>Fecha de Inicio</th>
+                            <th>Fecha de Término</th>
+                            <th>Horas</th>
+                            <th>Generar Constancia</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for curso in cursos_impartidos %}
+                        <tr>
+                            <td>{{ curso.nombre }}</td>
+                            <td>{{ curso.fecha_inicio }}</td>
+                            <td>{{ curso.fecha_fin }}</td>
+                            <td>{{ curso.horas }}</td>
+                            <td>
+                                <a href="{% url 'generar_constancia' curso.evento_id %}" class="btn btn-primary btn-sm">
+                                    Generar Constancia
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

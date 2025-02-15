@@ -180,7 +180,7 @@
     <!-- Rol de Docente e instructor -->
     {% if request.user.rol == "Docente" or request.user.rol == "Instructor" %}
     <li class="nav-item">
-        <a class="nav-link" href="">
+        <a class="nav-link" href="{% url 'lista_cursos' %}">
             <i class="fas fa-fw fa-file-pdf"></i>
             <span>Mis constancias</span>
         </a>
