@@ -60,6 +60,7 @@
                 <a class="collapse-item" href="{% url 'periodolista' %}">Periodo</a>
                 <a class="collapse-item" href="{% url 'directorlista' %}">Autoridades</a>
                 <a class="collapse-item" href="{% url 'valorcalificacionlista' %}">Valores para calificación</a>
+                <a class="collapse-item" href="{% url 'formatoslista' %}">Formatos de documentos</a>
             </div>
         </div>
     </li>
@@ -189,12 +190,12 @@
     <!-- Rol de Jefe de capacitación puede ver todo -->
     {% elif request.user.rol == "Jefe de Capacitación" %}
     <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#colla"
-            aria-expanded="true" aria-controls="colla">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseFour"
+            aria-expanded="true" aria-controls="collapseFour">
             <i class="fas fa-fw fa-file-pdf"></i>
             <span>Reportes</span>
         </a>
-        <div id="colla" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+        <div id="collapseFour" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <a class="collapse-item" href="">Verificación de constancias</a>
                 <a class="collapse-item" href="">Consulta de constancia</a>
@@ -205,12 +206,12 @@
     <!-- Rol de Subdirección y Jefe Académico (Se oculta)-->
     {% elif request.user.rol != "Subdirección" and request.user.rol != "Jefe Académico" %}
     <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#colla"
-            aria-expanded="true" aria-controls="colla">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseFour"
+            aria-expanded="true" aria-controls="collapseFour">
             <i class="fas fa-fw fa-file-pdf"></i>
             <span>Reportes</span>
         </a>
-        <div id="colla" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+        <div id="collapseFour" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <a class="collapse-item" href="">Verificación de constancias</a>
                 <a class="collapse-item" href="">Consulta de constancia</a>
