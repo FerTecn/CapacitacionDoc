@@ -19,7 +19,7 @@
                 <select name="nuevo_instructor" id="nuevo_instructor" class="form-control" required style="max-width: 70%;">
                     {% for instructor in instructores %}
                         <option value="{{ instructor.id }}" {% if instructor.id == instructor_actual.id %}selected{% endif %}>
-                            {{ instructor.user.first_name }} {{ instructor.user.last_name_paterno }} {{ instructor.user.last_name_materno }}
+                            {{ instructor.user.get_user_full_name }}
                         </option>
                     {% endfor %}
                 </select>
