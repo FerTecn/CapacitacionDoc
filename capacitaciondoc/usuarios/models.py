@@ -52,3 +52,6 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return f"{self.first_name} {self.last_name_paterno} {self.last_name_materno} - {self.rol}"
+    
+    def get_user_full_name(self):
+        return f"{self.first_name} {self.last_name_paterno} {self.last_name_materno}"

@@ -65,7 +65,7 @@ def signin(request):
             return render(request, 'signin.html', {'form': SigninForm, 'error': 'Usuario y/o contraseña incorrectos'})
         else:
             login(request, user) #Inicia la sesión y
-            messages.success(request, f"¡Bienvenido de nuevo, {user.first_name}!")
+            messages.success(request, f"¡Bienvenido de nuevo, {user.get_user_full_name()}!")
             return redirect('/') # redirecciona a la página principal
         
             # # Redirecciones basadas en grupo
