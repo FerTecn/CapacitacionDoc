@@ -177,7 +177,14 @@ def fichatecnicacrear(request, curso_id):
         'curso': curso,
     })
 
-def procesar_texto(texto):
+def text_processor(texto):
+    """
+    Procesa el texto que contenga saltos de linea para mostrarlos correctamente.
+    - Sustituye dobles saltos de línea (\n\n) por un salto de párrafo.
+    - Sustituye saltos de línea simples (\n) por <br/>.
+    - Se asegura de que el texto procesado esté correctamente formateado.
+    """
+
     # Reemplazar saltos de línea (\n) por <br/>
     texto = texto.replace("\n", "<br/>")
     
@@ -191,6 +198,67 @@ def procesar_texto(texto):
         texto = texto + '</p>'
 
     return texto
+
+import re
+
+def cell_text_processor(texto):
+    """
+    Procesa el texto dentro de una celda de tabla.
+    - Sustituye dobles saltos de línea (\n\n) por viñetas.
+    - Sustituye saltos de línea simples (\n) por <br/>.
+    - Se asegura de que el texto procesado esté correctamente formateado.
+    """
+
+    # Reemplazar dobles saltos de línea (\n\n) por una viñeta y un salto de línea
+    texto = re.sub(r'\n\s*\n', r'<br/>• ', texto)
+
+    # Si el texto contiene viñetas, asegurarse de que la primera línea también tenga una
+    if "•" in texto:
+        texto = "• " + texto.lstrip()
+
+    # Reemplazar saltos de línea simples (\n) por <br/>
+    texto = texto.replace("\n", "<br/>")
+
+    return texto
+
+
+def draw_table(data_table, col_widths, style):
+    """
+    Crea la estructura de tabla.
+    - Establece los encabezados de la tabla.
+    - Formatea y procesa el texto de la celda si es que contiene viñetas.
+    - Define el tamaño de las columnas.
+    - Establece el estilo de la tabla.
+    """
+    processed_data = []
+    
+    for fila in data_table:
+        processed_row = []
+        
+        for i, celda in enumerate(fila):
+            contenido = str(celda)
+            if fila == data_table[0]:
+                paragraph = contenido
+            else:
+                contenido = cell_text_processor(contenido)
+                paragraph = Paragraph(contenido, style)
+            processed_row.append(paragraph)
+        
+        processed_data.append(processed_row)
+    
+    table = Table(processed_data, colWidths=col_widths)
+    table.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (-1, 0), colors.grey),
+        ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+        ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+        ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+        ("BOTTOMPADDING", (0, 0), (-1, 0), 8),
+        ("BACKGROUND", (0, 1), (-1, -1), colors.white),
+        ("GRID", (0, 0), (-1, -1), 1, colors.grey),
+        ("VALIGN", (0, 1), (-1, -1), "TOP"),
+    ]))
+    return table
+
 def fichatecnicapdf(request, curso_id):
     curso = get_object_or_404(RegistroCurso, id=curso_id)
     ficha = get_object_or_404(FichaTecnica, curso=curso)
@@ -199,45 +267,15 @@ def fichatecnicapdf(request, curso_id):
     buffer = BytesIO()
     doc = SimpleDocTemplate(buffer, pagesize=letter,
                             leftMargin=2 * cm, rightMargin=2 * cm,
-                            topMargin=2 * cm, bottomMargin=2 * cm)
+                            topMargin=1.5 * cm, bottomMargin=1.5 * cm)
 
     styles = getSampleStyleSheet()
-    style_normal = ParagraphStyle(
-        "Normal",
-        parent=styles["Normal"],
-        leading=14,
-        alignment=TA_JUSTIFY
-    )
-    style_center = ParagraphStyle(
-        "Center", 
-        parent=style_normal, 
-        alignment=TA_CENTER
-    )
-    
-    style_bold = ParagraphStyle(
-        "Bold", 
-        parent=style_normal, 
-        fontName="Helvetica-Bold"
-    )
+    style_normal = ParagraphStyle("Normal", parent=styles["Normal"], leading=14, alignment=TA_JUSTIFY)
+    style_center = ParagraphStyle("Center",  parent=style_normal,  alignment=TA_CENTER)
+    style_bold = ParagraphStyle("Bold",  parent=style_normal,  fontName="Helvetica-Bold")
 
     # Lista para almacenar contenido
     Story = []
-
-    # Función para crear una tabla
-    def crear_tabla(data, col_widths):
-        table = Table(data, col_widths)
-        table.setStyle(TableStyle([
-            ("BACKGROUND", (0, 0), (-1, 0), colors.grey),
-            ("TEXTCOLOR", (0, 0), (-1, 0), colors.whitesmoke),
-            ("ALIGN", (0, 0), (-1, -1), "CENTER"),
-            ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
-            ("BOTTOMPADDING", (0, 0), (-1, 0), 8),
-            ("GRID", (0, 0), (-1, -1), 1, colors.black),
-            ("VALIGN", (0, 0), (-1, -1), "TOP"),
-        ]))
-        
-        Story.append(table)
-        Story.append(Spacer(1, 12))
 
     # **Encabezado**
     encabezado = "FICHA TÉCNICA DEL SERVICIO DE ACTUALIZACIÓN PROFESIONAL<br/> Y FORMACIÓN DOCENTE"
@@ -252,75 +290,61 @@ def fichatecnicapdf(request, curso_id):
     Story.append(Paragraph(f"<b>Instructor(a):</b> {ficha.curso.instructor}", style_normal))
     Story.append(Spacer(1, 12))
 
-    # **1) Introducción**
-    Story.append(Paragraph(f"<b>1) Introducción:</b>", style_bold))
-    Story.append(Paragraph(procesar_texto(ficha.introduccion), style_normal))
-    Story.append(Spacer(1, 12))
-
-    # **2) Justificación**
-    Story.append(Paragraph(f"<b>2) Justificación:</b>", style_bold))
-    Story.append(Paragraph(procesar_texto(ficha.justificacion), style_normal))
-    Story.append(Spacer(1, 12))
-
-    # **3) Objetivo**
-    Story.append(Paragraph(f"<b>3) Objetivo:</b>", style_bold))
-    Story.append(Paragraph(procesar_texto(ficha.curso.objetivo), style_normal))
-    Story.append(Spacer(1, 12))
-
-    # **4) Descripción del Servicio**
-    Story.append(Paragraph(f"<b>4) Descripción del Servicio:</b>", style_bold))
-    Story.append(Paragraph(f"<b>a. Tipo de Servicio:</b> {ficha.servicio}", style_normal))
-    Story.append(Paragraph(f"<b>b. Duración en horas:</b> {ficha.curso.horas}", style_normal))
-
-    # **Tabla de Contenido Temático**
-    Story.append(Paragraph("<b>c. Contenido Temático del Curso:</b>", style_bold))
+    data = [
+        ['1) Introducción', ficha.introduccion],
+        ['2) Justificación', ficha.justificacion],
+        ['3) Objetivo', ficha.curso.objetivo],
+        ['4) Descripción del Servicio', ''],
+        ['a) Tipo de servicio', ficha.servicio],
+        ['b) Duración en horas del curso', f'{ficha.curso.horas} horas'],
+        ['c) Contenido Temático del Curso', ''],
+        ['d) Elementos didácticos', ficha.elementosDidacticos],
+        ['e) Criterios de evaluación', ''],
+        ['5) Competencias a desarrollar', ficha.competencias],
+        ['6) Fuentes de información', ficha.fuentes]
+    ]
     
-    data = [["Temas/Subtemas", "Tiempo Programado", "Actividades de Aprendizaje"]]
+    # Introduccion, Justificacion y Objetivo
+    for label, value in data[:3]:
+        Story.append(Paragraph(f"{label}:", style_bold))
+        Story.append(Paragraph(text_processor(value), style_normal))
+        Story.append(Spacer(1, 12))
+    
+    # Descripción del servicio (a, b, c)
+    for label, value in data[3:7]:
+        Story.append(Paragraph(f"<b>{label}:</b> {text_processor(value)}", style_normal))
+
+    # c) Contenido Temático del Curso (Tabla)
+    data_table = [["Temas/Subtemas", "Tiempo Programado\n(Horas)", "Actividades de Aprendizaje"]]
     for contenido in ficha.contenidos_tematicos.all():
-        data.append([
-            Paragraph(str(contenido.tema), style_normal),
-            Paragraph(str(contenido.tiempo), style_normal),
-            Paragraph(procesar_texto(contenido.actividades), style_normal)
-        ])
-
-    crear_tabla(data, [200, 100, 170])
-    
-
-    # **4) --> Continuación**
-    Story.append(Paragraph(f"<b>d. Elementos didácticos:</b> {ficha.elementosDidacticos}", style_normal))
-    Story.append(Paragraph(f"<b>e. Criterios de evaluación:</b>", style_normal))
+        data_table.append([contenido.tema, contenido.tiempo, contenido.actividades])
+    Story.append(draw_table(data_table, [200, 100, 170], style_normal))
     Story.append(Spacer(1, 12))
 
-    # ** Tabla Criterios de evaluación
-    data = [["No", "Criterio", "Valor", "Instrumento de Evaluación"]]
+    # **4) --> Continuación de descripción del servicio**
+    for label, value in data[7:9]:
+        Story.append(Paragraph(f"<b>{label}:</b> {text_processor(value)}", style_normal))
+
+    # **e) Criterios de evaluación (Tabla)**
+    data_table = [["No", "Criterio", "Valor", "Instrumento de Evaluación"]]
     for index, criterio in enumerate(ficha.criterios_evaluacion.all(), start=1):
-        data.append([
-            Paragraph(str(index), style_normal),
-            Paragraph(str(criterio.criterio), style_normal), 
-            Paragraph(str(criterio.valor), style_normal),
-            Paragraph(str(criterio.instrumento), style_normal)
-        ])
-    
-    crear_tabla(data, [20, 200, 50, 200])
-
-    # **5) Competencias a desarrollar**
-    Story.append(Paragraph(f"<b>5) Competencias a desarrollar:</b>", style_bold))
-    Story.append(Paragraph(f"{ficha.competencias}", style_normal))
+        data_table.append([index, criterio.criterio, criterio.valor, criterio.instrumento])
+    Story.append(draw_table(data_table, [30, 180, 60, 200], style_normal))
     Story.append(Spacer(1, 12))
 
-    # **6) Fuentes de infomación**
-    Story.append(Paragraph(f"<b>6) Fuentes de información:</b>", style_bold))
-    Story.append(Paragraph(f"{ficha.fuentes}", style_normal))
+    # Competencias y fuentes de informacion
+    for label, value in data[9:]:
+        Story.append(Paragraph(f"{label}:", style_bold))
+        Story.append(Paragraph(text_processor(value), style_normal))
+        Story.append(Spacer(1, 12))
 
     # **Firmas y Sello (agregados al final)**
     Story.append(Spacer(1, 100))
-
-    # Nuevas filas para las firmas y sello
-    data = [
+    data_table = [
         [ficha.curso.instructor, "", f"{jefe.nombre} {jefe.apPaterno} {jefe.apMaterno}"],
         ["Nombre y Firma del Facilitador", "Sello", "Nombre y Firma del\n Jefe de Desarrollo Académico"],
     ]
-    table = Table(data, [200, 100, 200])
+    table = Table(data_table, [200, 100, 200])
     table.setStyle(TableStyle([
         ("ALIGN", (0, 0), (-1, -1), "CENTER"),
         ("FONTNAME", (0, 1), (-1, 1), "Helvetica-Bold"),
@@ -329,7 +353,6 @@ def fichatecnicapdf(request, curso_id):
         ("BOTTOMPADDING", (0, 0), (-1, 0), 8),
         ("VALIGN", (0, 0), (-1, -1), "TOP"),
     ]))
-        
     Story.append(table)
     Story.append(Spacer(1, 12))
 
@@ -345,5 +368,3 @@ def fichatecnicapdf(request, curso_id):
     response = HttpResponse(buffer, content_type="application/pdf")
     response['Content-Disposition'] = f'inline; filename="{filename}"'
     return response
-
-
