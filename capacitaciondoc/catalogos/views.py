@@ -14,6 +14,8 @@ from reportlab.lib.styles import getSampleStyleSheet
 from io import BytesIO
 
 from .models import (
+    FormatoConstancia,
+    FormatoDepartamento,
     ValorCalificacion,
     ExperienciaDocente, 
     ExperienciaLaboral, 
@@ -24,7 +26,7 @@ from .models import (
     GradoAcademico, Lugar, Sede, Departamento,
     Dirigido, Genero, PerfilCurso ,Periodo, Director)
 
-from .forms import GradoAcForm, LugarForm, SedeForm, DirectorForm, ValorCalificacionForm
+from .forms import FormatoConstanciaForm, FormatoConstanciaUpdateForm, FormatoDepartamentoForm, FormatoDepartamentoUpdateForm, GradoAcForm, LugarForm, SedeForm, DirectorForm, ValorCalificacionForm
 from .forms import (
     AgregarDocenteForm, ActualizarDocenteForm, 
     DepartamentoForm, DirigidoForm, GeneroForm, PerfilcursoForm, PeriodoForm)
@@ -929,3 +931,91 @@ def valorcalificacioneliminar(request, valor_id):
         messages.success(request, f"Valor de calificación {valor} eliminado correctamente.")
         return redirect('valorcalificacionlista')  
     return render(request, 'valorcalificacioneliminar.html', {'valor': valor})
+
+def formatoslista(request):
+    formatosdepartamentos = FormatoDepartamento.objects.all().order_by('departamento', '-year')
+    formatosconstancias = FormatoConstancia.objects.all().order_by('-year')
+
+    return render(request, 'formatoslista.html', {
+        'formatosdepartamentos': formatosdepartamentos, 
+        'formatosconstancias': formatosconstancias
+        })
+
+def formatodepartamentocrear(request):
+    if request.method == 'POST':
+        form = FormatoDepartamentoForm(request.POST, request.FILES)
+        if form.is_valid():
+            departamento = form.cleaned_data.get('departamento')
+            year = form.cleaned_data.get('year')
+
+            # Verificar si ya existe un formato con el mismo departamento y año
+            if FormatoDepartamento.objects.filter(departamento=departamento, year=year).exists():
+                messages.warning(request, "Ya existe un formato para este departamento y año.")
+                return render(request, 'formatodepartamentocrear.html', {'form': form})
+            
+            form.save()
+            messages.success(request, f"Formato de { form.instance.departamento }-{form.instance.year} creado correctamente.")
+            return redirect('formatoslista') 
+    else:
+        form = FormatoDepartamentoForm()
+
+    return render(request, 'formatodepartamentocrear.html', {'form': form})
+
+def formatodepartamentover(request, formato_id):
+    formato = get_object_or_404(FormatoDepartamento, id=formato_id)
+    form = FormatoDepartamentoForm(instance=formato)
+    return render(request, 'formatodepartamentover.html', {'formato': formato, 'form': form})
+
+def formatodepartamentoactualizar(request, formato_id):
+    formato = get_object_or_404(FormatoDepartamento, id=formato_id)
+    if request.method == 'POST':
+        form = FormatoDepartamentoUpdateForm(request.POST, request.FILES, instance=formato)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Formato actualizado correctamente.")
+            return redirect('formatoslista')
+        else:
+            print(form.errors)
+    else:
+        form = FormatoDepartamentoForm(instance=formato)
+    return render(request, 'formatodepartamentoactualizar.html', {'form': form, 'formato': formato})
+
+def formatoconstanciacrear(request):
+    if request.method == 'POST':
+        form = FormatoConstanciaForm(request.POST, request.FILES)
+        if form.is_valid():
+            year = form.cleaned_data.get('year')
+
+            # Verificar si ya existe un formato con el mismo departamento y año
+            if FormatoConstancia.objects.filter(year=year).exists():
+                messages.warning(request, "Ya existe un formato para de este año.")
+                return render(request, 'formatoconstanciacrear.html', {'form': form})
+            
+            form.save()
+            messages.success(request, "Formato creado correctamente.")
+            return redirect('formatoslista') 
+    else:
+        form = FormatoConstanciaForm()
+
+    return render(request, 'formatoconstanciacrear.html', {'form': form})
+
+def formatoconstanciaver(request, formato_id):
+    formato = get_object_or_404(FormatoConstancia, id=formato_id)
+    form = FormatoConstanciaForm(instance=formato)
+    return render(request, 'formatoconstanciaver.html', {'formato': formato, 'form': form})
+
+def formatoconstanciaactualizar(request, formato_id):
+    formato = get_object_or_404(FormatoConstancia, id=formato_id)
+    if request.method == 'POST':
+        form = FormatoConstanciaUpdateForm(request.POST, request.FILES, instance=formato)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Formato actualizado correctamente.")
+            return redirect('formatoslista')
+        else:
+            print(form.errors)
+    else:
+        form = FormatoConstanciaForm(instance=formato)
+    return render(request, 'formatoconstanciaactualizar.html', {'form': form, 'formato': formato})

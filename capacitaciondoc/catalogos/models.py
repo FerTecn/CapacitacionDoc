@@ -1,3 +1,4 @@
+import datetime
 import locale
 from django.db import models
 
@@ -97,7 +98,7 @@ class Docente(models.Model):
         
     def __str__(self):
         return f"{self.user.first_name} {self.user.last_name_paterno} {self.user.last_name_materno} {self.departamento}"
-    
+
     class Meta:
         verbose_name_plural = 'Docentes'
 
@@ -190,3 +191,46 @@ class ValorCalificacion(models.Model):
     class Meta:
         verbose_name_plural = 'Valores de Calificación'
         verbose_name = 'Valor de Calificación'
+
+import os
+def formato_departamento_upload_path(instance, filename):
+    """Guarda los archivos en: media/formatos/departamento/nombredepartamento/año/ con nombres fijos."""
+    departamento_nombre = instance.departamento.departamento if instance.departamento else "sin departamento"
+    folder_path = os.path.join("formatos", "departamento", departamento_nombre, str(instance.year))
+    
+    # Verificar qué campo está subiendo el archivo y asignar nombre correcto
+    if instance._meta.get_field("header").attname in filename.lower():  
+        filename = "header.png"  
+    elif instance._meta.get_field("footer").attname in filename.lower():
+        filename = "footer.png"
+    else:
+        # Si no se detecta por el nombre del campo, asignar basado en el tipo de instancia
+        if instance.header == filename:
+            filename = "header.png"
+        elif instance.footer == filename:
+            filename = "footer.png"
+
+    return os.path.join(folder_path, filename)
+
+def formato_constancia_upload_path(instance, filename):
+    """Guarda los archivos en: media/formatos/constancia/año/ siempre como 'header.png'."""
+    folder_path = os.path.join("formatos", "constancia", str(instance.year))
+    return os.path.join(folder_path, "header.png")  # Siempre guardado como "header.png"
+
+class FormatoDepartamento(models.Model):
+    header = models.ImageField(upload_to=formato_departamento_upload_path)
+    footer = models.ImageField(upload_to=formato_departamento_upload_path)
+    departamento = models.ForeignKey(Departamento, on_delete=models.SET_NULL, null=True)
+    year = models.IntegerField(
+        choices=[(r, r) for r in range(1980, datetime.datetime.now().year + 2)], 
+        default=datetime.datetime.now().year
+    )
+    vigente = models.BooleanField(default=False)
+
+class FormatoConstancia(models.Model):
+    header = models.ImageField(upload_to=formato_constancia_upload_path)
+    year = models.IntegerField(
+        choices=[(r, r) for r in range(1980, datetime.datetime.now().year + 2)], 
+        default=datetime.datetime.now().year
+    )
+    vigente = models.BooleanField(default=False)   

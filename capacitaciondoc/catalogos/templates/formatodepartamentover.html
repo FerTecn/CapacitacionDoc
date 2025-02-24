@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}- Ver Formato de departamento{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between mb-3">
+    <a href="{% url 'formatoslista' %}" class="btn btn-secondary btn-icon-split mr-2">
+        <span class="icon text-white-50">
+            <i class="fas fa-arrow-left"></i>
+        </span>
+        <span class="text">Volver</span>
+    </a>
+</div>
+<h1 class="h3 mb-2 text-gray-800">Formato del departamento {{ formato.departamento.departamento}}</h1><br>
+
+<div class="form-row">
+    <div class="form-group col-md-6 align-items-center">
+        <p><strong>{{form.departamento.label_tag}}</strong> {{ formato.departamento }}</p>
+    </div>
+    <div class="form-group col-md-3 align-items-center">
+        <p><strong>{{form.year.label_tag}}</strong> {{ formato.year }}</p>
+    </div>
+    <div class="form-group col-md-3 align-items-center">
+        <p><strong>{{form.vigente.label_tag}}</strong> 
+            <button class="btn {% if formato.vigente %}btn-success{% else %}btn-danger{% endif %}">
+                {% if formato.vigente %}Vigente{% else %}No vigente{% endif %}
+            </button>
+        </p>
+    </div>
+</div>
+<hr>
+<div class="form-row mb-4">
+    <strong>{{form.header.label_tag}}</strong>
+    {% if formato.header %}
+        <img src="{{ formato.header.url }}" 
+        alt="Encabezado para el formato del departamento {{formato.departamento.departamento}}"
+        class="border rounded"
+        style="width: 100%;"
+        >
+    {% else %}
+        <div class="text-center mt-4">No hay encabezado</div>
+    {% endif %}
+</div>
+
+<div class="form-row">
+    <strong>{{form.footer.label_tag}}</strong>
+    {% if formato.footer %}
+        <img src="{{ formato.footer.url }}" 
+        alt="Pie de página para el formato del departamento {{formato.departamento.departamento}}"
+        class="border rounded"
+        style="width: 100%;"
+        >
+    {% else %}
+        <div class="text-center mt-4">No hay encabezado</div>
+    {% endif %}
+</div>
+{% endblock %}

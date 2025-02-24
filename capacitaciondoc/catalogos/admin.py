@@ -1,6 +1,8 @@
 from django.contrib import admin
 
 from .models import (
+    FormatoConstancia,
+    FormatoDepartamento,
     ValorCalificacion,
     ExperienciaDocente, 
     ExperienciaLaboral, 
@@ -77,5 +79,10 @@ class DirectorAdmin(admin.ModelAdmin):
     list_display = ('nombre', 'apPaterno', 'apMaterno', 'cargo', 'estatus')
 admin.site.register(Director)
 
+class FormatoDepAdmin(admin.ModelAdmin):
+    list_display = ('id', 'departamento', 'year', 'vigente')
+admin.site.register(FormatoDepartamento, FormatoDepAdmin)
 
-
+class FormatoConsAdmin(admin.ModelAdmin):
+    list_display = ('id', 'year', 'vigente')    
+admin.site.register(FormatoConstancia, FormatoConsAdmin)

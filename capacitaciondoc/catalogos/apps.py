@@ -6,7 +6,7 @@ class CatalogosConfig(AppConfig):
     name = 'catalogos'
 
     def ready(self):
-        
+        import catalogos.signals # Agregado para el signals de borrar archivos
         from django.contrib.auth.models import Group, Permission
         from django.db.models.signals import post_migrate
         from django.core.exceptions import ObjectDoesNotExist

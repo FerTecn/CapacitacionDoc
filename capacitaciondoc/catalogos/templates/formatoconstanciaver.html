@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}- Ver Formato de constancia{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between mb-3">
+    <a href="{% url 'formatoslista' %}" class="btn btn-secondary btn-icon-split mr-2">
+        <span class="icon text-white-50">
+            <i class="fas fa-arrow-left"></i>
+        </span>
+        <span class="text">Volver</span>
+    </a>
+</div>
+<h1 class="h3 mb-2 text-gray-800">Formato de constancia del año {{ formato.year}}</h1><br>
+
+<div class="form-row">
+    <div class="form-group col-md-12 align-items-center">
+        <p><strong>{{form.vigente.label_tag}}</strong> 
+            <button class="btn {% if formato.vigente %}btn-success{% else %}btn-danger{% endif %}">
+                {% if formato.vigente %}Vigente{% else %}No vigente{% endif %}
+            </button>
+        </p>
+    </div>
+</div>
+<hr>
+<div class="form-row mb-4">
+    <strong>{{form.header.label_tag}}</strong>
+    {% if formato.header %}
+        <img src="{{ formato.header.url }}" 
+        alt="Encabezado para el formato de constancias del año {{formato.year}}"
+        class="border rounded"
+        style="width: 100%;"
+        >
+    {% else %}
+        <div class="text-center mt-4">No hay encabezado</div>
+    {% endif %}
+</div>
+{% endblock %}

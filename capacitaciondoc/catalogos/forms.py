@@ -1,7 +1,6 @@
-import datetime
 from django import forms
 from .models import (
-    ExperienciaDocente, ExperienciaLaboral, FormacionAcademica, 
+    ExperienciaDocente, ExperienciaLaboral, FormacionAcademica, FormatoConstancia, FormatoDepartamento, 
     GradoAcademico, Lugar, ParticipacionInstructor, Sede, 
     Instructor, Docente, Director,
     Departamento, Dirigido, Genero, PerfilCurso, Periodo, ValorCalificacion)
@@ -466,3 +465,88 @@ class ValorCalificacionForm(forms.ModelForm):
             self.fields[field].widget.attrs.update({
                 'class': 'form-control',
             })
+
+class FormatoDepartamentoForm(forms.ModelForm):
+    class Meta:
+        model = FormatoDepartamento
+        fields = '__all__'
+        labels = {
+            'header': 'Imagen de encabezado',
+            'footer': 'Imagen de pie de página',
+            'departamento': 'Departamento al que corresponde',
+            'year': 'Año',
+            'vigente': 'Formato vigente',
+        }
+        widgets = {
+            'header': forms.FileInput(attrs={
+                'class': 'btn btn-primary',  # Clase CSS para estilos
+                'accept': 'image/*',  # Aceptar solo imágenes
+                'id': 'headerimg-input',  # ID para JavaScript
+            }),
+            'footer': forms.FileInput(attrs={
+                'class': 'btn btn-primary',  # Clase CSS para estilos
+                'accept': 'image/*',  # Aceptar solo imágenes
+                'id': 'footerimg-input',  # ID para JavaScript
+            }),
+            'departamento': forms.Select(attrs={'class': 'form-control',}),
+            'year': forms.Select(attrs={'class': 'form-control',}),
+        }
+
+class FormatoDepartamentoUpdateForm(forms.ModelForm):
+    class Meta:
+        model = FormatoDepartamento
+        exclude = ('departamento', 'year')
+        labels = {
+            'header': 'Imagen de encabezado',
+            'footer': 'Imagen de pie de página',
+            'departamento': 'Departamento al que corresponde',
+            'year': 'Año',
+            'vigente': 'Formato vigente',
+        }
+        widgets = {
+            'header': forms.FileInput(attrs={
+                'class': 'btn btn-primary',  # Clase CSS para estilos
+                'accept': 'image/*',  # Aceptar solo imágenes
+                'id': 'headerimg-input',  # ID para JavaScript
+            }),
+            'footer': forms.FileInput(attrs={
+                'class': 'btn btn-primary',  # Clase CSS para estilos
+                'accept': 'image/*',  # Aceptar solo imágenes
+                'id': 'footerimg-input',  # ID para JavaScript
+            }),
+        }
+
+class FormatoConstanciaForm(forms.ModelForm):
+    class Meta:
+        model = FormatoConstancia
+        fields = '__all__'
+        labels = {
+            'header': 'Imagen de encabezado',
+            'año': 'Año',
+            'vigente': 'Formato vigente',
+        }
+        widgets = {
+            'header': forms.FileInput(attrs={
+                'class': 'btn btn-primary',  # Clase CSS para estilos
+                'accept': 'image/*',  # Aceptar solo imágenes
+                'id': 'headerimg-input',  # ID para JavaScript
+            }),
+            'year': forms.Select(attrs={'class': 'form-control',}),
+        }
+
+class FormatoConstanciaUpdateForm(forms.ModelForm):
+    class Meta:
+        model = FormatoConstancia
+        exclude = ('year',)
+        labels = {
+            'header': 'Imagen de encabezado',
+            'año': 'Año',
+            'vigente': 'Formato vigente',
+        }
+        widgets = {
+            'header': forms.FileInput(attrs={
+                'class': 'btn btn-primary',  # Clase CSS para estilos
+                'accept': 'image/*',  # Aceptar solo imágenes
+                'id': 'headerimg-input',  # ID para JavaScript
+            }),
+        }
