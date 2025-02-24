@@ -1,4 +1,4 @@
-from datetime import datetime
+import locale
 from django.http import HttpResponseForbidden, HttpResponse
 from django.shortcuts import render, redirect, render, get_object_or_404
 from django.contrib.auth.decorators import login_required, permission_required
@@ -246,44 +246,26 @@ def instructorver(request, instructor_id=None):
         'participaciones': participaciones,
     })
 
-def format_date(fecha_str):
-    meses = {
-        "January": "Enero", "February": "Febrero", "March": "Marzo", "April": "Abril",
-        "May": "Mayo", "June": "Junio", "July": "Julio", "August": "Agosto",
-        "September": "Septiembre", "October": "Octubre", "November": "Noviembre", "December": "Diciembre"
-    }
-    
-    fecha_obj = datetime.strptime(fecha_str, "%Y-%m-%d")
-    mes = meses[fecha_obj.strftime("%B")]
-    return fecha_obj.strftime(f"%d-{mes}-%Y")
-
-def calc_row_height(contenido, ancho_columna, style):
-    paragraph = Paragraph(contenido, style)
-    w, h = paragraph.wrap(ancho_columna, 800)  # Ajusta la altura según el contenido
-    return h + 6
-
 def draw_table(data, col_widths, styles):
     processed_data = []
-    alturas_filas = []
     
     for fila in data:
         processed_row = []
-        altura_maxima = 0
         
         for i, celda in enumerate(fila):
             contenido = str(celda)
-            paragraph = Paragraph(contenido, styles['Normal'])
-            w, h = paragraph.wrap(col_widths[i], 800)
-            processed_row.append(paragraph)
-            altura_maxima = max(altura_maxima, h + 6)
+            if fila == data[0]:
+                paragraph = contenido
+            else:
+                contenido = Paragraph(contenido, styles['Normal'])
+            processed_row.append(contenido)
         
         processed_data.append(processed_row)
-        alturas_filas.append(altura_maxima)
     
-    table = Table(processed_data, colWidths=col_widths, rowHeights=alturas_filas)
+    table = Table(processed_data, colWidths=col_widths)
     table.setStyle(TableStyle([
         ("BACKGROUND", (0, 0), (-1, 0), colors.grey),
-        ("TEXTCOLOR", (0, 0), (-1, 0), colors.whitesmoke),
+        ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
         ("ALIGN", (0, 0), (-1, -1), "CENTER"),
         ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
         ("BOTTOMPADDING", (0, 0), (-1, 0), 8),
@@ -294,6 +276,7 @@ def draw_table(data, col_widths, styles):
     return table
 
 def generar_cv_pdf(request, instructor_id=None):
+    locale.setlocale(locale.LC_TIME, 'spanish')  # Establecer la localización para formatear la fecha a español
     if request.user.rol == 'Instructor':
         # Verificar si el registro que intenta acceder es suyo
         instructor = get_object_or_404(Instructor, user=request.user)
@@ -319,8 +302,8 @@ def generar_cv_pdf(request, instructor_id=None):
     
     story.append(Paragraph("<b>1. Datos Personales</b>", styles['Heading2']))
     datos = [
-        ("Nombre", f"{instructor.user.last_name_paterno} {instructor.user.last_name_materno} {instructor.user.first_name}"),
-        ("Fecha de nacimiento", format_date(f"{instructor.fechaNac}")),
+        ("Nombre", instructor.user.get_user_full_name()),
+        ("Fecha de nacimiento", instructor.fechaNac.strftime('%d de %B de %Y')),
         ("CURP", instructor.user.curp),
         ("RFC", instructor.RFC),
         ("Teléfono", instructor.telefono),
@@ -334,34 +317,44 @@ def generar_cv_pdf(request, instructor_id=None):
     data1 = [["Institución", "Titulación", "Cédula Profesional"]]
     for formacion in instructor.formaciones_academicas.all():
         data1.append([formacion.institucion, formacion.grado, formacion.cedulaProf])
-    story.append(draw_table(data1, [200, 150, 100], styles))
+    story.append(draw_table(data1, [200, 150, 150], styles))
 
     # Tabla Experiencias laborales
     story.append(Paragraph("<b>3. Experiencia Laboral</b>", styles['Heading2']))
     data2 = [["No.", "Puesto", "Empresa", "Permanencia"]]
     for index, exp in enumerate(instructor.experiencias_laborales.all(), start=1):
-        data2.append([index, exp.puesto, exp.empresa, f"{format_date(str(exp.fecha_inicio))} - {format_date(str(exp.fecha_fin))}"])
-    story.append(draw_table(data2, [40, 150, 150, 110], styles))
+        data2.append([
+            index, 
+            exp.puesto, 
+            exp.empresa, 
+            f"{exp.fecha_inicio.strftime('%d de %B de %Y')} - <br/> {exp.fecha_fin.strftime('%d de %B de %Y')}"
+        ])
+    story.append(draw_table(data2, [50, 150, 150, 150], styles))
 
     # Tabla Experiencias Docencias
     story.append(Paragraph("<b>4. Experiencia en Docencia</b>", styles['Heading2']))
     data3 = [["No.", "Materia", "Periodo"]]
     for index, exp in enumerate(instructor.experiencias_docentes.all(), start=1):
         data3.append([index, exp.materia, exp.periodo])
-    story.append(draw_table(data3, [40, 260, 150], styles))
+    story.append(draw_table(data3, [50, 300, 150], styles))
     
 
     # Tabla Participaicones como instructor
     story.append(Paragraph("<b>5. Participaciones como Instructor</b>", styles['Heading2']))
     data4 = [["No.", "Curso", "Empresa", "Horas", "Fecha"]]
     for index, part in enumerate(instructor.participaciones_instructor.all(), start=1):
-        data4.append([index, part.curso, part.nombreEmpresa, part.duracionHoras, f"{format_date(str(part.periodoInicio))} - {format_date(str(part.periodoFin))}"])
-    story.append(draw_table(data4, [40, 150, 110, 50, 100], styles))
+        data4.append([
+            index, 
+            part.curso, 
+            part.nombreEmpresa, 
+            part.duracionHoras, 
+            f"{part.periodoInicio.strftime('%d de %B de %Y')} -<br/> {part.periodoFin.strftime('%d de %B de %Y')}"])
+    story.append(draw_table(data4, [40, 170, 120, 50, 130], styles))
 
     doc.build(story)
     
     buffer.seek(0)
-    filename = f"CV_{instructor.user.last_name_paterno}_{instructor.user.last_name_materno}_{instructor.user.first_name}.pdf"
+    filename = f"CV_{instructor.user.get_user_full_name().replace(' ', '_')}.pdf"
     response = HttpResponse(buffer, content_type='application/pdf')
     response['Content-Disposition'] = f'inline; filename="{filename}"'
     return response
