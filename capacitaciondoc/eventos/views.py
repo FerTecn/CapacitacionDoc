@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+import locale
 from django.conf import settings
 from django.shortcuts import render, redirect, reverse
 from django.shortcuts import get_object_or_404, redirect
@@ -555,6 +556,8 @@ def oficioactualizar(request, oficio_id):
     return render(request, "oficioactualizar.html", {'oficio': oficio, 'form': form, 'docente': docente})
 
 def descargar_oficio(request, oficio_id):
+    locale.setlocale(locale.LC_TIME, 'spanish')  # Establecer la localización para formatear la fecha a español en el pdf
+
     oficio = get_object_or_404(OficioComision, id=oficio_id)
     docente = oficio.docente
     inscripciones = Inscripcion.objects.filter(usuario=docente.user).order_by('evento__fechaInicio')
@@ -587,7 +590,6 @@ def descargar_oficio(request, oficio_id):
         fontSize=10,
         spaceAfter=8,
         alignment=TA_JUSTIFY,
-        allowHtml=True 
     )
     
     style_bold = ParagraphStyle(
@@ -620,12 +622,19 @@ def descargar_oficio(request, oficio_id):
 
     # Agregar un encabezado con el logo
     def encabezado(canvas, doc):
-        logo_path = os.path.join(settings.MEDIA_ROOT, 'docs', 'header.jpg')
-        canvas.drawImage(logo_path, 2 * cm, 25 * cm, width= 17.5 * cm, height=50, preserveAspectRatio=True)
-    
+        header_path = os.path.join(settings.MEDIA_ROOT, f'formatos/departamento/{departamento.departamento}/{oficio.fecha.year}', 'header.png')
+        if os.path.exists(header_path):
+            canvas.drawImage(header_path, 2 * cm, 25 * cm, width=17.5 * cm, height=50, preserveAspectRatio=True, mask='auto')
+        else:
+            canvas.drawString(2 * cm, 25 * cm, "Encabezado no encontrado")
+
     def pie_pagina(canvas, doc):
-        pieimg_path = os.path.join(settings.MEDIA_ROOT, 'docs', 'footer.jpg')
-        canvas.drawImage(pieimg_path, 1 * cm, 1 * cm, width= 19 * cm, height=100, preserveAspectRatio=True)
+        footer_path = os.path.join(settings.MEDIA_ROOT, f'formatos/departamento/{departamento.departamento}/{oficio.fecha.year}', 'footer.png')
+        if os.path.exists(footer_path):
+            canvas.drawImage(footer_path, 1 * cm, 1 * cm, width= 19 * cm, height=100, preserveAspectRatio=True, mask='auto')
+        else:
+            canvas.drawString(2 * cm, 2 * cm, "Pie de página no encontrado")
+
     
     # Definir un marco para el contenido
     frame = Frame(doc.leftMargin, doc.bottomMargin, doc.width, doc.height - 2 * cm, id='normal')
@@ -635,7 +644,7 @@ def descargar_oficio(request, oficio_id):
     doc.addPageTemplates([plantilla])
 
     # Encabezado alineado a la derecha
-    fecha_formateada = format_date(oficio.fecha)
+    fecha_formateada = oficio.fecha.strftime('%d/%B/%Y')
 
     encabezado_data = [
         ["Apizaco, Tlaxcala, ", f"{fecha_formateada}"],
@@ -652,10 +661,9 @@ def descargar_oficio(request, oficio_id):
 
     Story.append(table)
     Story.append(Spacer(1, 1))
-    oficio = Paragraph(f"Oficio No. {oficio.nomenclatura}-{oficio.no_oficio}/{oficio.fecha.year}", style_right)
+    no_oficio = Paragraph(f"Oficio No. {oficio.nomenclatura}-{oficio.no_oficio}/{oficio.fecha.year}", style_right)
     asunto = Paragraph('Asunto: COMISIÓN',style_right)
-    Story.append(oficio)
-    Story.append(Spacer(1, 12))
+    Story.append(no_oficio)
     Story.append(asunto)
     Story.append(Spacer(1, 12))
     
@@ -673,7 +681,7 @@ def descargar_oficio(request, oficio_id):
         Con base en su desarrollo profesional en el desempeño de sus funciones y aunado a su alto sentido de responsabilidad, 
         se le <b>COMISIONA</b> a participar en los siguientes <b>cursos y/o actividades intersemestrales</b>, 
         durante el preiodo comprendido del
-        {format_date(inscripciones[0].evento.curso.periodo.inicioPeriodo)} al {format_date(inscripciones[0].evento.curso.periodo.finPeriodo)}:
+        {inscripciones[0].evento.curso.periodo.inicioPeriodo} al {inscripciones[0].evento.curso.periodo.finPeriodo}:
     '''
     
     redaccion = Paragraph(text, style_normal)
@@ -687,7 +695,7 @@ def descargar_oficio(request, oficio_id):
         hora_inicio = inscripcion.evento.horaInicio.strftime("%H:%M") if inscripcion.evento.horaInicio else "N/A"
         hora_fin = inscripcion.evento.horaFin.strftime("%H:%M") if inscripcion.evento.horaFin else "N/A"
         data.append([
-            Paragraph(f"{format_date(inscripcion.evento.fechaInicio)} al {format_date(inscripcion.evento.fechaFin)}", style_normal),
+            Paragraph(f"{inscripcion.evento.fechaInicio.strftime('%d-%B-%Y')} al {inscripcion.evento.fechaFin.strftime('%d-%B-%Y')}", style_normal),
             Paragraph(inscripcion.evento.curso.nombre, style_normal), 
             Paragraph(f'{inscripcion.evento.lugar}', style_normal), 
             Paragraph(f'{hora_inicio} a {hora_fin} hrs.',style_normal),
@@ -733,13 +741,3 @@ def descargar_oficio(request, oficio_id):
     response['Content-Disposition'] = f'inline; filename="{filename}"'
 
     return response
-
-def format_date(fecha):
-    meses = {
-        "January": "Enero", "February": "Febrero", "March": "Marzo", "April": "Abril",
-        "May": "Mayo", "June": "Junio", "July": "Julio", "August": "Agosto",
-        "September": "Septiembre", "October": "Octubre", "November": "Noviembre", "December": "Diciembre"
-    }
-    
-    mes = meses[fecha.strftime("%B")]
-    return fecha.strftime(f"%d-{mes}-%Y")
