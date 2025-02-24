@@ -1,7 +1,7 @@
 .slide-container {
     align-items: center;
   justify-content: center;
-/* display: flex; */
+  display: flex;
   max-width: 1120px;
   width: 100%;
   padding: 40px 0;
