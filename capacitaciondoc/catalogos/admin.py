@@ -26,29 +26,16 @@ admin.site.register(ParticipacionInstructor)
 admin.site.register(ValorCalificacion)
     
 class InstructorAdmin(admin.ModelAdmin):
-    list_display = ('user', 'clave', 'fechaNac', 'genero', 'RFC', 'telefono')
-    
+    # Personalización de cómo se muestra la información de un Docente
+    def get_user_full_name(self, obj):
+        return f"{obj.user.first_name} {obj.user.last_name_paterno} {obj.user.last_name_materno}"
+    get_user_full_name.short_description = 'Nombre completo'
+
     search_fields = ('user__curp', 'user__first_name', 'user__last_name_paterno', 'user__last_name_materno')  # Búsqueda por CURP y nombre
     ordering = ('user__curp',)
 
     # Campos de solo lectura (para proteger ciertos datos)
     readonly_fields = ('user',)
-
-    # Personalización de cómo se muestra la información de un Docente
-    def get_user_full_name(self, obj):
-        return f"{obj.user.first_name} {obj.user.last_name_paterno} {obj.user.last_name_materno}"
-    get_user_full_name.short_description = 'Nombre completo'
-
-    # Mostrar el nombre completo del docente en lugar de los nombres individuales en la lista
-    list_display = ('get_user_full_name', 'clave', 'fechaNac', 'RFC', 'telefono')
-
-    # Campos de solo lectura (para proteger ciertos datos)
-    readonly_fields = ('user',)
-
-    # Personalización de cómo se muestra la información de un Docente
-    def get_user_full_name(self, obj):
-        return f"{obj.user.first_name} {obj.user.last_name_paterno} {obj.user.last_name_materno}"
-    get_user_full_name.short_description = 'Nombre completo'
 
     # Mostrar el nombre completo del docente en lugar de los nombres individuales en la lista
     list_display = ('get_user_full_name', 'clave', 'fechaNac', 'RFC', 'telefono')
