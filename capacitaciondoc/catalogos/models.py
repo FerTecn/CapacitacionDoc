@@ -1,6 +1,8 @@
 import datetime
 import locale
+import os
 from django.db import models
+from django.forms import ValidationError
 
 from usuarios.models import CustomUser
 
@@ -174,13 +176,54 @@ class PerfilCurso(models.Model):
     
     class Meta:
         verbose_name_plural = 'Perfiles de Curso'
+class CargoAutoridad(models.Model):
+    cargo_masculino = models.CharField(max_length=200)
+    cargo_femenino = models.CharField(max_length=200)
 
-class Director(models.Model):
+    def __str__(self):
+        return f'{self.cargo_masculino} - {self.cargo_femenino}'
+    
+    class Meta:
+        verbose_name_plural = 'Cargos de Autoridad'
+
+class Autoridad(models.Model):
     nombre=models.CharField(max_length=40)
     apPaterno=models.CharField(max_length=40)
     apMaterno=models.CharField(max_length=40)
-    puesto=models.CharField(max_length=40)
+    genero = models.ForeignKey('Genero', on_delete=models.SET_NULL, null=True, verbose_name="Género")
+    puesto=models.ForeignKey('CargoAutoridad', on_delete=models.SET_NULL, null=True, verbose_name="Cargo")
     estatus=models.BooleanField()
+
+    def get_puesto(self):
+        if self.genero.genero == 'Femenino' and self.puesto.cargo_femenino:
+            return self.puesto.cargo_femenino
+        return self.puesto.cargo_masculino
+    
+    def clean(self):
+        """
+        Evita que haya más de una autoridad con el mismo puesto y estatus=True.
+        """
+        if self.estatus:  # Solo valida si es True
+            existe = Autoridad.objects.filter(puesto=self.puesto, estatus=True).exclude(id=self.id).exists()
+            if existe:
+                raise ValidationError(f"Ya existe un {self.puesto} activo. Solo puede haber uno.")
+
+    def save(self, *args, **kwargs):
+        """
+        Llama a clean() antes de guardar para aplicar la validación.
+        """
+        self.clean()
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        if self.genero.genero == 'Femenino':
+            puesto = self.puesto.cargo_femenino
+        else:
+            puesto = self.puesto.cargo_masculino
+        return f"{self.nombre} {self.apPaterno} {self.apMaterno} {puesto}"
+    
+    class Meta:
+        verbose_name_plural = 'Autoridades'
 
 class ValorCalificacion(models.Model):
     valorCalificacion =  models.CharField(max_length=40)
@@ -192,7 +235,6 @@ class ValorCalificacion(models.Model):
         verbose_name_plural = 'Valores de Calificación'
         verbose_name = 'Valor de Calificación'
 
-import os
 def formato_departamento_upload_path(instance, filename):
     """Guarda los archivos en: media/formatos/departamento/nombredepartamento/año/ con nombres fijos."""
     departamento_nombre = instance.departamento.departamento if instance.departamento else "sin departamento"

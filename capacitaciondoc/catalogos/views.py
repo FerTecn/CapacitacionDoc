@@ -24,9 +24,9 @@ from .models import (
 from .models import (
     Docente, Instructor,
     GradoAcademico, Lugar, Sede, Departamento,
-    Dirigido, Genero, PerfilCurso ,Periodo, Director)
+    Dirigido, Genero, PerfilCurso ,Periodo, Autoridad)
 
-from .forms import FormatoConstanciaForm, FormatoConstanciaUpdateForm, FormatoDepartamentoForm, FormatoDepartamentoUpdateForm, GradoAcForm, LugarForm, SedeForm, DirectorForm, ValorCalificacionForm
+from .forms import FormatoConstanciaForm, FormatoConstanciaUpdateForm, FormatoDepartamentoForm, FormatoDepartamentoUpdateForm, GradoAcForm, LugarForm, SedeForm, AutoridadForm, ValorCalificacionForm
 from .forms import (
     AgregarDocenteForm, ActualizarDocenteForm, 
     DepartamentoForm, DirigidoForm, GeneroForm, PerfilcursoForm, PeriodoForm)
@@ -837,56 +837,56 @@ def periodoeliminar(request, periodo_id):
         return redirect('periodolista')  
     return render(request, 'periodoeliminar.html', {'periodo': periodo})
 
-#Director
+#Autoridad
 @login_required(login_url='signin')
-@permission_required('catalogos.view_director', raise_exception=True)
-def directorlista(request):
-    directores = Director.objects.all()
-    return render(request, 'directorlista.html', {'directores': directores})
+@permission_required('catalogos.view_autoridad', raise_exception=True)
+def autoridadlista(request):
+    autoridades = Autoridad.objects.all()
+    return render(request, 'autoridadlista.html', {'autoridades': autoridades})
 
 @login_required(login_url='signin')
-@permission_required('catalogos.add_director', raise_exception=True)
-def directorcrear(request):
+@permission_required('catalogos.add_autoridad', raise_exception=True)
+def autoridadcrear(request):
     if request.method == 'POST':
-        form = DirectorForm(request.POST)
+        form = AutoridadForm(request.POST)
         if form.is_valid():
             form.save()
             messages.success(request, "Autoridad creada correctamente.")
-            return redirect('directorlista') 
+            return redirect('autoridadlista') 
     else:
-        form = DirectorForm()
+        form = AutoridadForm()
 
-    return render(request, 'directoragregar.html', {'form': form})
-
-@login_required(login_url='signin')
-@permission_required('catalogos.view_director', raise_exception=True)
-def directorver(request, director_id):
-    director= get_object_or_404(Director, id=director_id)
-    form = DirectorForm(instance=director)
-    return render(request, 'directorver.html', {'director': director, 'form': form})
+    return render(request, 'autoridadagregar.html', {'form': form})
 
 @login_required(login_url='signin')
-@permission_required('catalogos.change_director', raise_exception=True)
-def directoractualizar(request, director_id):
-    director= get_object_or_404(Director, id=director_id)
+@permission_required('catalogos.view_autoridad', raise_exception=True)
+def autoridadver(request, autoridad_id):
+    autoridad= get_object_or_404(Autoridad, id=autoridad_id)
+    form = AutoridadForm(instance=autoridad)
+    return render(request, 'autoridadver.html', {'autoridad': autoridad, 'form': form})
+
+@login_required(login_url='signin')
+@permission_required('catalogos.change_autoridad', raise_exception=True)
+def autoridadactualizar(request, autoridad_id):
+    autoridad= get_object_or_404(Autoridad, id=autoridad_id)
     if request.method == 'POST':
-        form = DirectorForm(request.POST, instance=director)
+        form = AutoridadForm(request.POST, instance=autoridad)
         if form.is_valid():
             form.save()
             messages.success(request, "Autoridad actualizada correctamente.")
-            return redirect('directorlista')
+            return redirect('autoridadlista')
     else:
-        form = DirectorForm(instance=director)
-    return render(request, 'directoractualizar.html', {'form': form, 'director': director})
+        form = AutoridadForm(instance=autoridad)
+    return render(request, 'autoridadactualizar.html', {'form': form, 'autoridad': autoridad})
 
 # @login_required(login_url='signin')
-# @permission_required('catalogos.delete_director', raise_exception=True)
-# def directoreliminar(request, director_id):
-#     director = get_object_or_404(Director, id=director_id)
+# @permission_required('catalogos.delete_autoridad', raise_exception=True)
+# def autoridadeliminar(request, autoridad_id):
+#     autoridad = get_object_or_404(Autoridad, id=autoridad_id)
 #     if request.method == 'POST':
-#         director.delete()
-#         return redirect('directorlista')  
-#     return render(request, 'directoreliminar.html', {'director': director})
+#         autoridad.delete()
+#         return redirect('autoridadlista')  
+#     return render(request, 'autoridadeliminar.html', {'autoridad': autoridad})
 
 @login_required(login_url='signin')
 @permission_required('catalogos.view_valorcalificacion', raise_exception=True)

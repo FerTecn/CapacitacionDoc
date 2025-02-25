@@ -74,12 +74,12 @@ urlpatterns = [
     path('periodoactualizar/<int:periodo_id>/', views.periodoactualizar, name='periodoactualizar'),
     path('periodoeliminar/<int:periodo_id>/', views.periodoeliminar, name='periodoeliminar'),
     
-    #DIRECTOR
-    path('directorlista/', views.directorlista, name='directorlista'),
-    path('directorcrear/', views.directorcrear, name='directorcrear'),
-    path('directorver/<int:director_id>/', views.directorver, name='directorver'),
-    path('directoractualizar/<int:director_id>/', views.directoractualizar, name='directoractualizar'),
-    # path('directoreliminar/<int:director_id>/', views.directoreliminar, name='directoreliminar'),
+    #AUTORIDAD
+    path('autoridadlista/', views.autoridadlista, name='autoridadlista'),
+    path('autoridadcrear/', views.autoridadcrear, name='autoridadcrear'),
+    path('autoridadver/<int:autoridad_id>/', views.autoridadver, name='autoridadver'),
+    path('autoridadactualizar/<int:autoridad_id>/', views.autoridadactualizar, name='autoridadactualizar'),
+    # path('autoridadeliminar/<int:autoridad_id>/', views.autoridadeliminar, name='autoridadeliminar'),
 
     # VALORES CALIFICACION
     path('valorcalificacionlista/', views.valorcalificacionlista, name='valorcalificacionlista'),

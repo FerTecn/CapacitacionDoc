@@ -2,7 +2,7 @@ from django import forms
 from .models import (
     ExperienciaDocente, ExperienciaLaboral, FormacionAcademica, FormatoConstancia, FormatoDepartamento, 
     GradoAcademico, Lugar, ParticipacionInstructor, Sede, 
-    Instructor, Docente, Director,
+    Instructor, Docente, Autoridad,
     Departamento, Dirigido, Genero, PerfilCurso, Periodo, ValorCalificacion)
 
 #GRADO ACADEMICO
@@ -431,10 +431,10 @@ class PeriodoForm(forms.ModelForm):
 
         return cleaned_data
 
-#DIRECTOR
-class DirectorForm(forms.ModelForm):
+#AUTORIDAD
+class AutoridadForm(forms.ModelForm):
     class Meta:
-        model = Director
+        model = Autoridad
         fields = '__all__'
         labels = {
             'nombre': 'Nombre(s)',
