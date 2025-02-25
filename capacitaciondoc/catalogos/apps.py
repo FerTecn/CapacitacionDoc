@@ -31,7 +31,7 @@ class CatalogosConfig(AppConfig):
                 permisos_sede = Permission.objects.filter(content_type__app_label='catalogos', codename__icontains='sede')
                 permisos_lugar = Permission.objects.filter(content_type__app_label='catalogos', codename__icontains='lugar')
                 permisos_perfil_curso = Permission.objects.filter(content_type__app_label='catalogos', codename__icontains='perfilcurso')
-                permisos_director = Permission.objects.filter(content_type__app_label='catalogos', codename__icontains='director')
+                permisos_autoridad = Permission.objects.filter(content_type__app_label='catalogos', codename__icontains='autoridad')
                 permisos_periodo = Permission.objects.filter(content_type__app_label='catalogos', codename__icontains='periodo')
                 permisos_valores_calificacion = Permission.objects.filter(content_type__app_label='catalogos', codename__icontains='valorcalificacion')
                 
@@ -70,13 +70,13 @@ class CatalogosConfig(AppConfig):
                     *permisos_lugar.filter(codename__startswith='view'),
                     *permisos_perfil_curso.filter(codename__startswith='view'),
                     *permisos_periodo.filter(codename__startswith='view'),
-                    *permisos_director.filter(codename__startswith='view'),
+                    *permisos_autoridad.filter(codename__startswith='view'),
                 )
 
                 # Grupo Jefe Capacitación: puede ver, agregar, modificar y eliminar instructores y docentes
                 capacitacion_group.permissions.add(
                     *permisos_docente, *permisos_instructor,
-                    *permisos_dirigido, *permisos_departamento, *permisos_director, *permisos_genero, *permisos_grado_academico,
+                    *permisos_dirigido, *permisos_departamento, *permisos_autoridad, *permisos_genero, *permisos_grado_academico,
                     *permisos_lugar, *permisos_sede, *permisos_perfil_curso, *permisos_periodo, *permisos_valores_calificacion
                 )
 
@@ -85,7 +85,7 @@ class CatalogosConfig(AppConfig):
                     *permisos_docente.filter(codename__startswith='view'),
                     *permisos_dirigido.filter(codename__startswith='view'),
                     *permisos_departamento.filter(codename__startswith='view'),
-                    *permisos_director.filter(codename__startswith='view'),
+                    *permisos_autoridad.filter(codename__startswith='view'),
                     *permisos_genero.filter(codename__startswith='view'),
                     *permisos_grado_academico.filter(codename__startswith='view'),
                     *permisos_lugar.filter(codename__startswith='view'),
