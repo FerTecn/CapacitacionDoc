@@ -14,7 +14,7 @@
 </h1>
 <div class="card mb-4">
     <div class="card-body">
-        Aquí puedes registrar el director(a)
+        Aquí puedes registrar la autoridad
     </div>
 </div>
 
@@ -34,9 +34,9 @@
 <!-- DataTales Example -->
 <div class="card shadow mb-4">
     <div class="card-header py-3 d-flex justify-content-between align-items-center">
-        <h4 class="m-0 font-weight-bold text-primary">Lista de Director(a)</h4>
-        {% if perms.catalogos.add_director %}
-        <a href="{% url 'directorcrear' %}" class="btn btn-success mb-3">Añadir</a>{% endif %}
+        <h4 class="m-0 font-weight-bold text-primary">Lista de Autoridades</h4>
+        {% if perms.catalogos.add_autoridad %}
+        <a href="{% url 'autoridadcrear' %}" class="btn btn-success mb-3">Añadir</a>{% endif %}
     </div>
     <div class="card-body">
         <div class="table-responsive">
@@ -52,21 +52,21 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for director in directores %}
-                    <tr id="director-{{ director.id }}">
-                        <td>{{director.nombre}}</td>
-                        <td>{{director.apPaterno}}</td>
-                        <td>{{director.apMaterno}}</td>
-                        <td>{{director.puesto}}</td>
-                        <td><button class="btn btn-sm btn-{% if director.estatus %}success{%else%}danger{% endif %}" disabled>{% if director.estatus %}Activo{%else%}Inactivo{% endif %}</button></td>
+                    {% for autoridad in autoridades %}
+                    <tr id="autoridad-{{ autoridad.id }}">
+                        <td>{{autoridad.nombre}}</td>
+                        <td>{{autoridad.apPaterno}}</td>
+                        <td>{{autoridad.apMaterno}}</td>
+                        <td>{{autoridad.puesto}}</td>
+                        <td><button class="btn btn-sm btn-{% if autoridad.estatus %}success{%else%}danger{% endif %}" disabled>{% if autoridad.estatus %}Activo{%else%}Inactivo{% endif %}</button></td>
                         <td>
                             <!-- Opciones -->
-                            {% if perms.catalogos.view_director %}
-                            <a href="{% url 'directorver' director.id %}" class="btn btn-info btn-sm">Ver</a>{% endif %}
-                            {% if perms.catalogos.change_director %}
-                            <a href="{% url 'directoractualizar' director.id %} " class="btn btn-warning btn-sm">Editar</a>{% endif %}
-                            {% comment %} {% if perms.catalogos.delete_director %}
-                            <a href="{% url 'directoreliminar' director.id %}" class="btn btn-danger btn-sm">Eliminar</a>{% endif %} {% endcomment %}
+                            {% if perms.catalogos.view_autoridad %}
+                            <a href="{% url 'autoridadver' autoridad.id %}" class="btn btn-info btn-sm">Ver</a>{% endif %}
+                            {% if perms.catalogos.change_autoridad %}
+                            <a href="{% url 'autoridadactualizar' autoridad.id %} " class="btn btn-warning btn-sm">Editar</a>{% endif %}
+                            {% comment %} {% if perms.catalogos.delete_autoridad %}
+                            <a href="{% url 'autoridadeliminar' autoridad.id %}" class="btn btn-danger btn-sm">Eliminar</a>{% endif %} {% endcomment %}
                         </td>
                     </tr>
                     {% endfor %}

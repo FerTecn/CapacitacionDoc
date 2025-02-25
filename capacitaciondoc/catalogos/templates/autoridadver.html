@@ -5,34 +5,34 @@
 
 {% block content %}
 <div class="d-flex justify-content-between mb-3">
-    <a href="{% url 'directorlista' %}" class="btn btn-secondary btn-icon-split mr-2">
+    <a href="{% url 'autoridadlista' %}" class="btn btn-secondary btn-icon-split mr-2">
         <span class="icon text-white-50">
             <i class="fas fa-arrow-left"></i>
         </span>
         <span class="text">Volver</span>
     </a>
 </div>
-<h1 class="h3 mb-2 text-gray-800">Información del/la director(a)</h1><br>
+<h1 class="h3 mb-2 text-gray-800">Información de la autoridad</h1><br>
 <div class="card mb-4">
     <div class="card-body">
         <div class="form-row">
             <div class="form-group col-md-4 align-items-center">
-                <p><strong style="display: block;">{{form.nombre.label_tag}}</strong> {{ director.nombre }}</p>
+                <p><strong style="display: block;">{{form.nombre.label_tag}}</strong> {{ autoridad.nombre }}</p>
             </div>
             <div class="form-group col-md-4 align-items-center">
-                <p><strong style="display: block;">{{form.apPaterno.label_tag}}</strong> {{ director.apPaterno }}</p>
+                <p><strong style="display: block;">{{form.apPaterno.label_tag}}</strong> {{ autoridad.apPaterno }}</p>
             </div>
             <div class="form-group col-md-4 align-items-center">
-                <p><strong style="display: block;">{{form.apMaterno.label_tag}}</strong> {{ director.apMaterno }}</p>
+                <p><strong style="display: block;">{{form.apMaterno.label_tag}}</strong> {{ autoridad.apMaterno }}</p>
             </div>
         </div>
         <div class="form-row">
             <div class="form-group col-md-6 align-items-center">
-                <p><strong style="display: block;">{{form.puesto.label_tag}}</strong>{{ director.puesto}}</p>
+                <p><strong style="display: block;">{{form.puesto.label_tag}}</strong>{{ autoridad.puesto}}</p>
             </div>
             <div class="form-group col-md-6 align-items-center">
                 <p><strong style="display: block;">{{form.estatus.label_tag}}</strong>
-                    {% if director.estatus %}
+                    {% if autoridad.estatus %}
                     <button class="btn btn-success" disabled>Activo</button>
                     {%else%}
                     <button class="btn btn-danger" disabled>Inactivo</button>
@@ -43,7 +43,7 @@
     </div>
 </div>
 <div class="d-flex justify-content-between mb-3">
-    <a href="{% url 'directorlista' %}" class="btn btn-secondary btn-icon-split mr-2">
+    <a href="{% url 'autoridadlista' %}" class="btn btn-secondary btn-icon-split mr-2">
         <span class="icon text-white-50">
             <i class="fas fa-arrow-left"></i>
         </span>

@@ -10,12 +10,12 @@
     </div>
     <div class="card-body">
       <h1 class="card-title">Eliminar autoridad</h1>
-      <p class="card-text">¿Estás seguro de que deseas eliminar el/la director(a) <strong>{{ director.nombre }} {{ director.apPaterno }} {{ director.apMaterno }}</strong>?</p>
+      <p class="card-text">¿Estás seguro de que deseas eliminar esta autoridad <strong>{{ autoridad.nombre }} {{ autoridad.apPaterno }} {{ autoridad.apMaterno }}</strong>?</p>
       
       <form method="post">
         {% csrf_token %}
         <button type="submit" class="btn btn-danger">Eliminar</button>
-        <a href="{% url 'directorlista' %}" class="btn btn-secondary">Cancelar</a>
+        <a href="{% url 'autoridadlista' %}" class="btn btn-secondary">Cancelar</a>
      </form>
     </div>
   </div>
