@@ -506,11 +506,24 @@ def oficioslista(request):
     departamento_seleccionado = None
     oficios = OficioComision.objects.all()
 
+    # Obtener el ID del departamento de la URL
+    departamento_id = request.GET.get('departamento_id')
+
+    # Si hay un departamento_id en la URL, pre-seleccionar ese departamento
+    if departamento_id:
+        departamento_seleccionado = Departamento.objects.get(id=departamento_id)
+
     # Crear un diccionario para mapear cada docente con su oficio
     oficios_dict = {oficio.docente.id: oficio for oficio in oficios}
 
-    form = DepartamentoForm(request.GET or None)
-    if form.is_valid() and form.cleaned_data["departamento"]:
+    # Combinar request.GET con el valor inicial
+    form_data = request.GET.copy()
+    if departamento_seleccionado:
+        form_data['departamento'] = departamento_seleccionado.id
+
+    # Pasar el form_data al formulario
+    form = DepartamentoForm(form_data or None, initial={'departamento': departamento_seleccionado})
+    if form.is_valid():
         departamento_seleccionado = form.cleaned_data["departamento"]
         docentes = Docente.objects.filter(departamento=departamento_seleccionado)
 
@@ -524,6 +537,7 @@ def oficioslista(request):
         })
 
 def oficiocrear(request, docente_id):
+    departamento_id = request.GET.get('departamento_id')
     docente = get_object_or_404(Docente, id=docente_id)
     if request.method == 'POST':
         form = OficioComisionForm(request.POST)
@@ -533,13 +547,15 @@ def oficiocrear(request, docente_id):
             oficio.nomenclatura = docente.departamento.nomenclatura
             oficio.save()
             messages.success(request, "Oficio creado correctamente.")
-            return redirect('oficioslista') 
+            # Redirigir a oficioslista con el departamento_id
+            return HttpResponseRedirect(f"{reverse('oficioslista')}?departamento_id={departamento_id}")
     else:
         form = OficioComisionForm()
     
-    return render(request, "oficiocrear.html", {'docente': docente, 'form': form})
+    return render(request, "oficiocrear.html", {'docente': docente, 'form': form, 'departamento_id': departamento_id})
 
 def oficioactualizar(request, oficio_id):
+    departamento_id = request.GET.get('departamento_id')
     oficio = get_object_or_404(OficioComision, id=oficio_id)
     docente = oficio.docente
     if request.method == 'POST':
@@ -549,11 +565,11 @@ def oficioactualizar(request, oficio_id):
             oficio.nomenclatura = docente.departamento.nomenclatura
             oficio.save()
             messages.success(request, "Oficio actualizado correctamente.")
-            return redirect('oficioslista') 
+            return HttpResponseRedirect(f"{reverse('oficioslista')}?departamento_id={departamento_id}")
     else:
         form = OficioComisionForm(instance=oficio)
     
-    return render(request, "oficioactualizar.html", {'oficio': oficio, 'form': form, 'docente': docente})
+    return render(request, "oficioactualizar.html", {'oficio': oficio, 'form': form, 'docente': docente, 'departamento_id': departamento_id})
 
 def descargar_oficio(request, oficio_id):
     locale.setlocale(locale.LC_TIME, 'spanish')  # Establecer la localización para formatear la fecha a español en el pdf

@@ -71,8 +71,19 @@ class DepartamentoForm(forms.Form):
         queryset=Departamento.objects.all(),
         empty_label="-- Selecciona un departamento --",
         widget=forms.Select(attrs={"class": "form-control"}),
-        required=False,
+        required=True,
     )
+
+    def clean_departamento(self):
+        departamento = self.cleaned_data.get('departamento')
+        if not departamento:  # Si el valor es None o vacío
+            raise forms.ValidationError("Por favor selecciona un departamento válido.")
+        return departamento
+
+    def __init__(self, *args, **kwargs):
+        super(DepartamentoForm, self).__init__(*args, **kwargs)
+        # Si se pasa un valor inicial, establecerlo en el campo departamento
+        self.fields['departamento'].initial = kwargs['initial']['departamento']
 
 class OficioComisionForm(forms.ModelForm):
     class Meta:

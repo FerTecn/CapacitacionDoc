@@ -30,6 +30,7 @@
     <div class="card mb-4 pb-4">
         <div class="card-body">
             Selecciona el departamento del que deseas consultar el oficio de comisión
+            {{departamento_seleccionado}}
             {{ form.departamento}}
         </div>
         <div class="text-center">
@@ -84,9 +85,9 @@
                             {% with oficio=oficios_dict|get_item:docente.id %}
                                 {% if oficio %}
                                     <a href="{% url 'descargar_oficio' oficio_id=oficio.id %}" class="btn btn-info btn-sm">Descargar oficio</a>
-                                    <a href="{% url 'oficioactualizar' oficio_id=oficio.id %}" class="btn btn-warning btn-sm">Modificar oficio</a>
+                                    <a href="{% url 'oficioactualizar' oficio_id=oficio.id %}?departamento_id={{ departamento_seleccionado.id }}" class="btn btn-warning btn-sm">Modificar oficio</a>
                                 {% else %}
-                                    <a href="{% url 'oficiocrear' docente_id=docente.id %}" class="btn btn-success btn-sm">Crear oficio</a>
+                                    <a href="{% url 'oficiocrear' docente_id=docente.id %}?departamento_id={{ departamento_seleccionado.id }}" class="btn btn-success btn-sm">Crear oficio</a>
                                 {% endif %}
                             {% endwith %}
                         </td>
