@@ -70,8 +70,14 @@ class ContenidoTematico(models.Model):
     tiempo = models.IntegerField()
     actividades = models.TextField()
 
+    class Meta:
+        verbose_name_plural="Contenidos Temáticos"
+
 class CriterioEvaluacion(models.Model):
     fichaTecnica = models.ForeignKey(FichaTecnica, verbose_name=("Ficha Técnica"), on_delete=models.CASCADE, null=True, blank=True, related_name="criterios_evaluacion")
     criterio = models.CharField(max_length=200)
     valor = models.IntegerField()
     instrumento = models.CharField(max_length=200)
+
+    class Meta:
+        verbose_name_plural="Criterios de Evaluación"
