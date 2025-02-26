@@ -2,6 +2,7 @@ from django.shortcuts import render, render, get_object_or_404, redirect
 from catalogos.models import Autoridad
 from .models import FichaTecnica, RegistroCurso, ValidarCurso
 from .forms import ContenidoTematicoFormSet, CriterioEvaluacionFormSet, CursoForm, FichaTecnicaForm
+from .utils import cell_text_processor, text_processor, draw_table
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from eventos.models import Evento
@@ -17,8 +18,6 @@ from reportlab.lib.enums import TA_JUSTIFY, TA_CENTER
 
 
 from io import BytesIO
-import os
-import re
 
 # Create your views here.
 @login_required(login_url='signin')
@@ -118,6 +117,8 @@ def invalidar_curso(request, curso_id):
     messages.success(request, "El curso ha sido invalidado.")
     return HttpResponseRedirect(reverse('validarcursolista'))
 
+@login_required(login_url='signin')
+@permission_required('plancapacitacion.view_fichatecnica', raise_exception=True)
 def cursosfichas(request):
     if request.user.rol == "Instructor":
         cursos = RegistroCurso.objects.filter(instructor__user=request.user)
@@ -125,6 +126,8 @@ def cursosfichas(request):
         cursos = RegistroCurso.objects.all()
     return render(request, 'cursosfichas.html', {'cursos': cursos})
 
+@login_required(login_url='signin')
+@permission_required('plancapacitacion.view_fichatecnica', raise_exception=True)
 def fichatecnicaver(request, curso_id):
     ficha = get_object_or_404(FichaTecnica, curso=curso_id)
     # Obtener las relaciones relacionadas con el curso
@@ -138,6 +141,8 @@ def fichatecnicaver(request, curso_id):
         'criterios_evaluacion': criterios_evaluacion,
     })
 
+@login_required(login_url='signin')
+@permission_required('plancapacitacion.add_fichatecnica', raise_exception=True)
 def fichatecnicacrear(request, curso_id):
     curso = get_object_or_404(RegistroCurso, id=curso_id)
     ficha, created = FichaTecnica.objects.get_or_create(curso=curso)
@@ -177,88 +182,8 @@ def fichatecnicacrear(request, curso_id):
         'curso': curso,
     })
 
-def text_processor(texto):
-    """
-    Procesa el texto que contenga saltos de linea para mostrarlos correctamente.
-    - Sustituye dobles saltos de línea (\n\n) por un salto de párrafo.
-    - Sustituye saltos de línea simples (\n) por <br/>.
-    - Se asegura de que el texto procesado esté correctamente formateado.
-    """
-
-    # Reemplazar saltos de línea (\n) por <br/>
-    texto = texto.replace("\n", "<br/>")
-    
-    # Reemplazar dobles saltos de línea (\n\n) por un salto de párrafo <p></p>
-    texto = re.sub(r'(\n\s*\n)', r'</p><p>', texto)
-    
-    # Asegurarnos de que el texto comience y termine dentro de <p> tags
-    if not texto.startswith('<p>'):
-        texto = '<p>' + texto
-    if not texto.endswith('</p>'):
-        texto = texto + '</p>'
-
-    return texto
-
-import re
-
-def cell_text_processor(texto):
-    """
-    Procesa el texto dentro de una celda de tabla.
-    - Sustituye dobles saltos de línea (\n\n) por viñetas.
-    - Sustituye saltos de línea simples (\n) por <br/>.
-    - Se asegura de que el texto procesado esté correctamente formateado.
-    """
-
-    # Reemplazar dobles saltos de línea (\n\n) por una viñeta y un salto de línea
-    texto = re.sub(r'\n\s*\n', r'<br/>• ', texto)
-
-    # Si el texto contiene viñetas, asegurarse de que la primera línea también tenga una
-    if "•" in texto:
-        texto = "• " + texto.lstrip()
-
-    # Reemplazar saltos de línea simples (\n) por <br/>
-    texto = texto.replace("\n", "<br/>")
-
-    return texto
-
-
-def draw_table(data_table, col_widths, style):
-    """
-    Crea la estructura de tabla.
-    - Establece los encabezados de la tabla.
-    - Formatea y procesa el texto de la celda si es que contiene viñetas.
-    - Define el tamaño de las columnas.
-    - Establece el estilo de la tabla.
-    """
-    processed_data = []
-    
-    for fila in data_table:
-        processed_row = []
-        
-        for i, celda in enumerate(fila):
-            contenido = str(celda)
-            if fila == data_table[0]:
-                paragraph = contenido
-            else:
-                contenido = cell_text_processor(contenido)
-                paragraph = Paragraph(contenido, style)
-            processed_row.append(paragraph)
-        
-        processed_data.append(processed_row)
-    
-    table = Table(processed_data, colWidths=col_widths)
-    table.setStyle(TableStyle([
-        ("BACKGROUND", (0, 0), (-1, 0), colors.grey),
-        ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
-        ("ALIGN", (0, 0), (-1, -1), "CENTER"),
-        ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
-        ("BOTTOMPADDING", (0, 0), (-1, 0), 8),
-        ("BACKGROUND", (0, 1), (-1, -1), colors.white),
-        ("GRID", (0, 0), (-1, -1), 1, colors.grey),
-        ("VALIGN", (0, 1), (-1, -1), "TOP"),
-    ]))
-    return table
-
+@login_required(login_url='signin')
+@permission_required('plancapacitacion.view_fichatecnica', raise_exception=True)
 def fichatecnicapdf(request, curso_id):
     curso = get_object_or_404(RegistroCurso, id=curso_id)
     ficha = get_object_or_404(FichaTecnica, curso=curso)
@@ -339,10 +264,16 @@ def fichatecnicapdf(request, curso_id):
     Story.append(draw_table(data_table, [30, 180, 60, 200], style_normal))
     Story.append(Spacer(1, 12))
 
-    # Competencias y fuentes de informacion
-    for label, value in data[9:]:
+    # Competencias
+    for label, value in data[9:10]:
         Story.append(Paragraph(f"{label}:", style_bold))
         Story.append(Paragraph(text_processor(value), style_normal))
+        Story.append(Spacer(1, 12))
+
+    # Funetes de informacion
+    for label, value in data[10:]:
+        Story.append(Paragraph(f"{label}:", style_bold))
+        Story.append(Paragraph(cell_text_processor(value), style_normal))
         Story.append(Spacer(1, 12))
 
     # **Firmas y Sello (agregados al final)**
