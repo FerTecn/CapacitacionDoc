@@ -32,8 +32,11 @@ class CatalogosConfig(AppConfig):
                 permisos_lugar = Permission.objects.filter(content_type__app_label='catalogos', codename__icontains='lugar')
                 permisos_perfil_curso = Permission.objects.filter(content_type__app_label='catalogos', codename__icontains='perfilcurso')
                 permisos_autoridad = Permission.objects.filter(content_type__app_label='catalogos', codename__icontains='autoridad')
+                permisos_cargo_autoridad = Permission.objects.filter(content_type__app_label='catalogos', codename__icontains='cargoautoridad')
                 permisos_periodo = Permission.objects.filter(content_type__app_label='catalogos', codename__icontains='periodo')
                 permisos_valores_calificacion = Permission.objects.filter(content_type__app_label='catalogos', codename__icontains='valorcalificacion')
+                permisos_formatos_departamento = Permission.objects.filter(content_type__app_label='catalogos', codename__icontains='formatodepartamento')
+                permisos_formatos_constancia = Permission.objects.filter(content_type__app_label='catalogos', codename__icontains='formatoconstancia')
                 
                 def limpiar_permisos(grupo):
                     permisos_actuales = grupo.permissions.filter(content_type__app_label='catalogos')
@@ -71,13 +74,18 @@ class CatalogosConfig(AppConfig):
                     *permisos_perfil_curso.filter(codename__startswith='view'),
                     *permisos_periodo.filter(codename__startswith='view'),
                     *permisos_autoridad.filter(codename__startswith='view'),
+                    *permisos_cargo_autoridad.filter(codename__startswith='view'),
+                    *permisos_valores_calificacion.filter(codename__startswith='view'),
+                    *permisos_formatos_departamento.filter(codename__startswith='view'),
+                    *permisos_formatos_constancia.filter(codename__startswith='view'),
                 )
 
                 # Grupo Jefe Capacitación: puede ver, agregar, modificar y eliminar instructores y docentes
                 capacitacion_group.permissions.add(
                     *permisos_docente, *permisos_instructor,
                     *permisos_dirigido, *permisos_departamento, *permisos_autoridad, *permisos_genero, *permisos_grado_academico,
-                    *permisos_lugar, *permisos_sede, *permisos_perfil_curso, *permisos_periodo, *permisos_valores_calificacion
+                    *permisos_lugar, *permisos_cargo_autoridad,*permisos_sede, *permisos_perfil_curso, *permisos_periodo, *permisos_valores_calificacion,
+                    *permisos_formatos_departamento, *permisos_formatos_constancia,
                 )
 
                 subdireccion_group.permissions.add(
@@ -86,13 +94,16 @@ class CatalogosConfig(AppConfig):
                     *permisos_dirigido.filter(codename__startswith='view'),
                     *permisos_departamento.filter(codename__startswith='view'),
                     *permisos_autoridad.filter(codename__startswith='view'),
+                    *permisos_cargo_autoridad.filter(codename__startswith='view'),
                     *permisos_genero.filter(codename__startswith='view'),
                     *permisos_grado_academico.filter(codename__startswith='view'),
                     *permisos_lugar.filter(codename__startswith='view'),
                     *permisos_sede.filter(codename__startswith='view'),
                     *permisos_perfil_curso.filter(codename__startswith='view'),
                     *permisos_periodo.filter(codename__startswith='view'),
-                    *permisos_valores_calificacion.filter(codename__startswith='view')
+                    *permisos_valores_calificacion.filter(codename__startswith='view'),
+                    *permisos_formatos_departamento.filter(codename__startswith='view'),
+                    *permisos_formatos_constancia.filter(codename__startswith='view'),
                 )
 
             except Permission.DoesNotExist as e:

@@ -35,7 +35,7 @@
 <div class="card shadow mb-4">
     <div class="card-header py-3 d-flex justify-content-between align-items-center">
         <h4 class="m-0 font-weight-bold text-primary">Lista de Cargo de autoridades</h4>
-        {% if perms.catalogos.add_autoridad %}
+        {% if perms.catalogos.add_cargoautoridad %}
         <a href="{% url 'cargoautoridadcrear' %}" class="btn btn-success mb-3">Añadir</a>{% endif %}
     </div>
     <div class="card-body">
@@ -55,9 +55,12 @@
                         <td>{{cargo.cargo_femenino}}</td>
                         <td>
                             <!-- Opciones -->
-                            <a href="{% url 'cargoautoridadver' cargo.id %}" class="btn btn-info btn-sm">Ver</a>
-                            <a href="{% url 'cargoautoridadactualizar' cargo.id %} " class="btn btn-warning btn-sm">Editar</a>
-                            <a href="{% url 'cargoautoridadeliminar' cargo.id %}" class="btn btn-danger btn-sm">Eliminar</a>
+                            {% if perms.catalogos.view_cargoautoridad %}
+                            <a href="{% url 'cargoautoridadver' cargo.id %}" class="btn btn-info btn-sm">Ver</a>{% endif %}
+                            {% if perms.catalogos.change_cargoautoridad %}
+                            <a href="{% url 'cargoautoridadactualizar' cargo.id %} " class="btn btn-warning btn-sm">Editar</a>{% endif %}
+                            {% if perms.catalogos.delete_cargoautoridad %}
+                            <a href="{% url 'cargoautoridadeliminar' cargo.id %}" class="btn btn-danger btn-sm">Eliminar</a>{% endif %}
                         </td>
                     </tr>
                     {% endfor %}

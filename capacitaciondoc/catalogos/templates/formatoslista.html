@@ -23,7 +23,8 @@
 <div class="card mb-4">
     <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
         <h4 class="m-0 font-weight-bold text-white">Formatos por departamento</h4>
-        <a href="{% url 'formatodepartamentocrear' %}" class="btn btn-success">Añadir</a>
+        {% if perms.catalogos.add_formatodepartamento %}
+        <a href="{% url 'formatodepartamentocrear' %}" class="btn btn-success">Añadir</a>{% endif %}
     </div>
     <div class="card-body">
         <div class="col-md-12 text-center">
@@ -52,8 +53,10 @@
                                         </td>
                                         <td>
                                             <!-- Opciones -->
-                                            <a href="{% url 'formatodepartamentover' formato.id %}" class="btn btn-info btn-sm">Ver</a>
-                                            <a href="{% url 'formatodepartamentoactualizar' formato.id %}" class="btn btn-warning btn-sm">Modificar</a>
+                                            {% if perms.catalogos.view_formatodepartamento %}
+                                            <a href="{% url 'formatodepartamentover' formato.id %}" class="btn btn-info btn-sm">Ver</a>{% endif %}
+                                            {% if perms.catalogos.change_formatodepartamento %}
+                                            <a href="{% url 'formatodepartamentoactualizar' formato.id %}" class="btn btn-warning btn-sm">Modificar</a>{% endif %}
                                         </td>
                                     </tr>
                                 {% endif %}
@@ -91,8 +94,10 @@
                                                 <button class="btn btn-warning btn-sm" disabled>No vigente</button>
                                             </td>
                                             <td>
-                                                <a href="{% url 'formatodepartamentover' formato.id %}" class="btn btn-info btn-sm">Ver</a>
-                                                <a href="{% url 'formatodepartamentoactualizar' formato.id %}" class="btn btn-warning btn-sm">Modificar</a>
+                                                {% if perms.catalogos.view_formatodepartamento %}
+                                                <a href="{% url 'formatodepartamentover' formato.id %}" class="btn btn-info btn-sm">Ver</a>{% endif %}
+                                                {% if perms.catalogos.change_formatodepartamento %}
+                                                <a href="{% url 'formatodepartamentoactualizar' formato.id %}" class="btn btn-warning btn-sm">Modificar</a>{% endif %}
                                             </td>
                                         </tr>
                                     {% endif %}
@@ -109,7 +114,8 @@
 <div class="card mb-4">
     <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
         <h4 class="m-0 font-weight-bold text-white">Formatos de constancias</h4>
-        <a href="{% url 'formatoconstanciacrear' %}" class="btn btn-success">Añadir</a>
+        {% if perms.catalogos.add_formatoconstancia %}
+        <a href="{% url 'formatoconstanciacrear' %}" class="btn btn-success">Añadir</a>{% endif %}
     </div>
     <div class="card-body">
         <div class="col-md-12 text-center">
@@ -135,8 +141,10 @@
                                         <button class="btn btn-success btn-sm" disabled>Vigente</button>
                                     </td>
                                     <td>
-                                        <a href="{% url 'formatoconstanciaver' formato.id %}" class="btn btn-info btn-sm">Ver</a>
-                                        <a href="{% url 'formatoconstanciaactualizar' formato.id %}" class="btn btn-warning btn-sm">Modificar</a>
+                                        {% if perms.catalogos.view_formatoconstancia %}
+                                        <a href="{% url 'formatoconstanciaver' formato.id %}" class="btn btn-info btn-sm">Ver</a>{% endif %}
+                                        {% if perms.catalogos.change_formatoconstancia %}
+                                        <a href="{% url 'formatoconstanciaactualizar' formato.id %}" class="btn btn-warning btn-sm">Modificar</a>{% endif %}
                                     </td>
                                 </tr>
                             {% endif %}
@@ -158,7 +166,6 @@
                         <table class="table table-bordered" id="dataTable4" width="100%" cellspacing="0">
                             <thead>
                                 <tr>
-                                    <th>Departamento</th>
                                     <th>Año</th>
                                     <th>Vigencia</th>
                                     <th>Opciones</th>
@@ -173,8 +180,10 @@
                                             <button class="btn btn-warning btn-sm" disabled>No vigente</button>
                                         </td>
                                         <td>
-                                            <a href="{% url 'formatoconstanciaver' formato.id %}" class="btn btn-info btn-sm">Ver</a>
-                                            <a href="{% url 'formatoconstanciaactualizar' formato.id %}" class="btn btn-warning btn-sm">Modificar</a>
+                                            {% if perms.catalogos.view_formatoconstancia %}
+                                            <a href="{% url 'formatoconstanciaver' formato.id %}" class="btn btn-info btn-sm">Ver</a>{% endif %}
+                                            {% if perms.catalogos.change_formatoconstancia %}
+                                            <a href="{% url 'formatoconstanciaactualizar' formato.id %}" class="btn btn-warning btn-sm">Modificar</a>{% endif %}
                                         </td>
                                     </tr>
                                     {% endif %}
