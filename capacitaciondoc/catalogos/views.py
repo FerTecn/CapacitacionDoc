@@ -7,11 +7,12 @@ from django.contrib import messages
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.units import cm
 from reportlab.pdfgen import canvas
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Table, TableStyle, Frame, PageTemplate, BaseDocTemplate, PageBreak
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Table, TableStyle
 from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet
 
 from io import BytesIO
+from .utils import draw_table
 
 from .models import (
     CargoAutoridad,
@@ -89,7 +90,7 @@ def gradoeliminar(request, grado_id):
         return redirect('gradolista')  
     return render(request, 'gradoeliminar.html', {'grado': grado})
 
- #LUGARES
+#LUGARES
 
 @login_required(login_url='signin')
 @permission_required('catalogos.view_lugar', raise_exception=True)
@@ -249,35 +250,8 @@ def instructorver(request, instructor_id=None):
         'participaciones': participaciones,
     })
 
-def draw_table(data, col_widths, styles):
-    processed_data = []
-    
-    for fila in data:
-        processed_row = []
-        
-        for i, celda in enumerate(fila):
-            contenido = str(celda)
-            if fila == data[0]:
-                paragraph = contenido
-            else:
-                contenido = Paragraph(contenido, styles['Normal'])
-            processed_row.append(contenido)
-        
-        processed_data.append(processed_row)
-    
-    table = Table(processed_data, colWidths=col_widths)
-    table.setStyle(TableStyle([
-        ("BACKGROUND", (0, 0), (-1, 0), colors.grey),
-        ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
-        ("ALIGN", (0, 0), (-1, -1), "CENTER"),
-        ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
-        ("BOTTOMPADDING", (0, 0), (-1, 0), 8),
-        ("BACKGROUND", (0, 1), (-1, -1), colors.white),
-        ("GRID", (0, 0), (-1, -1), 1, colors.grey),
-        ("VALIGN", (0, 1), (-1, -1), "TOP"),
-    ]))
-    return table
-
+@login_required(login_url='signin')
+@permission_required('catalogos.view_instructor', raise_exception=True)
 def generar_cv_pdf(request, instructor_id=None):
     locale.setlocale(locale.LC_TIME, 'spanish')  # Establecer la localización para formatear la fecha a español
     if request.user.rol == 'Instructor':
@@ -889,11 +863,14 @@ def autoridadactualizar(request, autoridad_id):
 #         return redirect('autoridadlista')  
 #     return render(request, 'autoridadeliminar.html', {'autoridad': autoridad})
 
-
+@login_required(login_url='signin')
+@permission_required('catalogos.view_cargoautoridad', raise_exception=True)
 def cargoautoridadlista(request):
     cargos = CargoAutoridad.objects.all()
     return render(request, 'cargoautoridadlista.html', {'cargos': cargos})
 
+@login_required(login_url='signin')
+@permission_required('catalogos.add_cargoautoridad', raise_exception=True)
 def cargoautoridadcrear(request):
     if request.method == 'POST':
         form = CargoAutoridadForm(request.POST)
@@ -906,11 +883,15 @@ def cargoautoridadcrear(request):
 
     return render(request, 'cargoautoridadagregar.html', {'form': form})
 
+@login_required(login_url='signin')
+@permission_required('catalogos.view_cargoautoridad', raise_exception=True)
 def cargoautoridadver(request, cargo_id):
     cargo= get_object_or_404(CargoAutoridad, id=cargo_id)
     form = CargoAutoridadForm(instance=cargo)
     return render(request, 'cargoautoridadver.html', {'cargo': cargo, 'form': form})
 
+@login_required(login_url='signin')
+@permission_required('catalogos.change_cargoautoridad', raise_exception=True)
 def cargoautoridadactualizar(request, cargo_id):
     cargo= get_object_or_404(CargoAutoridad, id=cargo_id)
     if request.method == 'POST':
@@ -923,6 +904,8 @@ def cargoautoridadactualizar(request, cargo_id):
         form = CargoAutoridadForm(instance=cargo)
     return render(request, 'cargoautoridadactualizar.html', {'form': form, 'cargo': cargo})
 
+@login_required(login_url='signin')
+@permission_required('catalogos.delete_cargoautoridad', raise_exception=True)
 def cargoautoridadeliminar(request, cargo_id):
     cargo = get_object_or_404(CargoAutoridad, id=cargo_id)
     if request.method == 'POST':
@@ -974,6 +957,8 @@ def valorcalificacioneliminar(request, valor_id):
         return redirect('valorcalificacionlista')  
     return render(request, 'valorcalificacioneliminar.html', {'valor': valor})
 
+@login_required(login_url='signin')
+@permission_required('catalogos.view_formatodepartamento', raise_exception=True)
 def formatoslista(request):
     formatosdepartamentos = FormatoDepartamento.objects.all().order_by('departamento', '-year')
     formatosconstancias = FormatoConstancia.objects.all().order_by('-year')
@@ -983,6 +968,8 @@ def formatoslista(request):
         'formatosconstancias': formatosconstancias
         })
 
+@login_required(login_url='signin')
+@permission_required('catalogos.add_formatodepartamento', raise_exception=True)
 def formatodepartamentocrear(request):
     if request.method == 'POST':
         form = FormatoDepartamentoForm(request.POST, request.FILES)
@@ -1003,11 +990,15 @@ def formatodepartamentocrear(request):
 
     return render(request, 'formatodepartamentocrear.html', {'form': form})
 
+@login_required(login_url='signin')
+@permission_required('catalogos.view_formatodepartamento', raise_exception=True)
 def formatodepartamentover(request, formato_id):
     formato = get_object_or_404(FormatoDepartamento, id=formato_id)
     form = FormatoDepartamentoForm(instance=formato)
     return render(request, 'formatodepartamentover.html', {'formato': formato, 'form': form})
 
+@login_required(login_url='signin')
+@permission_required('catalogos.change_formatodepartamento', raise_exception=True)
 def formatodepartamentoactualizar(request, formato_id):
     formato = get_object_or_404(FormatoDepartamento, id=formato_id)
     if request.method == 'POST':
@@ -1023,6 +1014,8 @@ def formatodepartamentoactualizar(request, formato_id):
         form = FormatoDepartamentoForm(instance=formato)
     return render(request, 'formatodepartamentoactualizar.html', {'form': form, 'formato': formato})
 
+@login_required(login_url='signin')
+@permission_required('catalogos.add_formatoconstancia', raise_exception=True)
 def formatoconstanciacrear(request):
     if request.method == 'POST':
         form = FormatoConstanciaForm(request.POST, request.FILES)
@@ -1042,11 +1035,15 @@ def formatoconstanciacrear(request):
 
     return render(request, 'formatoconstanciacrear.html', {'form': form})
 
+@login_required(login_url='signin')
+@permission_required('catalogos.view_formatoconstancia', raise_exception=True)
 def formatoconstanciaver(request, formato_id):
     formato = get_object_or_404(FormatoConstancia, id=formato_id)
     form = FormatoConstanciaForm(instance=formato)
     return render(request, 'formatoconstanciaver.html', {'formato': formato, 'form': form})
 
+@login_required(login_url='signin')
+@permission_required('catalogos.change_formatoconstancia', raise_exception=True)
 def formatoconstanciaactualizar(request, formato_id):
     formato = get_object_or_404(FormatoConstancia, id=formato_id)
     if request.method == 'POST':
