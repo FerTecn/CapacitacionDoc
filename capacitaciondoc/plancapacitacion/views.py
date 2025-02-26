@@ -1,5 +1,5 @@
 from django.shortcuts import render, render, get_object_or_404, redirect
-from catalogos.models import Director
+from catalogos.models import Autoridad
 from .models import FichaTecnica, RegistroCurso, ValidarCurso
 from .forms import ContenidoTematicoFormSet, CriterioEvaluacionFormSet, CursoForm, FichaTecnicaForm
 from django.http import HttpResponseRedirect, HttpResponse
@@ -262,7 +262,14 @@ def draw_table(data_table, col_widths, style):
 def fichatecnicapdf(request, curso_id):
     curso = get_object_or_404(RegistroCurso, id=curso_id)
     ficha = get_object_or_404(FichaTecnica, curso=curso)
-    jefe = get_object_or_404(Director, puesto="Jefe de Desarrollo Académico")
+
+    # Obtiene la autoridad que contenga cargo Jefe de Des. Academico
+    # Dado que Jefe es el mismo id para Jefa, obtenemos a través del cargo en masculino
+    jefe = get_object_or_404(Autoridad, puesto__cargo_masculino="Jefe de Desarrollo Académico", estatus=True)
+
+    # Para obtener el caego según el género, llamamos la funcion get_puesto() que
+    # devuelve el puesto de la autoridad según su género
+    cargo_jefe = jefe.get_puesto()
 
     buffer = BytesIO()
     doc = SimpleDocTemplate(buffer, pagesize=letter,
@@ -342,7 +349,7 @@ def fichatecnicapdf(request, curso_id):
     Story.append(Spacer(1, 100))
     data_table = [
         [ficha.curso.instructor, "", f"{jefe.nombre} {jefe.apPaterno} {jefe.apMaterno}"],
-        ["Nombre y Firma del Facilitador", "Sello", "Nombre y Firma del\n Jefe de Desarrollo Académico"],
+        ["Nombre y Firma del Facilitador", "Sello", f"Nombre y Firma del\n {cargo_jefe}"],
     ]
     table = Table(data_table, [200, 100, 200])
     table.setStyle(TableStyle([
