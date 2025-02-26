@@ -26,6 +26,7 @@ class EventosConfig(AppConfig):
                 permisos_asistencias = Permission.objects.filter(content_type__app_label='eventos', codename__icontains='asistencia')
                 permisos_calificaciones = Permission.objects.filter(content_type__app_label='eventos', codename__icontains='calificacion')
                 permisos_evidencias = Permission.objects.filter(content_type__app_label='eventos', codename__icontains='evidencia')
+                permisos_oficios_comision = Permission.objects.filter(content_type__app_label='eventos', codename__icontains='oficiocomision')
 
                 def limpiar_permisos(grupo):
                     permisos_actuales = grupo.permissions.filter(content_type__app_label='eventos')
@@ -53,6 +54,7 @@ class EventosConfig(AppConfig):
                 # Grupo Jefe Académico: solo puede ver los eventos, no puede inscribirse
                 academico_group.permissions.add(
                     *permisos_eventos.filter(codename__startswith='view'),
+                    *permisos_oficios_comision,
                 )
 
                 # Grupo Jefe Capacitación: puede ver, agregar, modificar y eliminar eventos

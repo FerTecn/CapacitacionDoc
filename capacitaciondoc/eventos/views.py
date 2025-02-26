@@ -500,6 +500,8 @@ def asignar_calificacion(request, evento_id):
         'valores_calificacion': valores_calificacion,  # Pasar las opciones de calificación a la plantilla
     })
 
+@login_required(login_url='signin')
+@permission_required('eventos.view_oficiocomision', raise_exception=True)
 def oficioslista(request):
     departamentos = Departamento.objects.all()
     docentes = None
@@ -536,6 +538,8 @@ def oficioslista(request):
         'form': form
         })
 
+@login_required(login_url='signin')
+@permission_required('eventos.add_oficiocomision', raise_exception=True)
 def oficiocrear(request, docente_id):
     departamento_id = request.GET.get('departamento_id')
     docente = get_object_or_404(Docente, id=docente_id)
@@ -554,6 +558,8 @@ def oficiocrear(request, docente_id):
     
     return render(request, "oficiocrear.html", {'docente': docente, 'form': form, 'departamento_id': departamento_id})
 
+@login_required(login_url='signin')
+@permission_required('eventos.change_oficiocomision', raise_exception=True)
 def oficioactualizar(request, oficio_id):
     departamento_id = request.GET.get('departamento_id')
     oficio = get_object_or_404(OficioComision, id=oficio_id)
@@ -571,6 +577,8 @@ def oficioactualizar(request, oficio_id):
     
     return render(request, "oficioactualizar.html", {'oficio': oficio, 'form': form, 'docente': docente, 'departamento_id': departamento_id})
 
+@login_required(login_url='signin')
+@permission_required('eventos.view_oficiocomision', raise_exception=True)
 def descargar_oficio(request, oficio_id):
     locale.setlocale(locale.LC_TIME, 'spanish')  # Establecer la localización para formatear la fecha a español en el pdf
 
