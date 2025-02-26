@@ -1,4 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required, permission_required
+from collections import defaultdict
 
 from eventos.models import Inscripcion, Evento
 from catalogos.models import Docente
@@ -7,31 +9,40 @@ from .models import Encuesta
 from django.contrib import messages
 
 # Create your views here.
-def listarcursos4encueta(request):
-    # Filtra las inscripciones del usuario docente autenticado
-    inscripciones = Inscripcion.objects.filter(usuario=request.user)
-    cursos = []
-    for inscripcion in inscripciones:
-        evento = inscripcion.evento
-        curso = evento.curso
+@login_required(login_url='signin')
+@permission_required('encuesta.view_encuesta', raise_exception=True)
+def listarcursos4encuesta(request):
+    if request.user.rol == "Docente":
+        # Filtra las inscripciones del usuario docente autenticado
+        inscripciones = Inscripcion.objects.filter(usuario=request.user)
+        cursos = []
+        for inscripcion in inscripciones:
+            encuesta_hecha = Encuesta.objects.filter(inscripcion=inscripcion).exists()
+            cursos.append({
+                'curso': inscripcion.evento.curso,
+                'evento': inscripcion.evento,
+                'encuesta_hecha': encuesta_hecha,
+            })
+    else:
+        # Muestra todos los cursos
+        eventos = Evento.objects.all()
+        cursos = []
 
-        # Verificar si ya tiene una encuesta existente relacionada
-        encuesta_hecha = Encuesta.objects.filter(docente=request.user, curso= curso).exists()
-
-        cursos.append({
-            'evento': evento,
-            'curso': curso,
-            'encuesta_hecha': encuesta_hecha,
-        })
+        for evento in eventos:
+            cursos.append({
+                'curso': evento.curso,
+                'evento': evento,
+                })
     return render(request, 'cursosparaencuesta.html', {'cursos': cursos})
 
-    
+@login_required(login_url='signin')
+@permission_required('encuesta.add_encuesta', raise_exception=True)
 def encuesta(request, curso_id):
-    # Obtener el evento especifico
+    # Obtener el curso especifico
     curso = get_object_or_404(RegistroCurso, id=curso_id)
-    evento = get_object_or_404(Evento, curso=curso)
+    inscripcion = get_object_or_404(Inscripcion, evento__curso=curso, usuario=request.user)
 
-    if Encuesta.objects.filter(docente=request.user, curso=curso).exists():
+    if Encuesta.objects.filter(inscripcion=inscripcion).exists():
         messages.warning(request, 'Ya realizaste esta encuesta')
         return redirect('encuesta')
     
@@ -48,7 +59,7 @@ def encuesta(request, curso_id):
             return redirect('encuesta')
         
         encuesta = Encuesta(
-            docente = request.user, curso = curso,
+            inscripcion = inscripcion,
             instructor1=request.POST['instructor1'],
             instructor2=request.POST['instructor2'],
             instructor3=request.POST['instructor3'],
@@ -77,7 +88,7 @@ def encuesta(request, curso_id):
         )
         encuesta.save()
         return redirect('gracias')  # Redirige a una página de agradecimiento
-    return render(request, 'encuesta.html', {'evento': evento})
+    return render(request, 'encuesta.html', {'inscripcion': inscripcion})
 
 def gracias(request):
     return render(request, 'gracias.html')

@@ -1,11 +1,11 @@
 from django.db import models
 from django.conf import settings
+from eventos.models import Inscripcion
 from plancapacitacion.models import RegistroCurso
 
 # Create your models here.
 class Encuesta(models.Model):
-    docente = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, related_name='encuestas')
-    curso = models.ForeignKey(RegistroCurso, on_delete=models.CASCADE, related_name='encuestas', null=True)
+    inscripcion = models.ForeignKey(Inscripcion, on_delete=models.CASCADE, related_name='encuestas', null=True)
     fecha_realizacion = models.DateTimeField(auto_now_add=True, null=True)
     
     #Catagoría del instructor
@@ -39,8 +39,8 @@ class Encuesta(models.Model):
     comentarios= models.TextField(blank=True, null=True) 
     
     def __str__(self):
-        return f"Encuesta #{self.id} de {self.docente} para {self.curso} - {self.fecha_realizacion}"
+        return f"Encuesta #{self.id} de {self.inscripcion.docente} para {self.inscripcion.evento.curso} - {self.fecha_realizacion}"
 
     class Meta:
         verbose_name_plural = 'Encuestas'
-        unique_together = ('docente', 'curso')
+        

@@ -9,9 +9,12 @@
 {% endblock %}
 
 {% block content %}
-{% if request.user.rol == 'Docente' %}
 <!-- Encabezado de página -->
-<h1 class="h3 mb-2 text-gray-800">Cursos en los que estás inscrito</h1>
+<h1 class="h3 mb-2 text-gray-800">
+    {% if request.user.rol == "Docente" %}Cursos en los que estás inscrito
+    {% else %} Listado de todos los Cursos
+    {% endif %}
+</h1>
 <div class="card my-2">
     <div class="card-body">
         Aquí puedes ver todos los cursos que estás tomando y poder realizar tu encuesta de satisfacción de cada uno.
@@ -48,14 +51,18 @@
                     {% for curso in cursos %}
                     <tr id="evento-{{ evento.id }}">
                         <td>{{ curso.curso.nombre }}</td>
-                        <td>{{ curso.evento.curso.instructor }}</td>
-                        <td>{{ curso.evento.fechaInicio }} - {{ evento.fechaFin }}</td>
+                        <td>{{ curso.curso.instructor }}</td>
+                        <td>{{ curso.evento.fechaInicio }} - {{ curso.evento.fechaFin }}</td>
                         <td>
                             <!-- Opciones -->
-                             {% if curso.encuesta_hecha %}
-                             <button class="btn btn-secondary btn-sm" disabled>Encuesta realizada</button>
-                             {% else %}
-                            <a href="{% url 'realizarencuesta' curso.evento.curso.id %}" class="btn btn-success btn-sm">Realizar encuesta</a>
+                            {% if request.user.rol == "Docente" %}
+                                {% if curso.encuesta_hecha %}
+                                    <button class="btn btn-secondary btn-sm" disabled>Encuesta realizada</button>
+                                {% else %}
+                                    <a href="{% url 'realizarencuesta' curso.curso.id %}" class="btn btn-success btn-sm">Realizar encuesta</a>
+                                {% endif %}
+                            {% else %}
+                                {% comment %} <a href="{% url 'resultados' curso.evento.curso.id %}" class="btn btn-success btn-sm">Ver resultados</a> {% endcomment %}
                             {% endif %}
                         </td>
                     </tr>
@@ -65,7 +72,6 @@
         </div>
     </div>
 </div>
-{% endif %}
 {% endblock %}
 
 {% block scripts %}
