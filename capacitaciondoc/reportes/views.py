@@ -1,7 +1,8 @@
+import locale
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 from eventos.models import Evento
-from catalogos.models import Instructor
+from catalogos.models import Autoridad, Docente, Instructor
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.utils import ImageReader
@@ -21,42 +22,42 @@ montserrat_bold_path = os.path.join(settings.BASE_DIR, "static/fonts/Montserrat-
 pdfmetrics.registerFont(TTFont('Montserrat', montserrat_regular_path))
 pdfmetrics.registerFont(TTFont('Montserrat-Bold', montserrat_bold_path))
 
-def procesar_imagen_png(ruta_imagen):
-    """Convierte un PNG con transparencia a un formato compatible con ReportLab."""
-    img = Image.open(ruta_imagen)
-    if img.mode in ("RGBA", "LA"):
-        fondo = Image.new("RGBA", img.size, (255, 255, 255, 0))
-        fondo.paste(img, mask=img.split()[3])
-        return ImageReader(fondo)
-    return ImageReader(img)
-
 def generar_constancia(request, evento_id):
-    user = request.user
+    locale.setlocale(locale.LC_TIME, 'spanish')
+    if request.user.rol == 'Instructor':
+        user = request.user
+    if request.user.rol == 'Docente':
+        user = request.user
+    
     evento = get_object_or_404(Evento, id=evento_id)
     curso = evento.curso
+
+    # Obtiene la autoridad que contenga cargo director
+    # Dado que director es el mismo id para directora, obtenemos a través de cargo en masculino
+    autoridad = get_object_or_404(Autoridad, puesto__cargo_masculino="Director", estatus=True)
+
+    # Para obtener el cargo según el género, llamamos la funcion get_puesto() que
+    # devuelve el puesto de la autoridad según su género
+    cargo = autoridad.get_puesto()
     
     datos = {
-        "nombre_receptor": f"{user.first_name} {user.last_name}",
+        "nombre_receptor": user.first_name,
+        "apellidos_receptor": f'{user.last_name_paterno} {user.last_name_materno}',
         "nombre_curso": curso.nombre.upper(),
         "fecha_inicio": evento.fechaInicio.strftime("%d de %B de %Y"),
         "fecha_fin": evento.fechaFin.strftime("%d de %B de %Y"),
         "duracion": f"{curso.horas} horas",
         "fecha_emision": evento.fechaFin.strftime("%d de %B de %Y"),
-        "firmante": "Yesica Imelda Saavedra Benítez",  # Cambia según el firmante real
-        "cargo_firmante": "Directora",  # Cambia según el cargo real
-        "ruta_logo" : os.path.join(settings.BASE_DIR, "static/img/constancia/logo_tecnm.png"),
-        "ruta_firma" : os.path.join(settings.BASE_DIR, "static/img/constancia/firma_director.png"),
-        "ruta_sello" : os.path.join(settings.BASE_DIR, "static/img/constancia/sello_tecnm.png"),
-        "ruta_fondo" : "",
-
-        # "ruta_fondo": os.path.join(settings.MEDIA_ROOT, 'fondos', 'fondo_constancia.jpg'),
-        # "ruta_logo": os.path.join(settings.MEDIA_ROOT, 'logos', 'logo_tecnm.png'),
-        # "ruta_firma": os.path.join(settings.MEDIA_ROOT, 'firmas', 'firma_director.png'),
-        # "ruta_sello": os.path.join(settings.MEDIA_ROOT, 'sellos', 'sello_tecnm.png'),
+        "firmante": autoridad.get_full_name(),
+        "cargo_firmante": cargo,
+        "ruta_fondo": '',
+        "ruta_logo": os.path.join(settings.MEDIA_ROOT, f'formatos/constancia/{evento.fechaInicio.year}', 'header.png'),
+        "ruta_firma": os.path.join(settings.MEDIA_ROOT, f'autoridades/{autoridad.puesto.cargo_masculino}/{autoridad.get_full_name()}', 'firma.png'),
     }
+    print(evento.fechaInicio.year)
 
     response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = f'attachment; filename="constancia_{evento_id}.pdf"'
+    response['Content-Disposition'] = f'inline; filename="constancia_{evento_id}.pdf"'
     c = canvas.Canvas(response, pagesize=letter)
     ancho, alto = letter
 
@@ -65,18 +66,18 @@ def generar_constancia(request, evento_id):
 
     # Fondo del certificado
     if os.path.exists(datos["ruta_fondo"]):
-        fondo = procesar_imagen_png(datos["ruta_fondo"])
-        c.drawImage(fondo, 0, 0, width=ancho, height=alto)
+        fondo = datos["ruta_fondo"]
+        c.drawImage(fondo, 0, 0, width=ancho, height=alto, mask='auto')
     
     # Logotipo
     if os.path.exists(datos["ruta_logo"]):
-        logo = procesar_imagen_png(datos["ruta_logo"])
+        logo = datos["ruta_logo"]
         logo_ancho_original = 924
         logo_alto_original = 126
         escala = (ancho - 100) / logo_ancho_original
         logo_ancho = logo_ancho_original * escala
         logo_alto = logo_alto_original * escala
-        c.drawImage(logo, (ancho - logo_ancho) / 2, alto - logo_alto - 50, width=logo_ancho, height=logo_alto)
+        c.drawImage(logo, (ancho - logo_ancho) / 2, alto - logo_alto - 50, width=logo_ancho, height=logo_alto, mask='auto')
 
     # Encabezado y texto con contraste
     c.setFont("Montserrat-Bold", 18)
@@ -93,9 +94,12 @@ def generar_constancia(request, evento_id):
     c.setFont("Montserrat-Bold", 24)
     c.drawCentredString(ancho / 2, alto - 390, f"{datos['nombre_receptor'].upper()}")
     c.setFont("Montserrat-Bold", 24)
-    c.drawCentredString(ancho / 2, alto - 420, f"{datos['nombre_receptor'].split()[-1].upper()}")
+    c.drawCentredString(ancho / 2, alto - 420, f"{datos['apellidos_receptor'].upper()}")
     c.setFont("Montserrat", 14)
-    c.drawCentredString(ancho / 2, alto - 460, f"Por impartir el curso:")
+    if request.user.rol== "Instructor":
+        c.drawCentredString(ancho / 2, alto - 460, f"Por impartir el curso:")
+    elif request.user.rol== "Docente":
+        c.drawCentredString(ancho / 2, alto - 460, f"Por acreditar el curso:")
     c.setFont("Montserrat-Bold", 13)
     c.drawCentredString(ancho / 2, alto - 480, datos["nombre_curso"])
     c.setFont("Montserrat", 14)
@@ -104,21 +108,14 @@ def generar_constancia(request, evento_id):
 
     # Firma
     if os.path.exists(datos["ruta_firma"]):
-        firma = procesar_imagen_png(datos["ruta_firma"])
+        firma = datos["ruta_firma"]
         firma_ancho = 200
         firma_alto = 100
-        c.drawImage(firma, (ancho - firma_ancho) / 2, alto - 650, width=firma_ancho, height=firma_alto)
-
-    # Sello
-    if os.path.exists(datos["ruta_sello"]):
-        sello = procesar_imagen_png(datos["ruta_sello"])
-        sello_ancho = 180
-        sello_alto = 130
-        c.drawImage(sello, ancho - sello_ancho - 10, alto - 680, width=sello_ancho, height=sello_alto)
+        c.drawImage(firma, (ancho - firma_ancho) / 2, alto - 650, width=firma_ancho, height=firma_alto, mask='auto')
 
     # Datos de emisión
     c.setFont("Montserrat", 9)
-    c.drawCentredString(ancho / 2, alto - 550, f"AV. INSTITUTO TECNOLÓGICO NO. 418, AHUASHUATEPEC, TZOMPANTEPEC, TLAX., {datos['fecha_emision']}")
+    c.drawCentredString(ancho / 2, alto - 550, f"AV. INSTITUTO TECNOLÓGICO NO. 418, AHUASHUATEPEC, TZOMPANTEPEC, TLAX., {datos['fecha_emision'].upper()}")
 
     # Espacio para la firma del responsable
     c.setFont("Montserrat", 12)
