@@ -23,6 +23,9 @@ class PlancapacitacionConfig(AppConfig):
                 # Obtener permisos definidos en los modelos
                 permisos_registro_curso = Permission.objects.filter(content_type__app_label='plancapacitacion', codename__icontains='registrocurso')
                 permisos_validados = Permission.objects.filter(content_type__app_label='plancapacitacion', codename__icontains='validarcurso')
+                permisos_ficha_tecnica = Permission.objects.filter(content_type__app_label='plancapacitacion', codename__icontains='fichatecnica')
+                permisos_criterios_evaluacion = Permission.objects.filter(content_type__app_label='plancapacitacion', codename__icontains='criterioevaluacion')
+                permisos_contenido_tematico = Permission.objects.filter(content_type__app_label='plancapacitacion', codename__icontains='contenidotematico')
 
                 def limpiar_permisos(grupo):
                     permisos_actuales = grupo.permissions.filter(content_type__app_label='plancapacitacion')
@@ -35,7 +38,10 @@ class PlancapacitacionConfig(AppConfig):
                 limpiar_permisos(subdireccion_group)
 
                 # Asignar permisos a los grupos
-                # Grupo Instructor: no puede registrar ni validar cursos
+                # Grupo Instructor: no puede registrar ni validar cursos, solo crea fichas tecnicas
+                instructor_group.permissions.add(
+                    *permisos_ficha_tecnica, *permisos_contenido_tematico, *permisos_criterios_evaluacion
+                )
 
                 # Grupo Docente: no puede registrar ni validar cursos
 
