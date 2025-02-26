@@ -14,6 +14,7 @@ from reportlab.lib.styles import getSampleStyleSheet
 from io import BytesIO
 
 from .models import (
+    CargoAutoridad,
     FormatoConstancia,
     FormatoDepartamento,
     ValorCalificacion,
@@ -26,7 +27,7 @@ from .models import (
     GradoAcademico, Lugar, Sede, Departamento,
     Dirigido, Genero, PerfilCurso ,Periodo, Autoridad)
 
-from .forms import FormatoConstanciaForm, FormatoConstanciaUpdateForm, FormatoDepartamentoForm, FormatoDepartamentoUpdateForm, GradoAcForm, LugarForm, SedeForm, AutoridadForm, ValorCalificacionForm
+from .forms import CargoAutoridadForm, FormatoConstanciaForm, FormatoConstanciaUpdateForm, FormatoDepartamentoForm, FormatoDepartamentoUpdateForm, GradoAcForm, LugarForm, SedeForm, AutoridadForm, ValorCalificacionForm
 from .forms import (
     AgregarDocenteForm, ActualizarDocenteForm, 
     DepartamentoForm, DirigidoForm, GeneroForm, PerfilcursoForm, PeriodoForm)
@@ -848,7 +849,7 @@ def autoridadlista(request):
 @permission_required('catalogos.add_autoridad', raise_exception=True)
 def autoridadcrear(request):
     if request.method == 'POST':
-        form = AutoridadForm(request.POST)
+        form = AutoridadForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
             messages.success(request, "Autoridad creada correctamente.")
@@ -870,7 +871,7 @@ def autoridadver(request, autoridad_id):
 def autoridadactualizar(request, autoridad_id):
     autoridad= get_object_or_404(Autoridad, id=autoridad_id)
     if request.method == 'POST':
-        form = AutoridadForm(request.POST, instance=autoridad)
+        form = AutoridadForm(request.POST, request.FILES, instance=autoridad)
         if form.is_valid():
             form.save()
             messages.success(request, "Autoridad actualizada correctamente.")
@@ -887,6 +888,47 @@ def autoridadactualizar(request, autoridad_id):
 #         autoridad.delete()
 #         return redirect('autoridadlista')  
 #     return render(request, 'autoridadeliminar.html', {'autoridad': autoridad})
+
+
+def cargoautoridadlista(request):
+    cargos = CargoAutoridad.objects.all()
+    return render(request, 'cargoautoridadlista.html', {'cargos': cargos})
+
+def cargoautoridadcrear(request):
+    if request.method == 'POST':
+        form = CargoAutoridadForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Cargo de autoridad creado correctamente.")
+            return redirect('cargoautoridadlista') 
+    else:
+        form = CargoAutoridadForm()
+
+    return render(request, 'cargoautoridadagregar.html', {'form': form})
+
+def cargoautoridadver(request, cargo_id):
+    cargo= get_object_or_404(CargoAutoridad, id=cargo_id)
+    form = CargoAutoridadForm(instance=cargo)
+    return render(request, 'cargoautoridadver.html', {'cargo': cargo, 'form': form})
+
+def cargoautoridadactualizar(request, cargo_id):
+    cargo= get_object_or_404(CargoAutoridad, id=cargo_id)
+    if request.method == 'POST':
+        form = CargoAutoridadForm(request.POST, instance=cargo)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Cargo de autoridad actualizado correctamente.")
+            return redirect('cargoautoridadlista')
+    else:
+        form = CargoAutoridadForm(instance=cargo)
+    return render(request, 'cargoautoridadactualizar.html', {'form': form, 'cargo': cargo})
+
+def cargoautoridadeliminar(request, cargo_id):
+    cargo = get_object_or_404(CargoAutoridad, id=cargo_id)
+    if request.method == 'POST':
+        cargo.delete()
+        return redirect('cargoautoridadlista')  
+    return render(request, 'cargoautoridadeliminar.html', {'cargo': cargo})
 
 @login_required(login_url='signin')
 @permission_required('catalogos.view_valorcalificacion', raise_exception=True)

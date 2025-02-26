@@ -1,6 +1,7 @@
 from django.contrib import admin
 
 from .models import (
+    CargoAutoridad,
     FormatoConstancia,
     FormatoDepartamento,
     ValorCalificacion,
@@ -11,7 +12,7 @@ from .models import (
     ParticipacionInstructor)
 from .models import (
     Docente, Genero, Departamento, GradoAcademico, Lugar, Periodo, 
-    Sede, Dirigido, PerfilCurso, Director)
+    Sede, Dirigido, PerfilCurso, Autoridad)
 
 # Register your models here.
 admin.site.register(Genero)
@@ -26,6 +27,7 @@ admin.site.register(ExperienciaLaboral)
 admin.site.register(ExperienciaDocente)
 admin.site.register(ParticipacionInstructor)
 admin.site.register(ValorCalificacion)
+admin.site.register(CargoAutoridad)
     
 class InstructorAdmin(admin.ModelAdmin):
     # Personalización de cómo se muestra la información de un Docente
@@ -75,9 +77,9 @@ class PeriodoAdmin(admin.ModelAdmin):
     list_display=('inicioPeriodo', 'finPeriodo')
 admin.site.register(Periodo, PeriodoAdmin)
 
-class DirectorAdmin(admin.ModelAdmin):
+class AutoridadAdmin(admin.ModelAdmin):
     list_display = ('nombre', 'apPaterno', 'apMaterno', 'cargo', 'estatus')
-admin.site.register(Director)
+admin.site.register(Autoridad)
 
 class FormatoDepAdmin(admin.ModelAdmin):
     list_display = ('id', 'departamento', 'year', 'vigente')

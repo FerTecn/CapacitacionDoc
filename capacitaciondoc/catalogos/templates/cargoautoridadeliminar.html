@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}- Cargo a eliminar{% endblock %}
+
+{% block content %}
+<div class="card text-center">
+    <div class="card-header">
+      Mensaje de eliminación
+    </div>
+    <div class="card-body">
+      <h1 class="card-title">Eliminar cargo</h1>
+      <p class="card-text">¿Estás seguro de que deseas eliminar el cargo de <strong>{{ cargo.cargo_masculino }} {{ cargo.cargo_femenino }}</strong>?</p>
+      
+      <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Eliminar</button>
+        <a href="{% url 'cargoautoridadlista' %}" class="btn btn-secondary">Cancelar</a>
+     </form>
+    </div>
+  </div>
+{% endblock %}

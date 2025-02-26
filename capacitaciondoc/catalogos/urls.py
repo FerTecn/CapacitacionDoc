@@ -81,6 +81,13 @@ urlpatterns = [
     path('autoridadactualizar/<int:autoridad_id>/', views.autoridadactualizar, name='autoridadactualizar'),
     # path('autoridadeliminar/<int:autoridad_id>/', views.autoridadeliminar, name='autoridadeliminar'),
 
+    # CARGO AUTORIDAD
+    path('cargoautoridadlista/', views.cargoautoridadlista, name='cargoautoridadlista'),
+    path('cargoautoridadcrear/', views.cargoautoridadcrear, name='cargoautoridadcrear'),
+    path('cargoautoridadver/<int:cargo_id>/', views.cargoautoridadver, name='cargoautoridadver'),
+    path('cargoautoridadactualizar/<int:cargo_id>/', views.cargoautoridadactualizar, name='cargoautoridadactualizar'),
+    path('cargoautoridadeliminar/<int:cargo_id>/', views.cargoautoridadeliminar, name='cargoautoridadeliminar'),
+
     # VALORES CALIFICACION
     path('valorcalificacionlista/', views.valorcalificacionlista, name='valorcalificacionlista'),
     path('valorcalificacioncrear/', views.valorcalificacioncrear, name='valorcalificacioncrear'),

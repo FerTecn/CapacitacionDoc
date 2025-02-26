@@ -186,6 +186,11 @@ class CargoAutoridad(models.Model):
     class Meta:
         verbose_name_plural = 'Cargos de Autoridad'
 
+def firma_autoridad_upload_path(instance, filename):
+    """Guarda los archivos en: media/autoridades/cargo/nombre/firma siempre como 'firma.png'."""
+    folder_path = os.path.join("autoridades", str(instance.puesto.cargo_masculino), f'{instance.nombre} {instance.apPaterno} {instance.apMaterno}')
+    return os.path.join(folder_path, "firma.png")  # Siempre guardado como "header.png"
+
 class Autoridad(models.Model):
     nombre=models.CharField(max_length=40)
     apPaterno=models.CharField(max_length=40)
@@ -193,11 +198,15 @@ class Autoridad(models.Model):
     genero = models.ForeignKey('Genero', on_delete=models.SET_NULL, null=True, verbose_name="Género")
     puesto=models.ForeignKey('CargoAutoridad', on_delete=models.SET_NULL, null=True, verbose_name="Cargo")
     estatus=models.BooleanField()
+    firma = models.ImageField(upload_to=firma_autoridad_upload_path, null=True, blank=True)
 
     def get_puesto(self):
         if self.genero.genero == 'Femenino' and self.puesto.cargo_femenino:
             return self.puesto.cargo_femenino
         return self.puesto.cargo_masculino
+    
+    def get_full_name(self):
+        return f"{self.nombre} {self.apPaterno} {self.apMaterno}"
     
     def clean(self):
         """

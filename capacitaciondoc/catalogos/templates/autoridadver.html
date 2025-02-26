@@ -27,10 +27,13 @@
             </div>
         </div>
         <div class="form-row">
+            <div class="form-group col-md-3 align-items-center">
+                <p><strong style="display: block;">{{form.genero.label_tag}}</strong>{{ autoridad.genero}}</p>
+            </div>
             <div class="form-group col-md-6 align-items-center">
                 <p><strong style="display: block;">{{form.puesto.label_tag}}</strong>{{ autoridad.puesto}}</p>
             </div>
-            <div class="form-group col-md-6 align-items-center">
+            <div class="form-group col-md-3 align-items-center">
                 <p><strong style="display: block;">{{form.estatus.label_tag}}</strong>
                     {% if autoridad.estatus %}
                     <button class="btn btn-success" disabled>Activo</button>
@@ -38,6 +41,24 @@
                     <button class="btn btn-danger" disabled>Inactivo</button>
                     {% endif %}
                 </p>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="form-row">
+            <div class="form-group col-md-6 align-items-center">
+                <strong>{{form.firma.label_tag}}</strong>
+                {% if autoridad.firma %}
+                    <img src="{{ autoridad.firma.url }}" 
+                    alt="Firma de la autoridad {{autoridad.get_full_name}}"
+                    class="border rounded"
+                    style="width: 100%;"
+                    >
+                {% else %}
+                    <div class="text-center mt-4">No hay firma</div>
+                {% endif %}
             </div>
         </div>
     </div>

@@ -1,6 +1,6 @@
 from django import forms
 from .models import (
-    ExperienciaDocente, ExperienciaLaboral, FormacionAcademica, FormatoConstancia, FormatoDepartamento, 
+    CargoAutoridad, ExperienciaDocente, ExperienciaLaboral, FormacionAcademica, FormatoConstancia, FormatoDepartamento, 
     GradoAcademico, Lugar, ParticipacionInstructor, Sede, 
     Instructor, Docente, Autoridad,
     Departamento, Dirigido, Genero, PerfilCurso, Periodo, ValorCalificacion)
@@ -432,16 +432,13 @@ class PeriodoForm(forms.ModelForm):
         return cleaned_data
 
 #AUTORIDAD
-class AutoridadForm(forms.ModelForm):
+class CargoAutoridadForm(forms.ModelForm):
     class Meta:
-        model = Autoridad
+        model = CargoAutoridad
         fields = '__all__'
         labels = {
-            'nombre': 'Nombre(s)',
-            'apPaterno': 'Apellido Paterno',
-            'apMaterno': 'Apellido Materno',
-            'puesto': 'Cargo',
-            'estatus': 'Estatus',
+            'cargo_masculino': 'Cargo (masculino)',
+            'cargo_femenino': 'Cargo (femenino)',
         }
 
     def __init__(self, *args, **kwargs):
@@ -450,6 +447,34 @@ class AutoridadForm(forms.ModelForm):
             self.fields[field].widget.attrs.update({
                 'class': 'form-control',
             })
+
+class AutoridadForm(forms.ModelForm):
+    class Meta:
+        model = Autoridad
+        fields = '__all__'
+        labels = {
+            'nombre': 'Nombre(s)',
+            'apPaterno': 'Apellido Paterno',
+            'apMaterno': 'Apellido Materno',
+            'genero': 'Genero',
+            'puesto': 'Cargo',
+            'estatus': 'Estatus',
+            'firma': 'Firma (imagen)',
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields:
+            if field == 'firma':
+                self.fields[field].widget.attrs.update({
+                    'class': 'btn btn-primary',
+                    'accept': 'image/*',
+                    'id': 'firmaimg-input',
+                })
+            else:
+                self.fields[field].widget.attrs.update({
+                    'class': 'form-control',
+                })
 
 class ValorCalificacionForm(forms.ModelForm):
     class Meta:
