@@ -1,7 +1,10 @@
 import locale
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import redirect, render, get_object_or_404
 from django.http import HttpResponse
-from eventos.models import Evento
+from django.urls import reverse_lazy
+from usuarios.models import CustomUser
+from encuesta.models import Encuesta
+from eventos.models import Calificacion, Evento, Inscripcion
 from catalogos.models import Autoridad, Docente, Instructor
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
@@ -22,12 +25,10 @@ montserrat_bold_path = os.path.join(settings.BASE_DIR, "static/fonts/Montserrat-
 pdfmetrics.registerFont(TTFont('Montserrat', montserrat_regular_path))
 pdfmetrics.registerFont(TTFont('Montserrat-Bold', montserrat_bold_path))
 
-def generar_constancia(request, evento_id):
+def generar_constancia_pdf(request, evento_id, user_id):
     locale.setlocale(locale.LC_TIME, 'spanish')
-    if request.user.rol == 'Instructor':
-        user = request.user
-    if request.user.rol == 'Docente':
-        user = request.user
+    user = CustomUser.objects.get(id=user_id)
+    print(user)
     
     evento = get_object_or_404(Evento, id=evento_id)
     curso = evento.curso
@@ -96,9 +97,9 @@ def generar_constancia(request, evento_id):
     c.setFont("Montserrat-Bold", 24)
     c.drawCentredString(ancho / 2, alto - 420, f"{datos['apellidos_receptor'].upper()}")
     c.setFont("Montserrat", 14)
-    if request.user.rol== "Instructor":
+    if user.rol== "Instructor":
         c.drawCentredString(ancho / 2, alto - 460, f"Por impartir el curso:")
-    elif request.user.rol== "Docente":
+    elif user.rol== "Docente":
         c.drawCentredString(ancho / 2, alto - 460, f"Por acreditar el curso:")
     c.setFont("Montserrat-Bold", 13)
     c.drawCentredString(ancho / 2, alto - 480, datos["nombre_curso"])
@@ -130,31 +131,92 @@ def generar_constancia(request, evento_id):
     c.save()
     return response
 
-def lista_cursos(request):
-    # Obtener el usuario actualmente logueado
-    usuario_actual = request.user
+def listacursos(request):
+    user = request.user
+    cursos = []
 
-    # Verificar si el usuario es un instructor
-    if hasattr(usuario_actual, 'instructor'):
-        # Obtener el instructor asociado al usuario
-        instructor = usuario_actual.instructor
+    if user.rol == "Instructor":
+        eventos = Evento.objects.filter(curso__instructor=user.instructor).order_by('curso__nombre')
 
-        # Obtener los eventos en los que el instructor está impartiendo cursos
-        eventos = Evento.objects.filter() #instructor=instructor
+    elif user.rol == "Docente":
+        inscripciones = Inscripcion.objects.filter(usuario=user).order_by('evento__curso__nombre')
+        eventos = [inscripcion.evento for inscripcion in inscripciones]
+        
+    else:
+        eventos = Evento.objects.all().order_by('curso__nombre')
 
-        # Obtener las inscripciones relacionadas con esos eventos
-        cursos_impartidos = []
-        for evento in eventos:
-            cursos_impartidos.append({
+    for evento in eventos:
+            curso_info = {
                 'nombre': evento.curso.nombre,
                 'fecha_inicio': evento.fechaInicio,
                 'fecha_fin': evento.fechaFin,
                 'horas': evento.curso.horas,
                 'evento_id': evento.id,
+            }
+            if user.rol != "Docente":  # Solo agregar el instructor si NO es docente
+                curso_info['instructor'] = evento.curso.instructor
+
+            cursos.append(curso_info)
+
+    return render(request, 'lista_cursos.html', {'cursos': cursos, 'user': user})
+
+def listaconstancias(request, evento_id):
+    evento = get_object_or_404(Evento, id=evento_id)
+    docentes_inscritos = Inscripcion.objects.filter(evento=evento).select_related('usuario')
+    docentes = []
+    for docente in docentes_inscritos:
+        if docente.usuario.rol == "Docente":
+            encuesta_realizada = Encuesta.objects.filter(inscripcion__usuario=docente.usuario, inscripcion__evento=evento).exists()
+            calificacion = Calificacion.objects.filter(inscripcion__evento=evento, inscripcion__usuario=docente.usuario).first()
+            if calificacion:
+                aprobado = calificacion.calificacion.aprobatoria
+            else:
+                calificacion = None
+                aprobado = False
+            
+            docentes.append({
+                'docente': docente.usuario,
+                'encuesta_realizada': encuesta_realizada,
+                'calificacion': calificacion,
+                'aprobado': aprobado,
             })
+    
+    instructor = evento.curso.instructor if evento.curso and evento.curso.instructor else None
 
-    else:
-        # Si el usuario no es un instructor, no mostrar cursos
-        cursos_impartidos = []
+    return render(request, 'lista_constancias.html', {
+        'evento': evento,
+        'docentes': docentes,
+        'instructor': instructor,
+        })
+def generar_constancia(request, evento_id, user_id):
+    user = get_object_or_404(CustomUser, id=user_id)
+    evento = get_object_or_404(Evento, id=evento_id)
 
-    return render(request, 'lista_cursos.html', {'cursos_impartidos': cursos_impartidos})
+    if user.rol == "Instructor":
+        return redirect('descargar_constancia', evento_id=evento.id, user_id=user.id)
+    elif user.rol == "Docente":
+        encuesta_realizada = Encuesta.objects.filter(inscripcion__usuario=user, inscripcion__evento=evento).exists()
+        if encuesta_realizada:
+            message_encuesta = 'Encuesta de satisfacción <b class="text-success">realizada satisfactoriamente</b>.'
+        else:
+            message_encuesta = 'El docente debe realizar la encuesta de satisfacción para poder generar la constancia.'
+        calificacion = Calificacion.objects.filter(inscripcion__evento=evento, inscripcion__usuario=user).first()
+        if calificacion:
+            aprobado = calificacion.calificacion.aprobatoria
+            if aprobado:
+                message_calificacion = f'Calificación obtenida: <b class="text-success">{calificacion.calificacion}</b>'
+            else:
+                message_calificacion = f'<b class="text-danger">Calificación reprobatoria: {calificacion.calificacion}.</b> Lamentamos que no hayas aprobado el curso.'
+        else:
+            aprobado = None
+            message_calificacion = f"<b>Sin calificación.</b> <br>Una vez el docente culmine el curso satisfactoriamente, obtendrá una calificación asignada por el instructor {evento.curso.instructor.user.get_user_full_name()}."
+    print(encuesta_realizada)
+    return render(request, 'generar_constancia.html', {
+        'evento': evento, 
+        'user': user, 
+        'encuesta_realizada': encuesta_realizada, 
+        'calificacion': calificacion,
+        'aprobado': aprobado,
+        'message_encuesta': message_encuesta,
+        'message_calificacion': message_calificacion,
+    })

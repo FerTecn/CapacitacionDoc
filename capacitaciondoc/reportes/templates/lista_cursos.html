@@ -3,13 +3,23 @@
 
 {% block title %} - Lista de Cursos{% endblock %}
 
+{% block styles %}
+<!-- Custom styles for this page -->
+<link href="{% static 'vendor/datatables/dataTables.bootstrap4.min.css' %}" rel="stylesheet">
+{% endblock %}
+
 {% block content %}
-    <h1 class="h3 mb-2 text-gray-800">Cursos que estás impartiendo</h1>
-    <p class="mb-4">Aquí puedes ver los cursos que estás impartiendo y generar constancias.</p>
+    <h1 class="h3 mb-2 text-gray-800">Cursos 
+        {% if user == Instructor %}que tienes asignados.
+        {% elif user == Docente %}que tomaste.
+        {% else %}que tienen un evento asignados.
+        {% endif %}
+    </h1>
+    <p class="mb-4">Aquí puedes ver los cursos para poder generar constancias.</p>
 
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Lista de Cursos</h6>
+            <h4 class="m-0 font-weight-bold text-primary">Lista de Cursos</h4>
         </div>
         <div class="card-body">
             <div class="table-responsive">
@@ -19,21 +29,29 @@
                             <th>Nombre del Curso</th>
                             <th>Fecha de Inicio</th>
                             <th>Fecha de Término</th>
+                            {% if user.rol not in "Instructor, Docente" %}<th>Instructor</th>{% endif %}
                             <th>Horas</th>
                             <th>Generar Constancia</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for curso in cursos_impartidos %}
+                        {% for curso in cursos %}
                         <tr>
                             <td>{{ curso.nombre }}</td>
                             <td>{{ curso.fecha_inicio }}</td>
                             <td>{{ curso.fecha_fin }}</td>
+                            {% if user.rol not in "Instructor, Docente" %}<td>{{ curso.instructor }}</td>{% endif %}
                             <td>{{ curso.horas }}</td>
                             <td>
-                                <a href="{% url 'generar_constancia' curso.evento_id %}" class="btn btn-primary btn-sm">
+                                {% if user.rol not in "Instructor, Docente" %}
+                                    <a href="{% url 'lista_constancias' curso.evento_id %}" class="btn btn-primary btn-sm">
+                                        Consultar constancias
+                                    </a>
+                                {% else %}
+                                <a href="{% url 'generar_constancia' curso.evento_id user.id %}" class="btn btn-primary btn-sm">
                                     Generar Constancia
                                 </a>
+                                {% endif %}
                             </td>
                         </tr>
                         {% endfor %}
@@ -42,4 +60,13 @@
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block scripts %}
+<!-- Page level plugins -->
+<script src="{% static 'vendor/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
+
+<!-- Page level custom scripts -->
+<script src="{% static 'js/demo/datatables-demo.js' %}"></script>
 {% endblock %}

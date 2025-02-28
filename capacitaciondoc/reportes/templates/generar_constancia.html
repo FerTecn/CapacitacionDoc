@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}- Generar constancia
+{% endblock title %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/stepper.css' %}">
+{% endblock styles %}
+
+{% block content %}
+<div class="d-flex justify-content-between mb-3">
+    <a {% if user.rol not in 'Docente, Instructor' %}href='{% url "lista_cursos" %}'
+    {% else %}href='{% url "lista_constancias" evento.id %}'
+    {% endif %} class="btn btn-secondary btn-icon-split mr-2">
+        <span class="icon text-white-50">
+            <i class="fas fa-arrow-left"></i>
+        </span>
+        <span class="text">Volver</span>
+    </a>
+</div>
+
+<h1 class="h3 mb-2 text-gray-800">Generar constancia del {{user.rol}} {{user.get_user_full_name}}</h1>
+<div class="card mb-4">
+    <div class="card-body">
+        Una vez completados todos los requisitos, se podrá generar la constancia para el curso <b>{{evento.curso.nombre}}</b>.
+    </div>
+</div>
+
+<!-- Stepers Wrapper -->
+<ul class="stepper stepper-vertical">
+
+    <!-- First Step -->
+    <li class="{% if encuesta_realizada %}completed{% endif %}">
+    
+    <!--Section Title -->
+        <a href="#!">
+            <span class="circle font-weight-bold h4">
+                {% if encuesta_realizada %}<i class="fa-solid fa-check"></i>
+                {% else %}1
+                {% endif %}
+            </span>
+            <span class="label h5 font-weight-bold">Realizar encuesta</span>
+        </a>
+    
+                        <!-- Section Description -->
+        <div class="step-content">
+            <p>
+                {% if message_encuesta %}{{message_encuesta|safe}}{% endif %}
+            </p>
+        </div>
+    </li>
+
+    <!-- Second Step -->
+    <li class="{% if calificacion and aprobado %}completed {% elif calificacion and not aprobado %}warning{% else %}{% endif %}">
+
+        <!--Section Title -->
+        <a href="#!">
+            <span class="circle font-weight-bold h4">
+                {% if calificacion and aprobado %}<i class="fa-solid fa-check"></i>
+                {% elif calificacion and not aprobado %}<i class="fa-solid fa-triangle-exclamation"></i>
+                {% else %}2{% endif %}
+            </span>
+            <span class="label h5 font-weight-bold">Aprobar el curso</span>
+        </a>
+
+        <!-- Section Description -->
+        <div class="step-content">
+
+            <p>
+                {% if  message_calificacion %}{{message_calificacion|safe}}{% endif %}
+            </p>
+        </div>
+    </li>
+
+    <!-- Third Step -->
+    <li class="{% if encuesta_realizada and aprobado %}completed{% else %}{% endif %}">
+        <a href="#!">
+            <span class="circle font-weight-bold h4">
+                {% if encuesta_realizada and aprobado %}<i class="fa-solid fa-check"></i>
+                {% else %}4
+                {% endif %}
+            </span>
+            <span class="label h5 font-weight-bold">Generar constancia</span>
+        </a>
+
+        <!-- Section Description -->
+        <div class="step-content">
+
+            <p>
+                {% if aprobado and encuesta_realizada %}
+                    Ya puedes descargar tu constancia de culminación. <strong class="text-info">¡Felicidades!</strong>
+                {% else %}Aún no puedes descargar tu constancia de culminación.{% endif %}
+            </p>
+        </div>
+    </li>
+
+</ul>
+{% if aprobado and encuesta_realizada %}
+<div class="w-100 text-center">
+    <a href="{% url "descargar_constancia" evento.id user.id%}" class="btn btn-primary">Descargar constancia</a>
+
+</div>
+{% endif %}
+    <!-- /.Stepers Wrapper -->
+
+{% endblock content %}
