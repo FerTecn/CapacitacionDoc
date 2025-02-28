@@ -198,24 +198,7 @@
         </a>
         <div id="collapseFour" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
-                <a class="collapse-item" href="">Verificación de constancias</a>
-                <a class="collapse-item" href="">Consulta de constancia</a>
-            </div>
-        </div>
-    </li>
-
-    <!-- Rol de Subdirección y Jefe Académico (Se oculta)-->
-    {% elif request.user.rol != "Subdirección" and request.user.rol != "Jefe Académico" %}
-    <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseFour"
-            aria-expanded="true" aria-controls="collapseFour">
-            <i class="fas fa-fw fa-file-pdf"></i>
-            <span>Reportes</span>
-        </a>
-        <div id="collapseFour" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
-            <div class="bg-white py-2 collapse-inner rounded">
-                <a class="collapse-item" href="">Verificación de constancias</a>
-                <a class="collapse-item" href="">Consulta de constancia</a>
+                <a class="collapse-item" href="{% url 'lista_cursos' %}">Verificación de constancias</a>
             </div>
         </div>
     </li>
