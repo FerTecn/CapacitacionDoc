@@ -17,7 +17,11 @@
 </h1>
 <div class="card my-2">
     <div class="card-body">
+        {% if request.user.rol == "Docente" %}
         Aquí puedes ver todos los cursos que estás tomando y poder realizar tu encuesta de satisfacción de cada uno.
+        {% else %}
+        Aqui se listan todos los cursos vigentes.
+        {% endif %}
     </div>
 </div>
 {% if messages %}
@@ -34,7 +38,7 @@
 {% endif %}
 <div class="card shadow mt-4 mb-4">
     <div class="card-header py-3 d-flex justify-content-between align-items-center">
-        <h4 class="m-0 font-weight-bold text-primary">Lista de tus cursos</h4>
+        <h4 class="m-0 font-weight-bold text-primary">Lista de cursos</h4>
     </div>
     <div class="card-body">
         <div class="table-responsive">
@@ -62,7 +66,7 @@
                                     <a href="{% url 'realizarencuesta' curso.curso.id %}" class="btn btn-success btn-sm">Realizar encuesta</a>
                                 {% endif %}
                             {% else %}
-                                {% comment %} <a href="{% url 'resultados' curso.evento.curso.id %}" class="btn btn-success btn-sm">Ver resultados</a> {% endcomment %}
+                                <a href="{% url 'resultados' curso.evento.curso.id %}" class="btn btn-success btn-sm">Ver resultados</a>
                             {% endif %}
                         </td>
                     </tr>

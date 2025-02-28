@@ -1,11 +1,13 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, permission_required
+from django.db.models import Count
 from collections import defaultdict
 
 from eventos.models import Inscripcion, Evento
 from catalogos.models import Docente
 from plancapacitacion.models import RegistroCurso
 from .models import Encuesta
+from .forms import EncuestaForm
 from django.contrib import messages
 
 # Create your views here.
@@ -24,7 +26,7 @@ def listarcursos4encuesta(request):
                 'encuesta_hecha': encuesta_hecha,
             })
     else:
-        # Muestra todos los cursos
+        # Muestra todos los cursos que están activos y tienen un evento
         eventos = Evento.objects.all()
         cursos = []
 
@@ -58,37 +60,40 @@ def encuesta(request, curso_id):
             print('invalido')
             return redirect('encuesta')
         
-        encuesta = Encuesta(
-            inscripcion = inscripcion,
-            instructor1=request.POST['instructor1'],
-            instructor2=request.POST['instructor2'],
-            instructor3=request.POST['instructor3'],
-            instructor4=request.POST['instructor4'],
-            instructor5=request.POST['instructor5'],
-            instructor6=request.POST['instructor6'],
-            instructor7=request.POST['instructor7'],
-            
-            curso1=request.POST['curso1'],
-            curso2=request.POST['curso2'],
-            curso3=request.POST['curso3'],
-            curso4=request.POST['curso4'],
-            
-            material1=request.POST['material1'],
-            material2=request.POST['material2'],
-            material3=request.POST['material3'],
-            
-            insfraestructura1=request.POST['insfraestructura1'],
-            insfraestructura2=request.POST['insfraestructura2'],
-            insfraestructura3=request.POST['insfraestructura3'],
-            insfraestructura4=request.POST['insfraestructura4'],
-            insfraestructura5=request.POST['insfraestructura5'],
-            insfraestructura6=request.POST['insfraestructura6'],
-            
-            comentarios=request.POST.get('comentarios', '')
-        )
-        encuesta.save()
-        return redirect('gracias')  # Redirige a una página de agradecimiento
-    return render(request, 'encuesta.html', {'inscripcion': inscripcion})
+        form = EncuestaForm(request.POST)
+        if form.is_valid():
+            form.instance.inscripcion = inscripcion
+            form.save()
+            return redirect('gracias')  # Redirige a una página de agradecimiento
+    else:
+        form = EncuestaForm()
+
+    return render(request, 'encuesta.html', {'inscripcion': inscripcion, 'form': form})
 
 def gracias(request):
     return render(request, 'gracias.html')
+
+def resultados(request, curso_id):
+    curso = get_object_or_404(RegistroCurso, id=curso_id)
+    inscripciones = Inscripcion.objects.filter(evento__curso=curso)
+    encuestas = Encuesta.objects.filter(inscripcion__in=inscripciones)
+
+    resultados = {}
+    comentarios = []
+    for field in Encuesta._meta.fields:
+        if field.name.startswith(('instructor', 'curso', 'material', 'insfraestructura')):
+            opciones = []
+            for opcion_valor in range(1, 6): #itera del 1 al 5
+                conteo = encuestas.filter(**{field.name: opcion_valor}).count()
+                opciones.append({'opcion': opcion_valor, 'count': conteo})
+            resultados[field.name] = opciones
+        if field.name == "comentarios":
+            comentarios = encuestas.values("comentarios")
+
+    return render(request, 'resultados.html', {
+        'resultados': resultados, 
+        'curso': curso, 
+        'inscripciones': inscripciones, 
+        'encuestas': encuestas,
+        'comentarios': comentarios,
+    })

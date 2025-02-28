@@ -1,0 +1,241 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Encuesta{% endblock %}
+
+{% block styles %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!--Estilo personalizado para los radio button-->
+<style>
+    .horizontal-radio > div {
+        display: inline-block; /* Muestra los divs en línea */
+        margin-right: 10px; /* Agrega espacio entre los botones */
+    }
+    
+    .horizontal-radio ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+    }
+    
+    .horizontal-radio li {
+        margin-right: 10px; /* Ajusta el espacio entre los botones */
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<h3 class="h3 mb-2 text-gray-800"><center><b>ENCUESTA DE OPINIÓN</b></center></h3>
+<center><b>Cursos de Capacitación Presencial</b></center><br>
+
+<p><strong>Nombre del curso: </strong>{{ curso.nombre}}</p>
+<p><strong>Nombre de Institución: </strong>{{ curso.sede }}</p>
+<p><strong>Nombre del facilitador: </strong>{{ curso.instructor }}</p>
+<p><strong>Total de docentes inscritos en este curso: </strong>{{inscripciones.count}}</p>
+<p><strong>Total de docentes que han respondido la encuesta: </strong>{{encuestas.count}} de {{inscripciones.count}}</p>
+
+
+<div class="card">
+    <div class="card-body">
+        <center>La presente encuesta tiene como finalidad conocer la opinión sobre el curso de capacitación.</center>
+    </div>
+</div><br>
+
+<div class="card mb-4">
+    <div class="card-body text-center">
+       <b>Valores de respuestas:</b>
+    </div>
+    <div class="row mx-4">
+        <div class="col-xl-1 col-md-6 mb-4 text-center">
+        </div>
+        <div class="col-xl-2 col-md-6 mb-4 text-center">
+            <div class="rounded font-weight-bold text-black" style="background-color:rgba(255, 99, 132, 0.2); border: 2px solid rgba(255, 99, 132, 1);">1</div>
+            <small>En desacuerdo</small>
+        </div>
+        <div class="col-xl-2 col-md-6 mb-4 text-center">
+            <div class="rounded font-weight-bold text-black" style="background-color:rgba(54, 162, 235, 0.2); border: 2px solid rgba(54, 162, 235, 1);">2</div>
+            <small>Parcialmente en desacuerdo</small>
+        </div>
+        <div class="col-xl-2 col-md-6 mb-4 text-center">
+            <div class="rounded font-weight-bold text-black" style="background-color:rgba(255, 206, 86, 0.2); border: 2px solid rgba(255, 206, 86, 1);">3</div>
+            <small>Indiferente</small>
+        </div>
+        <div class="col-xl-2 col-md-6 mb-4 text-center">
+            <div class="rounded font-weight-bold text-black" style="background-color:rgba(75, 192, 192, 0.2); border: 2px solid rgba(75, 192, 192, 1);">4</div>
+            <small>Parcialmente de acuerdo</small>
+        </div>
+        <div class="col-xl-2 col-md-6 mb-4 text-center">
+            <div class="rounded font-weight-bold text-black" style="background-color:rgba(153, 102, 255, 0.2); border: 2px solid rgba(153, 102, 255, 1);">5</div>
+            <small>Totalmente de acuerdo</small>
+        </div>
+    </div>
+</div>
+{% if encuestas %}
+<div class="row">
+    <div class="col-lg-6">
+        <div class="card shadow mb-4">
+            <div class="card-header bg-primary py-3">
+                <h6 class="m-0 font-weight-bold text-white"><center>INSTRUCTOR</center></h6>
+            </div>
+            <div class="card-body">
+                <label><b>1. Expuso el objetivo y temario del curso:</b></label><br>
+                <canvas class="mx-0 mx-md-4" id="chartInstructor1" width="100" height="100"></canvas>
+                <hr>
+                
+                <label><b>2. Mostró dominio del contenido abordado:</b></label><br>
+                <canvas class="mx-0 mx-md-4" id="chartInstructor2" width="100" height="100"></canvas>
+                <hr>
+        
+                <label><b>3. Fomentó la participación del grupo:</b></label><br>
+                <canvas class="mx-0 mx-md-4" id="chartInstructor3" width="100" height="100"></canvas>
+                <hr>
+
+                <label><b>4. Aclaró las dudas que se presentaron:</b></label><br>
+                <canvas class="mx-0 mx-md-4" id="chartInstructor4" width="100" height="100"></canvas>
+                <hr>
+
+                <label><b>5. Dio retroalimentación a los ejercicios realizados:</b></label><br>
+                <canvas class="mx-0 mx-md-4" id="chartInstructor5" width="100" height="100"></canvas>
+                <hr>
+
+                <label><b>6. Aplicó una evaluación final relacionada con los contenidos del curso:</b></label><br>
+                <canvas class="mx-0 mx-md-4" id="chartInstructor6" width="100" height="100"></canvas>
+                <hr>
+
+                <label><b>7. Inició y concluyó puntualmente las sesiones:</b></label><br>
+                <canvas class="mx-0 mx-md-4" id="chartInstructor7" width="100" height="100"></canvas>
+                <hr>
+            </div>
+        </div>
+
+        <div class="card shadow mb-4">
+            <div class="card-header bg-primary py-3">
+                <h6 class="m-0 font-weight-bold text-white"><center>MATERIAL</center></h6>
+            </div>
+            <div class="card-body">
+                <label><b>8. El material didáctico fue útil a lo largo del curso:</b></label><br>
+                <canvas class="mx-0 mx-md-4" id="chartMaterial1" width="100" height="100"></canvas>
+                <hr>
+                
+                <label><b>9. La impresión del material didáctico fue legible:</b></label><br>
+                <canvas class="mx-0 mx-md-4" id="chartMaterial2" width="100" height="100"></canvas>
+                <hr>
+        
+                <label><b>10. La variedad del material didáctico fue suficiente para apoyar su aprendizaje:</b></label><br>
+                <canvas class="mx-0 mx-md-4" id="chartMaterial3" width="100" height="100"></canvas>
+                <hr>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card shadow mb-4">
+            <div class="card-header bg-primary py-3">
+                <h6 class="m-0 font-weight-bold text-white"><center>CURSO</center></h6>
+            </div>
+            <div class="card-body">
+                <label><b>11. La distribución del tiempo fue adecuada para cubrir el contenido:</b></label><br>
+                <canvas class="mx-0 mx-md-4" id="chartCurso1" width="100" height="100"></canvas>
+                <hr>
+                
+                <label><b>12. Los temas fueron suficientes para alcanzar el objetivo del curso:</b></label><br>
+                <canvas class="mx-0 mx-md-4" id="chartCurso2" width="100" height="100"></canvas>
+                <hr>
+        
+                <label><b>13. El curso comprendió ejercicios de práctica relacionados con el contenido:</b></label><br>
+                <canvas class="mx-0 mx-md-4" id="chartCurso3" width="100" height="100"></canvas>
+                <hr>
+
+                <label><b>14. El curso cubrió sus expectativas:</b></label><br>
+                <canvas class="mx-0 mx-md-4" id="chartCurso4" width="100" height="100"></canvas>
+                <hr>
+            </div>
+        </div>
+
+        <div class="card shadow mb-4">
+            <div class="card-header bg-primary py-3">
+                <h6 class="m-0 font-weight-bold text-white"><center>INFRAESTRUCTURA</center></h6>
+            </div>
+            <div class="card-body">
+                <label><b>15. La iluminación del aula fue adecuada:</b></label><br>
+                <canvas class="mx-0 mx-md-4" id="chartInfraestructura1" width="100" height="100"></canvas>
+                <hr>
+
+                <label><b>16. La ventilación del aula fue adecuada:</b></label><br>
+                <canvas class="mx-0 mx-md-4" id="chartInfraestructura2" width="100" height="100"></canvas>
+                <hr>
+
+                <label><b>17. El aseo del aula fue adecuado:</b></label><br>
+                <canvas class="mx-0 mx-md-4" id="chartInfraestructura3" width="100" height="100"></canvas>
+                <hr>
+
+                <label><b>18. El servicio de los sanitarios fue adecuado (limpieza, abasto de papel, toallas, jabón, etc.):</b></label><br>
+                <canvas class="mx-0 mx-md-4" id="chartInfraestructura4" width="100" height="100"></canvas>
+                <hr>
+
+                <label><b>19. El servicio de café fue adecuado:</b></label><br>
+                <canvas class="mx-0 mx-md-4" id="chartInfraestructura5" width="100" height="100"></canvas>
+                <hr>
+
+                <label><b>20. Recibió apoyo del personal que coordinó el curso:</b></label><br>
+                <canvas class="mx-0 mx-md-4" id="chartInfraestructura6" width="100" height="100"></canvas>
+                <hr>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-12">
+        <div class="card shadow mb-4">
+            <div class="card-header bg-primary py-3">
+                <h6 class="m-0 font-weight-bold text-white"><center>COMENTARIOS O SUGERENCIAS</center></h6>
+            </div>
+            <div class="card-body">
+                {% for comentario in comentarios %}
+                    {% if comentario.comentarios %}
+                        <div class="
+                        border 
+                        border-left-{% cycle 'primary' 'danger' 'warning' 'secondary' 'info' 'success' %}
+                        rounded mb-4 p-4 font-weight-bold">
+                            {{ comentario.comentarios }}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+    <h1>No hay resultados disponibles. {{encuestas.count}} de {{inscripciones.count}} docentes han respondido la encuesta.</h1>
+{% endif %}
+{% endblock %}
+
+
+{% block scripts %}
+<script>
+    const resultados = {
+        instructor1: {{ resultados.instructor1|safe }},
+        instructor2: {{ resultados.instructor2|safe }},
+        instructor3: {{ resultados.instructor3|safe }},
+        instructor4: {{ resultados.instructor4|safe }},
+        instructor5: {{ resultados.instructor5|safe }},
+        instructor6: {{ resultados.instructor6|safe }},
+        instructor7: {{ resultados.instructor7|safe }},
+        material1: {{ resultados.material1|safe }},
+        material2: {{ resultados.material2|safe }},
+        material3: {{ resultados.material3|safe }},
+        curso1: {{ resultados.curso1|safe }},
+        curso2: {{ resultados.curso2|safe }},
+        curso3: {{ resultados.curso3|safe }},
+        curso4: {{ resultados.curso4|safe }},
+        insfraestructura1: {{ resultados.insfraestructura1|safe }},
+        insfraestructura2: {{ resultados.insfraestructura2|safe }},
+        insfraestructura3: {{ resultados.insfraestructura3|safe }},
+        insfraestructura4: {{ resultados.insfraestructura4|safe }},
+        insfraestructura5: {{ resultados.insfraestructura5|safe }},
+        insfraestructura6: {{ resultados.insfraestructura6|safe }}
+    };
+</script>
+<script src="{% static 'js/demo/chart-pie-demo.js' %}"></script>
+{% endblock scripts %}
