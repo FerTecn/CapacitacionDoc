@@ -8,7 +8,6 @@ from plancapacitacion.models import RegistroCurso
 # Create your models here.
 class Evento(models.Model):
     curso= models.ForeignKey(RegistroCurso, on_delete=models.CASCADE, null=True)
-    instructor=models.ForeignKey(Instructor,on_delete=models.SET_NULL, null=True, blank=True )
     lugar=models.ForeignKey(Lugar,on_delete=models.SET_NULL, null=True )
     fechaInicio = models.DateField(null=True, blank=True)
     fechaFin = models.DateField(null=True, blank=True)
