@@ -42,6 +42,7 @@
                 <thead>
                     <tr>
                         <th>Valor de calificación</th>
+                        <th>¿Es aprobatoria?</th>
                         <th>Opciones</th>
                     </tr>
                 </thead>
@@ -49,6 +50,13 @@
                     {% for valor in valores %}
                     <tr id="valor-{{ valor.id }}">
                         <td>{{valor.valorCalificacion}}</td>
+                        <td>
+                            {% if valor.aprobatoria %}
+                                Si
+                            {% else %}
+                                No
+                            {% endif %}
+                        </td>
                         <td>
                             <!-- Opciones -->
                             {% if perms.catalogos.change_valorcalificacion %}

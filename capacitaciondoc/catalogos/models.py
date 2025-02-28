@@ -236,6 +236,7 @@ class Autoridad(models.Model):
 
 class ValorCalificacion(models.Model):
     valorCalificacion =  models.CharField(max_length=40)
+    aprobatoria = models.BooleanField()
 
     def __str__(self):
         return self.valorCalificacion

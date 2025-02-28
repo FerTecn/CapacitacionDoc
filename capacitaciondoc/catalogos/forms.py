@@ -482,6 +482,7 @@ class ValorCalificacionForm(forms.ModelForm):
         fields = '__all__'
         labels = {
             'valorCalificacion': 'Valor de Calificación',
+            'aprobatoria': '¿Es Aprobatoria?',
         }
 
     def __init__(self, *args, **kwargs):
