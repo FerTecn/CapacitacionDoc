@@ -13,7 +13,7 @@ class EventoAdmin(admin.ModelAdmin):
 admin.site.register(Evento, EventoAdmin)
 
 class InscripcionAdmin(admin.ModelAdmin):
-    list_display = ('evento__curso__nombre', 'evento__curso__instructor', 'evento__curso__horas')
+    list_display = ('evento__curso__nombre', 'evento__curso__instructor', 'usuario', 'evento__curso__horas')
 admin.site.register(Inscripcion, InscripcionAdmin)
 
 admin.site.register(Asistencia)
