@@ -1,7 +1,7 @@
 import locale
 from django.shortcuts import redirect, render, get_object_or_404
 from django.http import HttpResponse
-from django.urls import reverse_lazy
+from django.contrib import messages
 from usuarios.models import CustomUser
 from encuesta.models import Encuesta
 from eventos.models import Calificacion, Evento, Inscripcion
@@ -28,7 +28,17 @@ pdfmetrics.registerFont(TTFont('Montserrat-Bold', montserrat_bold_path))
 def generar_constancia_pdf(request, evento_id, user_id):
     locale.setlocale(locale.LC_TIME, 'spanish')
     user = CustomUser.objects.get(id=user_id)
-    print(user)
+    encuesta_realizada = Encuesta.objects.filter(inscripcion__usuario_id=user_id, inscripcion__evento_id=evento_id).exists()
+    calificacion = Calificacion.objects.filter(inscripcion__evento_id=evento_id, inscripcion__usuario_id=user_id).first()
+    if calificacion:
+        aprobado = calificacion.calificacion.aprobatoria
+    else:
+        aprobado = False
+    
+    if encuesta_realizada or aprobado:
+        messages.warning(request, f'{user.rol} {user.get_user_full_name()} aún no cumple los requisitos para poder generar la constancia.')
+        return redirect('generar_constancia', evento_id=evento_id, user_id=user_id)
+
     
     evento = get_object_or_404(Evento, id=evento_id)
     curso = evento.curso
@@ -153,7 +163,7 @@ def listacursos(request):
                 'horas': evento.curso.horas,
                 'evento_id': evento.id,
             }
-            if user.rol != "Docente":  # Solo agregar el instructor si NO es docente
+            if user.rol != "Instructor":  # Solo agregar el instructor si rol es instructor
                 curso_info['instructor'] = evento.curso.instructor
 
             cursos.append(curso_info)

@@ -10,8 +10,8 @@
 
 {% block content %}
     <h1 class="h3 mb-2 text-gray-800">Cursos 
-        {% if user == Instructor %}que tienes asignados.
-        {% elif user == Docente %}que tomaste.
+        {% if user.rol == 'Instructor' %}que tienes asignados.
+        {% elif user.rol == 'Docente' %}a los que te inscribiste.
         {% else %}que tienen un evento asignados.
         {% endif %}
     </h1>
@@ -29,7 +29,7 @@
                             <th>Nombre del Curso</th>
                             <th>Fecha de Inicio</th>
                             <th>Fecha de Término</th>
-                            {% if user.rol not in "Instructor, Docente" %}<th>Instructor</th>{% endif %}
+                            {% if user.rol not in "Instructor" %}<th>Instructor</th>{% endif %}
                             <th>Horas</th>
                             <th>Generar Constancia</th>
                         </tr>
@@ -40,7 +40,7 @@
                             <td>{{ curso.nombre }}</td>
                             <td>{{ curso.fecha_inicio }}</td>
                             <td>{{ curso.fecha_fin }}</td>
-                            {% if user.rol not in "Instructor, Docente" %}<td>{{ curso.instructor }}</td>{% endif %}
+                            {% if user.rol not in "Instructor" %}<td>{{ curso.instructor }}</td>{% endif %}
                             <td>{{ curso.horas }}</td>
                             <td>
                                 {% if user.rol not in "Instructor, Docente" %}
