@@ -1,4 +1,6 @@
 import os
+from django.utils.timezone import now
+from django.core.exceptions import ValidationError
 from django.utils.text import slugify
 from django.db import models
 from django.conf import settings
@@ -26,6 +28,26 @@ class Inscripcion(models.Model):
     aceptado = models.BooleanField(default=False)  # Campo para rastrear estado de aceptación
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)  # Docente que se inscribe
 
+    def clean(self):
+        """ Verifica que el curso no haya empezado"""
+        if self.evento.fechaInicio < now().date():
+            raise ValidationError("El curso ya ha empezado. No puedes inscribirte.")
+        
+        """ Verifica que la inscripción no tenga empalmes de horario con otras inscripciones del usuario. """
+        if Inscripcion.objects.filter(
+            usuario=self.usuario,
+            evento__fechaInicio__lte=self.evento.fechaFin,
+            evento__fechaFin__gte=self.evento.fechaInicio,
+            evento__horaInicio__lt=self.evento.horaFin,
+            evento__horaFin__gt=self.evento.horaInicio
+        ).exists():
+            raise ValidationError("No puedes inscribirte en eventos con horarios empalmados.")
+
+    def save(self, *args, **kwargs):
+        """ Llama a la validación antes de guardar el objeto. """
+        self.clean()  # Llama a la validación
+        super().save(*args, **kwargs)
+        
     def __str__(self):
         return f"{self.evento}"
     

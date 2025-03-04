@@ -1,6 +1,8 @@
 from datetime import datetime, timedelta
 import locale
+from django.utils.timezone import now
 from django.conf import settings
+from django.forms import ValidationError
 from django.shortcuts import render, redirect, reverse
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib import messages
@@ -253,36 +255,79 @@ def añadirinstructor(request, evento_id):
 @permission_required('eventos.view_evento', raise_exception=True)
 def inscripcionlista(request):
     usuario = request.user
+    hoy = now().date()
+
     # Verificar si el usuario es docente o instructor
     es_docente = Docente.objects.filter(user=usuario).exists()
     es_instructor = Instructor.objects.filter(user=usuario).exists()
 
-    # Filtrar eventos que tienen lugar, fecha y hora definidos
-    eventos_disponibles = Evento.objects.filter(
-        lugar__isnull=False, fechaInicio__isnull=False, fechaFin__isnull=False
+    # Filtrar eventos válidos
+    eventos = Evento.objects.filter(
+        lugar__isnull=False, fechaInicio__isnull=False, fechaFin__isnull=False,
     ).order_by('curso__nombre')
 
-    eventos_inscritos = []
-    eventos_instructor = []
 
     if es_docente:
-        # Obtener eventos donde el usuario está inscrito
-        inscripciones_usuario = Inscripcion.objects.filter(usuario=usuario).order_by('evento__curso__nombre')
-        eventos_inscritos = [inscripcion.evento for inscripcion in inscripciones_usuario]
+        # Cursos disponibles (antes de la fecha de inicio y en los que no está inscrito)
+        eventos_disponibles = eventos.filter(fechaInicio__gt=hoy).exclude(
+            id__in=Inscripcion.objects.filter(usuario=usuario).values_list('evento_id', flat=True)
+        )
 
-        # Filtrar eventos en los que aún no está inscrito
-        eventos_disponibles = eventos_disponibles.exclude(id__in=[evento.id for evento in eventos_inscritos])
+        # Cursos en los que está inscrito (que aún no han finalizado)
+        eventos_inscritos = eventos.filter(
+            id__in=Inscripcion.objects.filter(usuario=usuario).values_list('evento_id', flat=True),
+            fechaFin__gte=hoy
+        )
+
+        # Cursos en los que está inscrito pero finalizados
+        cursos_finalizados = eventos.filter(
+            id__in=Inscripcion.objects.filter(usuario=usuario).values_list('evento_id', flat=True),
+            fechaFin__lt=hoy
+        )
+
+        # Cursos en los que esta inscrito pero separados (en curso, por comenzar)
+        cursos_por_comenzar = eventos_inscritos.filter(fechaInicio__gt=hoy)
+        cursos_en_curso = eventos_inscritos.filter(fechaInicio__lte=hoy, fechaFin__gte=hoy)
 
     elif es_instructor:
         # Filtrar eventos donde el usuario es instructor
-        eventos_instructor = eventos_disponibles.filter(curso__instructor__user=usuario)
+        cursos_asignados_por_comenzar = eventos.filter(curso__instructor__user=usuario, fechaInicio__gt=hoy)
+
+        # Cursos en desarrollo
+        cursos_asignados_en_desarrollo = eventos.filter(
+            curso__instructor__user=usuario, fechaInicio__lte=hoy, fechaFin__gte=hoy
+        )
+
+        # Cursos finalizados
+        cursos_asignados_finalizados = eventos.filter(curso__instructor__user=usuario, fechaFin__lt=hoy)
+    
+    else:
+         # Cursos vigentes (en desarrollo)
+        cursos_vigentes = eventos.filter(fechaInicio__lte=hoy, fechaFin__gte=hoy)
+
+        # Cursos próximos a iniciar
+        cursos_proximos = eventos.filter(fechaInicio__gt=hoy)
+
+        # Cursos terminados
+        cursos_terminados = eventos.filter(fechaFin__lt=hoy)
 
     return render(request, 'inscripcionlista.html', {
         'es_docente': es_docente,
         'es_instructor': es_instructor,
-        'eventos_inscritos': eventos_inscritos,
-        'eventos_instructor': eventos_instructor,
-        'eventos_disponibles': eventos_disponibles,
+
+        'eventos_disponibles': eventos_disponibles if es_docente else None,
+        'eventos_inscritos': eventos_inscritos if es_docente else None,
+        'cursos_finalizados': cursos_finalizados if es_docente else None,
+        'cursos_por_comenzar': cursos_por_comenzar if es_docente else None,
+        'cursos_en_curso': cursos_en_curso if es_docente else None,
+
+        'cursos_asignados_por_comenzar': cursos_asignados_por_comenzar if es_instructor else None,
+        'cursos_asignados_en_desarrollo': cursos_asignados_en_desarrollo if es_instructor else None,
+        'cursos_asignados_finalizados': cursos_asignados_finalizados if es_instructor else None,
+
+        'cursos_vigentes': cursos_vigentes if not es_docente and not es_instructor else None,
+        'cursos_proximos': cursos_proximos if not es_docente and not es_instructor else None,
+        'cursos_terminados': cursos_terminados if not es_docente and not es_instructor else None,
     })
 
 @login_required(login_url='signin')
@@ -297,14 +342,17 @@ def vercurso(request, evento_id):
 @permission_required('eventos.change_inscripcion', raise_exception=True)
 def aceptarinscripcion(request, evento_id):
     evento = get_object_or_404(Evento, id=evento_id)
-    # Verificar si el usuario ya está inscrito
-    print(evento.id, request.user.id)
-
-    if not Inscripcion.objects.filter(evento=evento, usuario=request.user).exists():
-        Inscripcion.objects.create(evento=evento, usuario=request.user, aceptado=True)
-        messages.success(request, f"Te has inscrito exitosamente al curso '{evento.curso.nombre}'.")
-    else:
-        messages.info(request, f"Ya estás inscrito en el curso '{evento.curso.nombre}'.")
+    
+    try:
+        # Verificar si el usuario ya está inscrito
+        if not Inscripcion.objects.filter(evento=evento, usuario=request.user).exists():
+            inscripcion = Inscripcion(evento=evento, usuario=request.user, aceptado=True)
+            inscripcion.save()
+            messages.success(request, f"Te has inscrito exitosamente al curso '{evento.curso.nombre}'.")
+        else:
+            messages.info(request, f"Ya estás inscrito en el curso '{evento.curso.nombre}'.")
+    except ValidationError as e:
+        messages.warning(request, f"Error: {e}")
 
     return redirect('inscripcionlista')
 
