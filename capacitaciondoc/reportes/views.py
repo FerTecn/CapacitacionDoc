@@ -2,6 +2,7 @@ import locale
 from django.shortcuts import redirect, render, get_object_or_404
 from django.http import HttpResponse
 from django.contrib import messages
+from .models import ConstanciaDocente, ConstanciaInstructor
 from usuarios.models import CustomUser
 from encuesta.models import Encuesta
 from eventos.models import Calificacion, Evento, Inscripcion
@@ -26,22 +27,34 @@ pdfmetrics.registerFont(TTFont('Montserrat', montserrat_regular_path))
 pdfmetrics.registerFont(TTFont('Montserrat-Bold', montserrat_bold_path))
 
 def generar_constancia_pdf(request, evento_id, user_id):
+    
     locale.setlocale(locale.LC_TIME, 'spanish')
-    user = CustomUser.objects.get(id=user_id)
-    encuesta_realizada = Encuesta.objects.filter(inscripcion__usuario_id=user_id, inscripcion__evento_id=evento_id).exists()
-    calificacion = Calificacion.objects.filter(inscripcion__evento_id=evento_id, inscripcion__usuario_id=user_id).first()
-    if calificacion:
-        aprobado = calificacion.calificacion.aprobatoria
-    else:
-        aprobado = False
-    
-    if encuesta_realizada or aprobado:
-        messages.warning(request, f'{user.rol} {user.get_user_full_name()} aún no cumple los requisitos para poder generar la constancia.')
-        return redirect('generar_constancia', evento_id=evento_id, user_id=user_id)
 
-    
+    user = CustomUser.objects.get(id=user_id)
+
     evento = get_object_or_404(Evento, id=evento_id)
     curso = evento.curso
+    
+    constancia = None
+    
+    if user.rol == "Docente":
+        constancia = ConstanciaDocente.objects.filter(curso=evento, docente=user.docente).first()
+        print(constancia)
+    elif user.rol == "Instructor":
+        constancia = ConstanciaInstructor.objects.filter(curso=evento, instructor=user.instructor).first()
+
+    if request.user.rol == "Instructor" and curso.instructor.user.id != request.user.id:
+        messages.warning(request, 'No tienes permiso para ver esta constancia.')
+        return redirect('home')
+    
+    inscrito = Inscripcion.objects.filter(evento=evento, usuario=user).exists()
+    if request.user.rol == "Docente" and request.user.id != user_id and not inscrito:
+        messages.warning(request, 'No tienes permiso para ver esta constancia.')
+        return redirect('home')
+    
+    if not constancia:
+        messages.warning(request, "Constancia no encontrada.")
+        return redirect('home')
 
     # Obtiene la autoridad que contenga cargo director
     # Dado que director es el mismo id para directora, obtenemos a través de cargo en masculino
@@ -54,18 +67,17 @@ def generar_constancia_pdf(request, evento_id, user_id):
     datos = {
         "nombre_receptor": user.first_name,
         "apellidos_receptor": f'{user.last_name_paterno} {user.last_name_materno}',
-        "nombre_curso": curso.nombre.upper(),
-        "fecha_inicio": evento.fechaInicio.strftime("%d de %B de %Y"),
-        "fecha_fin": evento.fechaFin.strftime("%d de %B de %Y"),
-        "duracion": f"{curso.horas} horas",
-        "fecha_emision": evento.fechaFin.strftime("%d de %B de %Y"),
+        "nombre_curso": constancia.curso.curso.nombre,
+        "fecha_inicio": constancia.curso.fechaInicio.strftime("%d de %B de %Y"),
+        "fecha_fin": constancia.curso.fechaFin.strftime("%d de %B de %Y"),
+        "duracion": f"{constancia.curso.curso.horas} horas",
+        "fecha_emision": constancia.fecha.strftime("%d de %B de %Y"),
         "firmante": autoridad.get_full_name(),
         "cargo_firmante": cargo,
         "ruta_fondo": '',
         "ruta_logo": os.path.join(settings.MEDIA_ROOT, f'formatos/constancia/{evento.fechaInicio.year}', 'header.png'),
         "ruta_firma": os.path.join(settings.MEDIA_ROOT, f'autoridades/{autoridad.puesto.cargo_masculino}/{autoridad.get_full_name()}', 'firma.png'),
     }
-    print(evento.fechaInicio.year)
 
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = f'inline; filename="constancia_{evento_id}.pdf"'
@@ -108,14 +120,14 @@ def generar_constancia_pdf(request, evento_id, user_id):
     c.drawCentredString(ancho / 2, alto - 420, f"{datos['apellidos_receptor'].upper()}")
     c.setFont("Montserrat", 14)
     if user.rol== "Instructor":
-        c.drawCentredString(ancho / 2, alto - 460, f"Por impartir el curso:")
+        c.drawCentredString(ancho / 2, alto - 460, f"POR IMPARTIR EL CURSO")
     elif user.rol== "Docente":
-        c.drawCentredString(ancho / 2, alto - 460, f"Por acreditar el curso:")
+        c.drawCentredString(ancho / 2, alto - 460, f"POR ACREDITAR EL CURSO")
     c.setFont("Montserrat-Bold", 13)
-    c.drawCentredString(ancho / 2, alto - 480, datos["nombre_curso"])
+    c.drawCentredString(ancho / 2, alto - 480, datos["nombre_curso"].upper())
     c.setFont("Montserrat", 14)
-    c.drawCentredString(ancho / 2, alto - 500, f"Realizado del {datos['fecha_inicio']} al {datos['fecha_fin']}")
-    c.drawCentredString(ancho / 2, alto - 520, f"Con duración de {datos['duracion']}")
+    c.drawCentredString(ancho / 2, alto - 500, f"REALIZADO DEL {datos['fecha_inicio'].upper()} AL {datos['fecha_fin'].upper()}")
+    c.drawCentredString(ancho / 2, alto - 520, f"CON DURACIÓN DE {datos['duracion'].upper()}")
 
     # Firma
     if os.path.exists(datos["ruta_firma"]):
@@ -198,29 +210,41 @@ def listaconstancias(request, evento_id):
         'docentes': docentes,
         'instructor': instructor,
         })
-def generar_constancia(request, evento_id, user_id):
-    user = get_object_or_404(CustomUser, id=user_id)
-    evento = get_object_or_404(Evento, id=evento_id)
 
-    if user.rol == "Instructor":
-        return redirect('descargar_constancia', evento_id=evento.id, user_id=user.id)
-    elif user.rol == "Docente":
-        encuesta_realizada = Encuesta.objects.filter(inscripcion__usuario=user, inscripcion__evento=evento).exists()
-        if encuesta_realizada:
-            message_encuesta = 'Encuesta de satisfacción <b class="text-success">realizada satisfactoriamente</b>.'
+def estatusconstancia(request, evento_id, user_id):
+    if request.user.id != user_id and request.user.rol == "Docente":
+        messages.warning(request, "No puedes generar constancias de otros docentes.")
+        return redirect('lista_cursos')
+    
+    evento = get_object_or_404(Evento, id=evento_id)
+    user = get_object_or_404(CustomUser, id=user_id)
+
+    if user.rol != "Docente":
+        messages.warning(request, "El usuario no es un docente.")
+        return redirect('lista_constancias', evento_id=evento.id)
+
+    inscripcion = Inscripcion.objects.filter(evento=evento, usuario=user).first()
+    if not inscripcion:
+        messages.warning(request, "El usuario no está inscrito en el evento.")
+        return redirect('lista_constancias', evento_id=evento.id)
+    
+    encuesta_realizada = Encuesta.objects.filter(inscripcion__usuario=user, inscripcion__evento=evento).exists()
+    if encuesta_realizada:
+        message_encuesta = 'Encuesta de satisfacción <b class="text-success">realizada satisfactoriamente</b>.'
+    else:
+        message_encuesta = 'El docente debe realizar la encuesta de satisfacción para poder generar la constancia.'
+
+    calificacion = Calificacion.objects.filter(inscripcion__evento=evento, inscripcion__usuario=user).first()
+    if calificacion:
+        aprobado = calificacion.calificacion.aprobatoria
+        if aprobado:
+            message_calificacion = f'Calificación obtenida: <b class="text-success">{calificacion.calificacion}</b>'
         else:
-            message_encuesta = 'El docente debe realizar la encuesta de satisfacción para poder generar la constancia.'
-        calificacion = Calificacion.objects.filter(inscripcion__evento=evento, inscripcion__usuario=user).first()
-        if calificacion:
-            aprobado = calificacion.calificacion.aprobatoria
-            if aprobado:
-                message_calificacion = f'Calificación obtenida: <b class="text-success">{calificacion.calificacion}</b>'
-            else:
-                message_calificacion = f'<b class="text-danger">Calificación reprobatoria: {calificacion.calificacion}.</b> Lamentamos que no hayas aprobado el curso.'
-        else:
-            aprobado = None
-            message_calificacion = f"<b>Sin calificación.</b> <br>Una vez el docente culmine el curso satisfactoriamente, obtendrá una calificación asignada por el instructor {evento.curso.instructor.user.get_user_full_name()}."
-    print(encuesta_realizada)
+            message_calificacion = f'<b class="text-danger">Calificación reprobatoria: {calificacion.calificacion}.</b> Lamentamos que no hayas aprobado el curso.'
+    else:
+        aprobado = None
+        message_calificacion = f"<b>Sin calificación.</b> <br>Una vez el docente culmine el curso satisfactoriamente, obtendrá una calificación asignada por el instructor {evento.curso.instructor.user.get_user_full_name()}."
+
     return render(request, 'generar_constancia.html', {
         'evento': evento, 
         'user': user, 
@@ -230,3 +254,56 @@ def generar_constancia(request, evento_id, user_id):
         'message_encuesta': message_encuesta,
         'message_calificacion': message_calificacion,
     })
+
+def generarconstanciadocente(request, evento_id, user_id):
+    if request.user.rol == "Docente" and request.user.id != user_id:
+        messages.warning(request, "No puedes generar constancias de otros docentes.")
+        return redirect('estatus_constancia_docente', evento_id=evento_id, user_id=user_id)
+    
+    docente = get_object_or_404(Docente, user_id=user_id)
+    evento = get_object_or_404(Evento, id=evento_id)
+
+    inscrito = Inscripcion.objects.filter(evento__id=evento_id, usuario=docente.user).exists()
+    if not inscrito:
+        messages.warning(request, "No estas inscrito en el evento.")
+        return redirect('estatus_constancia_docente', evento_id=evento.id, user_id=docente.user.id)
+    
+    encuesta = Encuesta.objects.filter(inscripcion__evento=evento, inscripcion__usuario=docente.user).first()
+    if not encuesta:
+        messages.warning(request, "El docente debe realizar la encuesta de satisfacción para poder generar la constancia.")
+        return redirect('estatus_constancia_docente', evento_id=evento.id, user_id=docente.user.id)
+        
+    calificacion = Calificacion.objects.filter(inscripcion__evento=evento, inscripcion__usuario=docente.user).first()
+    if not calificacion or not calificacion.calificacion.aprobatoria:
+        messages.warning(request, "El docente debe aprobar el curso para poder generar la constancia.")
+        return redirect('estatus_constancia_docente', evento_id=evento.id, user_id=docente.user.id)
+        
+    constancia, created = ConstanciaDocente.objects.get_or_create(
+        curso = evento,
+        docente = docente,
+        calificacion = calificacion,
+        encuesta = encuesta,
+        defaults={
+            'fecha': evento.fechaFin
+        })
+    return redirect('descargar_constancia', evento_id=evento.id, user_id=docente.user.id)
+    
+def generarconstanciainstructor(request, evento_id, user_id):
+    evento = get_object_or_404(Evento, id=evento_id)
+    instructor = get_object_or_404(Instructor, user_id=user_id)
+
+    # Comprobar que el instructor corresponde al evento del curso
+    if evento.curso.instructor.user.id == user_id:
+        constancia, created = ConstanciaInstructor.objects.get_or_create(
+            curso=evento,
+            instructor = instructor,
+            defaults={
+                'fecha': evento.fechaFin
+            })
+        return redirect('descargar_constancia', evento_id=evento.id, user_id=user_id)
+    else:
+        messages.warning(request, "El instructor no corresponde al evento del curso.")
+        if request.user.rol == "Instructor":
+            return redirect('lista_cursos')
+        elif request.user.rol != "Docente" and request.user.rol != "Instructor": 
+            return redirect('lista_constancias', evento_id=evento.id)

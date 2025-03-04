@@ -112,7 +112,7 @@
 </ul>
 {% if aprobado and encuesta_realizada %}
 <div class="w-100 text-center">
-    <a href="{% url "descargar_constancia" evento.id user.id%}" class="btn btn-primary">Descargar constancia</a>
+    <a href="{% url "generar_constancia_docente" evento.id user.id%}" class="btn btn-primary">Descargar constancia</a>
 
 </div>
 {% endif %}
