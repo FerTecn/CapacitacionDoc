@@ -1,4 +1,5 @@
 import os
+from django.utils.text import slugify
 from django.db import models
 from django.conf import settings
 from catalogos.models import Docente, Lugar, Instructor, ValorCalificacion
@@ -69,10 +70,19 @@ class Calificacion(models.Model):
         verbose_name_plural = 'Calificaciones'
         unique_together = ('inscripcion', 'fecha_calificacion')
 
+def evidencia_upload_path(instance, filename):
+    """Guarda los archivos en: media/evidencias/curso/instructor siempre como 'evidencia.png'."""
+
+    curso_slug = slugify(instance.evento.curso.nombre)
+    instructor_slug = slugify(instance.evento.curso.instructor.user.get_user_full_name())
+
+    folder_path = os.path.join("evidencias", curso_slug, instructor_slug)
+    return os.path.join(folder_path, "evidencia.jpg")  # Siempre guardado como "evidencia.jpg"
+
 class Evidencia(models.Model):
     evento = models.ForeignKey(Evento, on_delete=models.CASCADE)
     evidencia = models.BooleanField(default=False)
-    archivo_evidencia = models.ImageField(upload_to='evidencias/', blank=True, null=True)
+    archivo_evidencia = models.ImageField(upload_to=evidencia_upload_path, blank=True, null=True)
 
     class Meta:
         verbose_name_plural = 'Evidencias'

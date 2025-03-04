@@ -378,18 +378,6 @@ def evidencia(request, evento_id):
 
         if 'guardar' in request.POST:  # Si se presionó el botón "Guardar"
             if form.is_valid():
-                nueva_evidencia = request.FILES.get('archivo_evidencia', None)
-
-                # Si hay una nueva evidencia, eliminar la anterior (si existe)
-                if nueva_evidencia:
-                    if evidencia and evidencia.archivo_evidencia:
-                        fs = FileSystemStorage()
-                        fs.delete(evidencia.archivo_evidencia.name)
-                elif evidencia and not nueva_evidencia:
-                    # Si no hay nueva evidencia, mantener la existente
-                    form.instance.archivo_evidencia = evidencia.archivo_evidencia
-
-                # Guardar el formulario
                 evidencia = form.save(commit=False)
                 evidencia.evento = evento
                 evidencia.save()
