@@ -2,6 +2,9 @@ import locale
 from django.shortcuts import redirect, render, get_object_or_404
 from django.http import HttpResponse
 from django.contrib import messages
+from django.utils.timezone import now
+from django.core.exceptions import ValidationError
+
 from .models import ConstanciaDocente, ConstanciaInstructor
 from usuarios.models import CustomUser
 from encuesta.models import Encuesta
@@ -277,16 +280,21 @@ def generarconstanciadocente(request, evento_id, user_id):
     if not calificacion or not calificacion.calificacion.aprobatoria:
         messages.warning(request, "El docente debe aprobar el curso para poder generar la constancia.")
         return redirect('estatus_constancia_docente', evento_id=evento.id, user_id=docente.user.id)
-        
-    constancia, created = ConstanciaDocente.objects.get_or_create(
-        curso = evento,
-        docente = docente,
-        calificacion = calificacion,
-        encuesta = encuesta,
-        defaults={
-            'fecha': evento.fechaFin
-        })
-    return redirect('descargar_constancia', evento_id=evento.id, user_id=docente.user.id)
+    
+    constancia = ConstanciaDocente(
+        curso=evento,
+        docente=docente,
+        calificacion=calificacion,
+        encuesta=encuesta,
+        fecha=evento.fechaFin
+    )
+
+    try:
+        constancia.save()
+        return redirect('descargar_constancia', evento_id=evento.id, user_id=docente.user.id)
+    except ValidationError as e:
+        messages.warning(request, str(e))
+        return redirect('estatus_constancia_docente', evento_id=evento.id, user_id=docente.user.id)
     
 def generarconstanciainstructor(request, evento_id, user_id):
     evento = get_object_or_404(Evento, id=evento_id)
@@ -294,13 +302,18 @@ def generarconstanciainstructor(request, evento_id, user_id):
 
     # Comprobar que el instructor corresponde al evento del curso
     if evento.curso.instructor.user.id == user_id:
-        constancia, created = ConstanciaInstructor.objects.get_or_create(
+        constancia = ConstanciaInstructor(
             curso=evento,
-            instructor = instructor,
-            defaults={
-                'fecha': evento.fechaFin
-            })
-        return redirect('descargar_constancia', evento_id=evento.id, user_id=user_id)
+            instructor=instructor,
+            fecha=evento.fechaFin
+        )
+
+        try:
+            constancia.save()
+            return redirect('descargar_constancia', evento_id=evento.id, user_id=user_id)
+        except ValidationError as e:
+            messages.warning(request, str(e))
+            return redirect('lista_cursos')
     else:
         messages.warning(request, "El instructor no corresponde al evento del curso.")
         if request.user.rol == "Instructor":
