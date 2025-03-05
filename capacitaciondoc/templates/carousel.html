@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
 
   <!-- CSS -->
-  <link rel="stylesheet" href="{% static "css/carousel.css" %}">
+  <link rel="stylesheet" href="{% static "css/carousel.css" %}?v={{timestamp}}">
 
 </head>
 
@@ -15,159 +15,202 @@
   <div class="slide-container swiper">
     <div class="slide-content">
       <div class="card-wrapper swiper-wrapper">
-        <div class="custom-card swiper-slide">
+        <!-- Card para todos -->
+        <div class="custom-card swiper-slide border">
           <div class="image-content">
-            <span class="overlay"></span>
+            <span class="overlay" style="background-image: url('{% static "img/carousel/itapizaco.jpeg" %}');"></span>
+          </div>
+          <div class="card-content">
+            <h2 class="h5 font-weight-bold text-primary text-center">Instituto Tecnológico de Apizaco</h2>
+            <p class="text-center">Conoce más sobre el Instituto Tecnológico de Apizaco.</p>
+            <a href="www.apizaco.tecnm.mx" class="m-4 btn btn-success">Conocer más</a>
+          </div>
+        </div>
+        <!-- Fin Card para todos-->
 
-            <div class="card-image">
-              <img src="{{ MEDIA_URL }}carousel/profile1.jpg" alt="" class="card-img">
+        <!-- Cards para docente -->
+        {% if request.user.rol == "Docente" %}
+          <div class="custom-card swiper-slide border">
+            <div class="image-content">
+              <span class="overlay" style="background-image: url('{% static "img/carousel/curso.jpeg" %}');"></span>
+            </div>
+            <div class="card-content">
+              <h2 class="h5 font-weight-bold text-primary">Inscripciones</h2>
+              <p class="text-center">Inscribete en cursos, verifica que cursos están disponibles para ti.</p>
+              <a href="{% url "inscripcionlista" %}" class="m-4 btn btn-success">Ver cursos</a>
             </div>
           </div>
 
-          <div class="card-content">
-            <h2 class="name">David Dell</h2>
-            <p class="description">The lorem text the section that contains header with having open functionality. Lorem
-              dolor sit amet consectetur adipisicing elit.</p>
-
-            <button class="m-4 btn btn-success">View More</button>
-          </div>
-        </div>
-        <div class="custom-card swiper-slide">
-          <div class="image-content">
-            <span class="overlay"></span>
-
-            <div class="card-image">
-              <img src="{{ MEDIA_URL }}carousel/profile2.jpg" alt="" class="card-img">
+          <div class="custom-card swiper-slide border">
+            <div class="image-content">
+              <span class="overlay" style="background-image: url('{% static "img/carousel/constancia.jpeg" %}');"></span>
+            </div>
+            <div class="card-content">
+              <h2 class="h5 font-weight-bold text-primary">Tus constancias</h2>
+              <p class="text-center">¿Has culminado un curso? Verifica si ya puedes descargar tu constancia.</p>
+              <a href="{% url "lista_cursos" %}" class="m-4 btn btn-success">Consultar constancias</a>
             </div>
           </div>
 
-          <div class="card-content">
-            <h2 class="name">David Dell</h2>
-            <p class="description">The lorem text the section that contains header with having open functionality. Lorem
-              dolor sit amet consectetur adipisicing elit.</p>
-
-            <button class="m-4 btn btn-success">View More</button>
-          </div>
-        </div>
-        <div class="custom-card swiper-slide">
-          <div class="image-content">
-            <span class="overlay"></span>
-
-            <div class="card-image">
-              <img src="{{ MEDIA_URL }}carousel/profile3.jpg" alt="" class="card-img">
+          <div class="custom-card swiper-slide border">
+            <div class="image-content">
+              <span class="overlay" style="background-image: url('{% static "img/carousel/encuesta.jpeg" %}');"></span>
+            </div>
+            <div class="card-content">
+              <h2 class="h5 font-weight-bold text-primary">Tus datos personales</h2>
+              <p class="text-center">Recuerda mantener actualizados tus datos personales.</p>
+              <a href="{% url "docentelista" %}" class="m-4 btn btn-success">Mis datos personales</a>
             </div>
           </div>
 
-          <div class="card-content">
-            <h2 class="name">David Dell</h2>
-            <p class="description">The lorem text the section that contains header with having open functionality. Lorem
-              dolor sit amet consectetur adipisicing elit.</p>
-
-            <button class="m-4 btn btn-success">View More</button>
+          <div class="custom-card swiper-slide border">
+            <div class="image-content">
+              <span class="overlay" style="background-image: url('{% static "img/carousel/encuesta.jpeg" %}');"></span>
+            </div>
+            <div class="card-content">
+              <h2 class="h5 font-weight-bold text-primary">Encuestas de satisfacción</h2>
+              <p class="text-center">¿Tomas un curso? Realiza una encuesta de satisfacción y ayuda a mejorar cada curso.</p>
+              <a href="{% url "encuesta" %}" class="m-4 btn btn-success">Realizar mis encuestas de satisfacción</a>
+            </div>
           </div>
-        </div>
-        <div class="custom-card swiper-slide">
-          <div class="image-content">
-            <span class="overlay"></span>
+        {% endif %}
+        <!-- Fin Cards para docente -->
 
-            <div class="card-image">
-              <img src="{{ MEDIA_URL }}carousel/profile4.jpg" alt="" class="card-img">
+        <!-- Cards para instructor -->
+        {% if request.user.rol == "Instructor" %}
+          <div class="custom-card swiper-slide border">
+            <div class="image-content">
+              <span class="overlay" style="background-image: url('{% static "img/carousel/curso.jpeg" %}');"></span>
+            </div>
+            <div class="card-content">
+              <h2 class="h5 font-weight-bold text-primary">Tus cursos</h2>
+              <p class="text-center">Consulta tus cursos asignados, gestiona tus docentes inscritos.</p>
+              <a href="{% url "inscripcionlista" %}" class="m-4 btn btn-success">Ver mis cursos</a>
             </div>
           </div>
 
-          <div class="card-content">
-            <h2 class="name">David Dell</h2>
-            <p class="description">The lorem text the section that contains header with having open functionality. Lorem
-              dolor sit amet consectetur adipisicing elit.</p>
-
-            <button class="m-4 btn btn-success">View More</button>
-          </div>
-        </div>
-        <div class="custom-card swiper-slide">
-          <div class="image-content">
-            <span class="overlay"></span>
-
-            <div class="card-image">
-              <img src="{{ MEDIA_URL }}carousel/profile5.jpg" alt="" class="card-img">
+          <div class="custom-card swiper-slide border">
+            <div class="image-content">
+              <span class="overlay" style="background-image: url('{% static "img/carousel/asistencia.jpeg" %}');"></span>
+            </div>
+            <div class="card-content">
+              <h2 class="h5 font-weight-bold text-primary">Pase de asistencia</h2>
+              <p class="text-center">Realiza el pase de asistencia de los docentes de tus cursos.</p>
+              <a href="{% url "asistencia" %}" class="m-4 btn btn-success">Pase de asistencia</a>
             </div>
           </div>
 
-          <div class="card-content">
-            <h2 class="name">David Dell</h2>
-            <p class="description">The lorem text the section that contains header with having open functionality. Lorem
-              dolor sit amet consectetur adipisicing elit.</p>
-
-            <button class="m-4 btn btn-success">View More</button>
-          </div>
-        </div>
-        <div class="custom-card swiper-slide">
-          <div class="image-content">
-            <span class="overlay"></span>
-
-            <div class="card-image">
-              <img src="{{ MEDIA_URL }}carousel/profile6.jpg" alt="" class="card-img">
+          <div class="custom-card swiper-slide border">
+            <div class="image-content">
+              <span class="overlay" style="background-image: url('{% static "img/carousel/calificacion.jpeg" %}');"></span>
+            </div>
+            <div class="card-content">
+              <h2 class="h5 font-weight-bold text-primary">Calificaciones</h2>
+              <p class="text-center">¿Estás a punto de terminar un curso? Es momento de asignar calificaciones.</p>
+              <a href="{% url "calificacion" %}" class="m-4 btn btn-success">Asignar calificaciones</a>
             </div>
           </div>
 
-          <div class="card-content">
-            <h2 class="name">David Dell</h2>
-            <p class="description">The lorem text the section that contains header with having open functionality. Lorem
-              dolor sit amet consectetur adipisicing elit.</p>
-
-            <button class="m-4 btn btn-success">View More</button>
+          <div class="custom-card swiper-slide border">
+            <div class="image-content">
+              <span class="overlay" style="background-image: url('{% static "img/carousel/cv.jpeg" %}');"></span>
+            </div>
+            <div class="card-content">
+              <h2 class="h5 font-weight-bold text-primary">CV</h2>
+              <p class="text-center">Realiza tu CV y descárgalo.</p>
+              <a href="{% url "instructorlista" %}" class="m-4 btn btn-success">Consultar CV</a>
+            </div>
           </div>
-        </div>
-        <div class="custom-card swiper-slide">
-          <div class="image-content">
-            <span class="overlay"></span>
-
-            <div class="card-image">
-              <img src="{{ MEDIA_URL }}carousel/profile7.jpg" alt="" class="card-img">
+        {% endif %}
+        <!-- Fin Cards para instructor -->
+        
+        <!-- Cards para Capacitacion-->
+        {% if request.user.rol == "Jefe de Capacitación" %}
+          <div class="custom-card swiper-slide border">
+            <div class="image-content">
+              <span class="overlay" style="background-image: url('{% static "img/carousel/evento.jpeg" %}');"></span>
+            </div>
+            <div class="card-content">
+              <h2 class="h5 font-weight-bold text-primary">Eventos</h2>
+              <p class="text-center">¿Se realziará un nuevo curso? Crea un evento para que docentes puedan inscribirse.</p>
+              <a href="{% url "eventolista" %}" class="m-4 btn btn-success">Ir a eventos</a>
             </div>
           </div>
 
-          <div class="card-content">
-            <h2 class="name">David Dell</h2>
-            <p class="description">The lorem text the section that contains header with having open functionality. Lorem
-              dolor sit amet consectetur adipisicing elit.</p>
-
-            <button class="m-4 btn btn-success">View More</button>
-          </div>
-        </div>
-        <div class="custom-card swiper-slide">
-          <div class="image-content">
-            <span class="overlay"></span>
-
-            <div class="card-image">
-              <img src="{{ MEDIA_URL }}carousel/profile8.jpg" alt="" class="card-img">
+          <div class="custom-card swiper-slide border">
+            <div class="image-content">
+              <span class="overlay" style="background-image: url('{% static "img/carousel/encuesta.jpeg" %}');"></span>
+            </div>
+            <div class="card-content">
+              <h2 class="h5 font-weight-bold text-primary">Mejoras de cursos</h2>
+              <p class="text-center">Las encuestas de satisfacción ayudan a mejorar los cursos. Ve los resultados de las encuestas.</p>
+              <a href="{% url "encuesta" %}" class="m-4 btn btn-success">Ver resultados de encuestas de satisfacción</a>
             </div>
           </div>
 
-          <div class="card-content">
-            <h2 class="name">David Dell</h2>
-            <p class="description">The lorem text the section that contains header with having open functionality. Lorem
-              dolor sit amet consectetur adipisicing elit.</p>
-
-            <button class="m-4 btn btn-success">View More</button>
+          <div class="custom-card swiper-slide border">
+            <div class="image-content">
+              <span class="overlay" style="background-image: url('{% static "img/carousel/asistencia.jpeg" %}');"></span>
+            </div>
+            <div class="card-content">
+              <h2 class="h5 font-weight-bold text-primary">Pase de asistencia</h2>
+              <p class="text-center">También puedes realziar el pase de aistencia en los cursos.</p>
+              <a href="{% url "inscripcionlista" %}" class="m-4 btn btn-success">Realizar pase de asistencia</a>
+            </div>
           </div>
-        </div>
-        <div class="custom-card swiper-slide">
-          <div class="image-content">
-            <span class="overlay"></span>
+        {% endif %}
+        <!-- Fin Cards para capacitacion-->
 
-            <div class="card-image">
-              <img src="{{ MEDIA_URL }}carousel/profile9.jpg" alt="" class="card-img">
+        <!-- Cards para Subdireccion -->
+        {% if request.user.rol == "Subdirección" %}
+          <div class="custom-card swiper-slide border">
+            <div class="image-content">
+              <span class="overlay" style="background-image: url('{% static "img/carousel/validar.jpeg" %}');"></span>
+            </div>
+            <div class="card-content">
+              <h2 class="h5 font-weight-bold text-primary">Validar cursos</h2>
+              <p class="text-center">¿Hay un nuevo curso que necesita tu aprobación? Verifica los cursos y validalos.</p>
+              <a href="{% url "validarcursolista" %}" class="m-4 btn btn-success">Ver cursos</a>
+            </div>
+          </div>
+          
+          <div class="custom-card swiper-slide border">
+            <div class="image-content">
+              <span class="overlay" style="background-image: url('{% static "img/carousel/curso.jpeg" %}');"></span>
+            </div>
+            <div class="card-content">
+              <h2 class="h5 font-weight-bold text-primary">Consultar cursos</h2>
+              <p class="text-center">Consulta los cursos y su información.</p>
+              <a href="{% url "inscripcionlista" %}" class="m-4 btn btn-success">Ver cursos registrados</a>
+            </div>
+          </div>
+        {% endif %}
+        <!-- Fin Cards para Subdirección-->
+
+        <!-- Cards para Jefe Académico -->
+        {% if request.user.rol == "Jefe Académico" %}
+          <div class="custom-card swiper-slide border">
+            <div class="image-content">
+              <span class="overlay" style="background-image: url('{% static "img/carousel/oficio.jpeg" %}');"></span>
+            </div>
+            <div class="card-content">
+              <h2 class="h5 font-weight-bold text-primary">Oficio de comisión</h2>
+              <p class="text-center">Crea y descarga el oficio de comisión por departamento.</p>
+              <a href="{% url "inscripcionlista" %}" class="m-4 btn btn-success">Oficio de comisión</a>
             </div>
           </div>
 
-          <div class="card-content">
-            <h2 class="name">David Dell</h2>
-            <p class="description">The lorem text the section that contains header with having open functionality. Lorem
-              dolor sit amet consectetur adipisicing elit.</p>
-
-            <button class="m-4 btn btn-success">View More</button>
+          <div class="custom-card swiper-slide border">
+            <div class="image-content">
+              <span class="overlay" style="background-image: url('{% static "img/carousel/curso.jpeg" %}');"></span>
+            </div>
+            <div class="card-content">
+              <h2 class="h5 font-weight-bold text-primary">Ver cursos</h2>
+              <p class="text-center">Consulta los cursos creados y que han sido validados por Subdirección.</p>
+              <a href="{% url "inscripcionlista" %}" class="m-4 btn btn-success">Ver cursos</a>
+            </div>
           </div>
-        </div>
+        {% endif %}
       </div>
     </div>
 
