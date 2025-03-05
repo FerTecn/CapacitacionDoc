@@ -9,6 +9,8 @@ from plancapacitacion.models import RegistroCurso
 from .models import Encuesta
 from .forms import EncuestaForm
 from django.contrib import messages
+from django.core.exceptions import ValidationError
+from django.utils.timezone import now
 
 # Create your views here.
 @login_required(login_url='signin')
@@ -16,24 +18,41 @@ from django.contrib import messages
 def listarcursos4encuesta(request):
     if request.user.rol == "Docente":
         # Filtra las inscripciones del usuario docente autenticado
-        inscripciones = Inscripcion.objects.filter(usuario=request.user)
+        inscripciones = Inscripcion.objects.filter(usuario=request.user).order_by('evento__curso__nombre')
         cursos = []
         for inscripcion in inscripciones:
+            curso = inscripcion.evento
             encuesta_hecha = Encuesta.objects.filter(inscripcion=inscripcion).exists()
+
+            # Verificar si el curso ya ha comenzado
+            curso_comenzado = curso.fechaInicio <= now().date()
+            curso_finalizado = curso.fechaFin < now().date()
+            print(curso)
+            print(curso_comenzado)
+            print(curso_finalizado)
+
             cursos.append({
                 'curso': inscripcion.evento.curso,
                 'evento': inscripcion.evento,
                 'encuesta_hecha': encuesta_hecha,
+                'curso_comenzado': curso_comenzado,
+                'curso_finalizado': curso_finalizado,
             })
     else:
         # Muestra todos los cursos que están activos y tienen un evento
-        eventos = Evento.objects.all()
+        eventos = Evento.objects.all().order_by('curso__nombre')
         cursos = []
 
         for evento in eventos:
+            # Verificar si el curso ya ha comenzado
+            curso_comenzado = evento.fechaInicio <= now().date()
+            curso_finalizado = evento.fechaFin < now().date()
+
             cursos.append({
                 'curso': evento.curso,
                 'evento': evento,
+                'curso_comenzado': curso_comenzado,
+                'curso_finalizado': curso_finalizado,
                 })
     return render(request, 'cursosparaencuesta.html', {'cursos': cursos})
 
@@ -62,9 +81,13 @@ def encuesta(request, curso_id):
         
         form = EncuestaForm(request.POST)
         if form.is_valid():
-            form.instance.inscripcion = inscripcion
-            form.save()
-            return redirect('gracias')  # Redirige a una página de agradecimiento
+            try:
+                form.instance.inscripcion = inscripcion
+                form.save()
+                return redirect('gracias')  # Redirige a una página de agradecimiento
+            except ValidationError as e:
+                messages.warning(request, str(e))
+                return redirect('encuesta')
     else:
         form = EncuestaForm()
 

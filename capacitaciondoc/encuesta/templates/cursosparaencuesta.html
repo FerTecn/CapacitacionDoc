@@ -24,6 +24,7 @@
         {% endif %}
     </div>
 </div>
+{{curso_comenzado}}
 {% if messages %}
     <div class="messages-container">
         {% for message in messages %}
@@ -53,26 +54,80 @@
                 </thead>
                 <tbody>
                     {% for curso in cursos %}
-                    <tr id="evento-{{ evento.id }}">
-                        <td>{{ curso.curso.nombre }}</td>
-                        <td>{{ curso.curso.instructor }}</td>
-                        <td>{{ curso.evento.fechaInicio }} - {{ curso.evento.fechaFin }}</td>
-                        <td>
-                            <!-- Opciones -->
-                            {% if request.user.rol == "Docente" %}
-                                {% if curso.encuesta_hecha %}
-                                    <button class="btn btn-secondary btn-sm" disabled>Encuesta realizada</button>
-                                {% else %}
-                                    <a href="{% url 'realizarencuesta' curso.curso.id %}" class="btn btn-success btn-sm">Realizar encuesta</a>
-                                {% endif %}
-                            {% else %}
-                                <a href="{% url 'resultados' curso.evento.curso.id %}" class="btn btn-success btn-sm">Ver resultados</a>
-                            {% endif %}
-                        </td>
-                    </tr>
+                        {% if not curso.curso_finalizado %}
+                            <tr id="evento-{{ evento.id }}">
+                                <td>{{ curso.curso.nombre }}</td>
+                                <td>{{ curso.curso.instructor }}</td>
+                                <td>{{ curso.evento.fechaInicio }} - {{ curso.evento.fechaFin }}</td>
+                                <td>
+                                    <!-- Opciones -->
+                                    {% if request.user.rol == "Docente" %}
+                                        {% if curso.encuesta_hecha %}
+                                            <button class="btn btn-secondary btn-sm" disabled>Encuesta realizada</button>
+                                        {% else %}
+                                            {% if not curso.curso_comenzado %}
+                                                <p class="text-danger">El curso aun no ha comenzado, no puedes realizar la encuesta.</p>
+                                            {% else %}
+                                                <a href="{% url 'realizarencuesta' curso.curso.id %}" class="btn btn-success btn-sm">Realizar encuesta</a>
+                                            {% endif %}
+                                        {% endif %}
+                                    {% else %}
+                                        <a href="{% url 'resultados' curso.evento.curso.id %}" class="btn btn-success btn-sm">Ver resultados</a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endif %}
                     {% endfor %}
                 </tbody>
             </table>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow mb-4">
+    <!-- Card Header - Accordion -->
+    <a href="#collapseVencidos" class="d-block card-header py-3" data-toggle="collapse"
+        role="button" aria-expanded="true" aria-controls="collapseVencidos">
+        <h4 class="m-0 font-weight-bold text-primary">Lista de cursos finalizados</h4>
+    </a>
+    <!-- Card Content - Collapse -->
+    <div class="collapse" id="collapseVencidos">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Nombre del curso</th>
+                            <th>Instructor</th>
+                            <th>Fecha</th>
+                            <th>Opciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for curso in cursos %}
+                            {% if curso.curso_finalizado %}
+                                <tr id="evento-{{ evento.id }}">
+                                    <td>{{ curso.curso.nombre }}</td>
+                                    <td>{{ curso.curso.instructor }}</td>
+                                    <td>{{ curso.evento.fechaInicio }} - {{ curso.evento.fechaFin }}</td>
+                                    <td>
+                                        <!-- Opciones -->
+                                        {% if request.user.rol == "Docente" %}
+                                            {% if curso.encuesta_hecha %}
+                                                <button class="btn btn-secondary btn-sm" disabled>Encuesta realizada</button>
+                                            {% else %}
+                                                <button class="btn btn-danger btn-sm" disabled>Encuesta no realizada</button>
+                                            {% endif %}
+                                        {% else %}
+                                            <a href="{% url 'resultados' curso.evento.curso.id %}" class="btn btn-success btn-sm">Ver resultados</a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>

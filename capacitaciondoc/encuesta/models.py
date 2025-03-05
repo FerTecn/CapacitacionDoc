@@ -1,7 +1,8 @@
 from django.db import models
-from django.conf import settings
 from eventos.models import Inscripcion
-from plancapacitacion.models import RegistroCurso
+
+from django.core.exceptions import ValidationError
+from django.utils import timezone
 
 # Create your models here.
 class Encuesta(models.Model):
@@ -37,6 +38,19 @@ class Encuesta(models.Model):
     insfraestructura6= models.IntegerField(choices=[(i, str(i)) for i in range (1, 6)], null=True, blank=True)
     
     comentarios= models.TextField(blank=True, null=True) 
+
+    def clean(self):
+        # Verificar si el curso ha comenzado y no ha finalizado
+        if self.inscripcion:
+            curso = self.inscripcion.evento.curso
+            curso_comenzado = curso.fechaInicio <= timezone.now()
+            curso_finalizado = curso.fechaFin < timezone.now()
+
+            if not curso_comenzado:
+                raise ValidationError('No puedes realizar la encuesta hasta que el curso haya comenzado.')
+
+            if curso_finalizado:
+                raise ValidationError('El curso ya ha finalizado. No puedes realizar la encuesta.')
     
     def __str__(self):
         return f"Encuesta #{self.id} de {self.inscripcion.usuario} para {self.inscripcion.evento.curso.nombre} - {self.fecha_realizacion}"
