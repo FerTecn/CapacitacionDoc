@@ -1,35 +1,33 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Añadir un nuevo Lugar{% endblock %}
+{% block title %}- Añadir un nuevo Lugar{% endblock %}
 
 {% block content %}
-<div class="container">
-    <h1 class="h3 mb-2 text-gray-800">Añadir Lugar</h1>
-    <div class="card">
-        <div class="card-body">
-            Rellena el siguiente formulario para añadir un nuevo lugar.
+<h1 class="h3 mb-2 text-gray-800">Añadir Lugar</h1>
+<div class="card mb-4">
+    <div class="card-body">
+        Rellena el siguiente formulario para añadir un nuevo lugar.
+    </div>
+</div>
+
+<form method="post">
+    {% csrf_token %}
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label for="nombreEdificio">Nombre del Edificio</label>
+            <input type="text" name="nombreEdificio" id="nombreEdificio" class="form-control" required>
+        </div>
+        <div class="form-group col-md-6">
+            <label for="ubicacion">Ubicación</label>
+            <input type="text" name="ubicacion" id="ubicacion" class="form-control" required>
         </div>
     </div><br>
 
-    <form method="post">
-        {% csrf_token %}
-        <div class="form-row">
-            <div class="form-group col-md-6">
-                <label for="nombreEdificio">Nombre del Edificio</label>
-                <input type="text" name="nombreEdificio" id="nombreEdificio" class="form-control" required>
-            </div>
-            <div class="form-group col-md-6">
-                <label for="ubicacion">Ubicación</label>
-                <input type="text" name="ubicacion" id="ubicacion" class="form-control" required>
-            </div>
-        </div><br>
+    <div class='text-center'>
+    <button type="submit" class="btn btn-success">Guardar</button>
+    <a href="{% url 'crearevento' request.session.evento_id %}" class="btn btn-secondary">Cancelar</a>
+    </div>
 
-        <div class='text-center'>
-        <button type="submit" class="btn btn-primary">Guardar</button>
-        <a href="{% url 'crearevento' request.session.evento_id %}" class="btn btn-secondary">Cancelar</a>
-        </div>
-
-    </form>
-</div>
+</form>
 {% endblock %}

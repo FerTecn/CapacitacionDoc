@@ -6,16 +6,14 @@
 {% block content %}
 <form method="post">
     {% csrf_token %}
-    <div class="d-flex justify-content-between mb-3">
+    <div class="d-flex align-items-start flex-column mb-3">
         <a href="{% url 'oficioslista' %}?departamento_id={{ departamento_id }}" class="btn btn-secondary btn-icon-split mr-2">
             <span class="icon text-white-50">
                 <i class="fas fa-arrow-left"></i>
             </span>
             <span class="text">Cancelar y volver</span>
         </a>
-        <button type="submit" class="btn btn-success ml-2">Guardar cambios</button>
     </div>
-
 
     <h1 class="h3 mb-2 text-gray-800">Actualizar oficio de comisión</h1>
     <div class="card mb-4">
@@ -45,14 +43,8 @@
             </div>
         </div>
 
-    <div class="d-flex justify-content-between mb-3">
-        <a href="{% url 'oficioslista' %}?departamento_id={{ request.GET.departamento_id }}" class="btn btn-secondary btn-icon-split mr-2">
-            <span class="icon text-white-50">
-                <i class="fas fa-arrow-left"></i>
-            </span>
-            <span class="text">Cancelar y volver</span>
-        </a>
-        <button type="submit" class="btn btn-success ml-2">Añadir</button>
+    <div class="d-flex align-items-end flex-column mb-3">
+        <button type="submit" class="btn btn-success ml-2">Guardar cambios</button>
     </div>
 
 </form>

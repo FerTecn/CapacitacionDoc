@@ -313,7 +313,10 @@ def generarconstanciainstructor(request, evento_id, user_id):
             return redirect('descargar_constancia', evento_id=evento.id, user_id=user_id)
         except ValidationError as e:
             messages.warning(request, str(e))
-            return redirect('lista_cursos')
+            if request.user.rol == "Instructor":
+                return redirect('lista_cursos')
+            elif request.user.rol != Docente and request.user.rol != "Instructor":
+                return redirect('lista_constancias', evento_id=evento.id)
     else:
         messages.warning(request, "El instructor no corresponde al evento del curso.")
         if request.user.rol == "Instructor":

@@ -3,13 +3,12 @@
 {% block title %}- Cambiar Instructor{% endblock %}
 
 {% block content %}
-<div class="container">
-    <h1 class="h3 mb-2 text-gray-800">Cambiar instructor</h1>
-    <div class="card">
-        <div class="card-body">
-            Seleccione en nuevo instructor, en caso de no estar añada uno nuevo
-        </div>
-    </div><br>
+<h1 class="h3 mb-2 text-gray-800">Cambiar instructor</h1>
+<div class="card mb-4">
+    <div class="card-body">
+        Seleccione en nuevo instructor.
+    </div>
+</div>
         
     <form method="post">
         {% csrf_token %}
@@ -23,18 +22,14 @@
                         </option>
                     {% endfor %}
                 </select>
-                <!-- Botón para agregar un nuevo instructor -->
-                <a href="{% url 'añadirinstructor' evento_id=evento.id %}" class="btn btn-success ml-2">Agregar Nuevo Instructor</a>
             </div>
         </div><br>
 
         <div class='text-center'>
-            <button type="submit" class="btn btn-primary">Guardar</button>
+            <button type="submit" class="btn btn-success">Guardar</button>
             <a href="{% url 'crearevento' evento_id=evento.id %}" class="btn btn-secondary">Cancelar</a>
         </div> 
     </form>
-
-</div>
 {% endblock %}
 
 

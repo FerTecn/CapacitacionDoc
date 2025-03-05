@@ -9,7 +9,7 @@
 {% endblock %}
 
 {% block content %}
-    <div class="d-flex justify-content-between mb-3">
+    <div class="d-flex align-items-start flex-column mb-3">
         <a href="{% url 'lista_cursos' %}" class="btn btn-secondary btn-icon-split mr-2">
             <span class="icon text-white-50">
                 <i class="fas fa-arrow-left"></i>
@@ -44,7 +44,7 @@
             </div>
             <div class="col-md-8">
                 <h6><strong>Nombre del instructor: </strong>{{instructor}}</h6>
-                <a href="{% url "generar_constancia_instructor" evento.id instructor.user.id %}" class="btn btn-success">Descargar constancia</a>
+                <a href="{% url "generar_constancia_instructor" evento.id instructor.user.id %}" class="btn btn-success">Generar constancia</a>
             </div>
         </div>
     </div>

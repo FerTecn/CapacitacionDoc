@@ -10,7 +10,7 @@ urlpatterns = [
 
     path('lugarcrearnuevo/', views.lugarcrearnuevo, name='lugarcrearnuevo'), 
     path('evento/<int:evento_id>/cambiarinstructor/', views.cambiarinstructor, name='cambiarinstructor'), 
-    path('evento/<int:evento_id>/añadirinstructor/', views.añadirinstructor, name='añadirinstructor'),
+    # path('evento/<int:evento_id>/añadirinstructor/', views.añadirinstructor, name='añadirinstructor'),
     
     #Inscripcion
     path('inscripcionlista/', views.inscripcionlista, name='inscripcionlista'),

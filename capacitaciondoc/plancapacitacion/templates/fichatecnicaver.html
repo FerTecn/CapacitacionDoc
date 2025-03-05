@@ -4,17 +4,17 @@
 {% block title %}- Consulta de ficha tecnica del curso {{ficha.curso.nombre }}{% endblock %}
 
 {% block content %}
+<div class="d-flex align-items-start flex-column mb-3">
+    <a href="{% url 'fichatecnica' %}" class="btn btn-secondary btn-icon-split mr-2">
+        <span class="icon text-white-50">
+            <i class="fas fa-arrow-left"></i>
+        </span>
+        <span class="text">Cancelar y volver</span>
+    </a>
+</div>
 
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
     <h1 class="h3 mb-0 text-gray-800">Consulta de ficha técnica</h1>
-    <form action="{% url 'generarficha' ficha_id=ficha.id %}" method="get">
-        <button type="submit" class="d-sm-inline-block btn btn-primary btn-icon-split">
-            <span class="icon text-white-50">
-                <i class="fas fa-download"></i>
-            </span>
-            <span class="text">Descargar Ficha Técnica</span>
-        </button>
-    </form>
 </div>
 {% if messages %}
     <div class="messages-container">
@@ -148,9 +148,6 @@
             </div>
         </div>
     </div>
-</div>
-<div class="text-center">
-    <a href="{% url 'fichatecnica' %}" class="btn btn-primary">Regresar</a>
 </div>
 
 {% endblock %}

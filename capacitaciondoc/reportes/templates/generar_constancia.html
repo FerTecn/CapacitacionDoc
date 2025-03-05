@@ -9,7 +9,7 @@
 {% endblock styles %}
 
 {% block content %}
-<div class="d-flex justify-content-between mb-3">
+<div class="d-flex align-items-start flex-column mb-3">
     <a {% if user.rol not in 'Docente, Instructor' %}href='{% url "lista_constancias" evento.id %}'
     {% else %}href='{% url "lista_cursos" %}'
     {% endif %} class="btn btn-secondary btn-icon-split mr-2">
@@ -50,7 +50,7 @@
     <!--Section Title -->
         <a href="#!">
             <span class="circle font-weight-bold h4">
-                {% if encuesta_realizada %}<i class="fa-solid fa-check"></i>
+                {% if encuesta_realizada %}<i class="fa-solid fa-check" style="line-height: 48px;"></i>
                 {% else %}1
                 {% endif %}
             </span>
@@ -71,7 +71,7 @@
         <!--Section Title -->
         <a href="#!">
             <span class="circle font-weight-bold h4">
-                {% if calificacion and aprobado %}<i class="fa-solid fa-check"></i>
+                {% if calificacion and aprobado %}<i class="fa-solid fa-check" style="line-height: 48px;"></i>
                 {% elif calificacion and not aprobado %}<i class="fa-solid fa-triangle-exclamation"></i>
                 {% else %}2{% endif %}
             </span>
@@ -91,7 +91,7 @@
     <li class="{% if encuesta_realizada and aprobado %}completed{% else %}{% endif %}">
         <a href="#!">
             <span class="circle font-weight-bold h4">
-                {% if encuesta_realizada and aprobado %}<i class="fa-solid fa-check"></i>
+                {% if encuesta_realizada and aprobado %}<i class="fa-solid fa-check" style="line-height: 48px;"></i>
                 {% else %}4
                 {% endif %}
             </span>

@@ -14,6 +14,14 @@
 </style>    
 {% endblock styles %}
 {% block content %}
+<div class="d-flex align-items-start flex-column mb-3">
+    <a href="{% url 'fichatecnica' %}" class="btn btn-secondary btn-icon-split mr-2">
+        <span class="icon text-white-50">
+            <i class="fas fa-arrow-left"></i>
+        </span>
+        <span class="text">Cancelar y volver</span>
+    </a>
+</div>
 
 {% if messages %}
     {% for message in messages %}
@@ -86,7 +94,7 @@
                     <div class="contenido-form">
                         <div class="form-row border rounded p-4 mb-4 bg-light">
                             {{ form.id }}
-                            <div class="form-group col-md-4 ">
+                            <div class="form-group col-md-3 ">
                                 <b>{{ form.tema.label_tag }}</b>
                                 {{ form.tema }}
                             </div>
@@ -100,15 +108,12 @@
                                 {{ form.actividades }}
                             </div>
                             {{ form.DELETE }}  <!-- Campo oculto DELETE -->
-                            <div class="form-group col-md-1 text-center">
+                            <div class="form-group col-md-2 text-center">
                                 <button type="button" class="btn btn-danger eliminar-contenido">
                                     <i class="fas fa-trash"></i> Eliminar
                                 </button>
                             </div>
                         </div>
-                        {% comment %} {{ form.as_p }} {% endcomment %}
-                        
-                        
                     </div>
                 {% endfor %}
             </div>
@@ -174,7 +179,9 @@
         </div>
     </div>
 
-    <button type="submit" class="btn btn-primary">Guardar Ficha</button>
+    <div class="d-flex align-items-end flex-column mb-3">
+        <button type="submit" class="btn btn-success ml-2">Crear ficha técnica</button>
+    </div>
 </form>
 {% endblock %}
 

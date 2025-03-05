@@ -4,7 +4,7 @@
 {% block title %}- Ver Departamento{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between mb-3">
+<div class="d-flex align-items-start flex-column mb-3">
     <a href="{% url 'departamentolista' %}" class="btn btn-secondary btn-icon-split mr-2">
         <span class="icon text-white-50">
             <i class="fas fa-arrow-left"></i>
@@ -63,13 +63,4 @@
         </div>
     </div>
 </div>
-<div class="d-flex justify-content-between mb-3">
-    <a href="{% url 'departamentolista' %}" class="btn btn-secondary btn-icon-split mr-2">
-        <span class="icon text-white-50">
-            <i class="fas fa-arrow-left"></i>
-        </span>
-        <span class="text">Volver</span>
-    </a>
-</div>
-
 {% endblock %}

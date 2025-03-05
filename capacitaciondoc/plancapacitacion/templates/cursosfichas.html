@@ -60,12 +60,13 @@
                             {% comment %} {% if perms.plancapacitacion.view_registrocurso %} {% endcomment %}
                             {% with ficha=curso.fichatecnica_set.first %}
                                 {% if ficha %}
+                                    <a href="{% url "fichatecnicaver" curso.id %}" class="btn btn-info btn-sm">Ver</a>
                                     {% if ficha.contenidos_tematicos.all and ficha.criterios_evaluacion.all %}
-                                        <a href="{% url 'generarficha' curso.id %}" class="btn btn-info btn-sm">Descargar ficha técnica</a>
+                                        <a href="{% url 'generarficha' curso.id %}" class="btn btn-success btn-sm">Descargar</a>
                                     {% endif %}
-                                    <a href="{% url 'fichatecnicacrear' curso.id %}" class="btn btn-warning btn-sm">Modificar Ficha Técnica</a>
+                                    <a href="{% url 'fichatecnicacrear' curso.id %}" class="btn btn-warning btn-sm">Modificar</a>
                                 {% else %}
-                                    <a href="{% url 'fichatecnicacrear' curso.id %}" class="btn btn-success btn-sm">Crear Ficha Técnica</a>
+                                    <a href="{% url 'fichatecnicacrear' curso.id %}" class="btn btn-success btn-sm">Crear</a>
                                 {% endif %}
                             {% endwith %}
                         </td>
