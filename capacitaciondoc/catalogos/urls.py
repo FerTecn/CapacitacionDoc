@@ -101,4 +101,11 @@ urlpatterns = [
     path('formatoconstanciacrear/', views.formatoconstanciacrear, name='formatoconstanciacrear'),
     path('formatoconstanciaver/<int:formato_id>/', views.formatoconstanciaver, name='formatoconstanciaver'),
     path('formatoconstanciaactualizar/<int:formato_id>/', views.formatoconstanciaactualizar, name='formatoconstanciaactualizar'),
+    
+    #CARRERAS
+    path('carreralista/', views.carreralista, name='carreralista'),
+    path('carreracrear/', views.carreracrear, name='carreracrear'),
+    path('carreraver/<int:carrera_id>/', views.carreraver, name='carreraver'),
+    path('carreraactualizar/<int:carrera_id>/', views.carreraactualizar, name='carreraactualizar'),
+    path('carreraeliminar/<int:carrera_id>/', views.carreraeliminar, name='carreraeliminar'),
 ]

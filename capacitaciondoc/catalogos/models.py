@@ -286,3 +286,12 @@ class FormatoConstancia(models.Model):
         default=datetime.datetime.now().year
     )
     vigente = models.BooleanField(default=False)   
+    
+class Carrera(models.Model):
+    carrera= models.CharField(max_length=100)
+    
+    def __str__(self):
+        return self.carrera
+    
+    class Meta:
+        verbose_name_plural = 'Carreras'

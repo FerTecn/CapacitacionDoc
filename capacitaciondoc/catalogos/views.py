@@ -22,7 +22,8 @@ from .models import (
     ExperienciaDocente, 
     ExperienciaLaboral, 
     FormacionAcademica, 
-    ParticipacionInstructor)
+    ParticipacionInstructor, 
+    Carrera)
 from .models import (
     Docente, Instructor,
     GradoAcademico, Lugar, Sede, Departamento,
@@ -35,7 +36,7 @@ from .forms import (
 from .forms import (
     AñadirInstructorForm, ActualizarInstructorForm, FormacionAcademicaForm,
     ExperienciaLaboralForm, ExperienciaDocenteForm,
-    ParticipacionInstructorForm
+    ParticipacionInstructorForm, CarreraForm
 )
 # Create your views here.
 
@@ -1058,3 +1059,54 @@ def formatoconstanciaactualizar(request, formato_id):
     else:
         form = FormatoConstanciaForm(instance=formato)
     return render(request, 'formatoconstanciaactualizar.html', {'form': form, 'formato': formato})
+
+#CARRERAS
+@login_required(login_url='signin')
+@permission_required('catalogos.view_carrera', raise_exception=True)
+def carreralista(request):
+    carreras = Carrera.objects.all()
+    return render(request, 'carreralista.html', {'carreras': carreras})
+
+@login_required(login_url='signin')
+@permission_required('catalogos.add_carrera', raise_exception=True)
+def carreracrear(request):
+    if request.method == 'POST':
+        form = CarreraForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Carrera creada correctamente.")
+            return redirect('carreralista') 
+    else:
+        form = CarreraForm()
+
+    return render(request, 'carreracrear.html', {'form': form})
+
+@login_required(login_url='signin')
+@permission_required('catalogos.view_carrera', raise_exception=True)
+def carreraver(request, carrera_id):
+    carrera = get_object_or_404(Carrera, id=carrera_id)
+    return render(request, 'carreraver.html', {'carrera': carrera})
+
+@login_required(login_url='signin')
+@permission_required('catalogos.change_carrera', raise_exception=True)
+def carreraactualizar(request, carrera_id):
+    carrera = get_object_or_404(Carrera, id=carrera_id)
+    if request.method == 'POST':
+        form = CarreraForm(request.POST, instance=carrera)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Carrera actualizado correctamente.")
+            return redirect('carreralista') 
+    else:
+        form = CarreraForm(instance=carrera)
+    return render(request, 'carreraactualizar.html', {'form': form, 'carrera': carrera})
+
+@login_required(login_url='signin')
+@permission_required('catalogos.delete_carrera', raise_exception=True)
+def carreraeliminar(request, carrera_id):
+    carrera = get_object_or_404(Carrera, id=carrera_id)
+    if request.method == 'POST':
+        carrera.delete()
+        messages.success(request, f"Carrera {carrera} eliminado correctamente.")
+        return redirect('carreralista')  
+    return render(request, 'carreraeliminar.html', {'carrera': carrera})

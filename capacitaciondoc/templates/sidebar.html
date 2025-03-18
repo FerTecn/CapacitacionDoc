@@ -58,6 +58,7 @@
                 <a class="collapse-item" href="{% url 'lugarlista' %}">Lugar</a>
                 <a class="collapse-item" href="{% url 'perfilcursolista' %}">Perfil de curso</a>
                 <a class="collapse-item" href="{% url 'periodolista' %}">Periodo</a>
+                <a class="collapse-item" href="{% url 'carreralista' %}">Carreras</a>
                 <a class="collapse-item" href="{% url 'autoridadlista' %}">Autoridades</a>
                 <a class="collapse-item" href="{% url 'cargoautoridadlista' %}">Cargos de autoridades</a>
                 <a class="collapse-item" href="{% url 'valorcalificacionlista' %}">Valores para calificación</a>
@@ -92,7 +93,13 @@
                     {% if request.user.rol == "Jefe Académico" or request.user.rol == "Subdirección" %}
                         <a class="collapse-item" href="{% url 'registrocursolista' %}">Registro de cursos</a>
                         <a class="collapse-item" href="{% url 'validarcursolista' %}">Validación de cursos</a>
+                        
                     {% endif %}
+
+                    <!-- Para Jefe de Capacitación y Jefe Académico -->
+                {% if request.user.rol == "Jefe de Capacitación" or request.user.rol == "Jefe Académico" %}
+                    <a class="collapse-item" href="">Detección de necesidades</a>
+                {% endif %}
                 </div>
             </div>
         </li>
@@ -152,6 +159,7 @@
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">Generar:</h6>
                 <a class="collapse-item" href="{% url 'eventolista' %}">Eventos</a>
+                <a class="collapse-item" href="">Criterios de selección</a>
                 <h6 class="collapse-header">Gestión de los cursos:</h6>
                 <a class="collapse-item" href="{% url 'asistencia' %}">Asistencia</a>
             </div>

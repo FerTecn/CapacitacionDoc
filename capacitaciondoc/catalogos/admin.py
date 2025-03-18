@@ -9,7 +9,8 @@ from .models import (
     ExperienciaLaboral, 
     FormacionAcademica, 
     Instructor, 
-    ParticipacionInstructor)
+    ParticipacionInstructor, 
+    Carrera)
 from .models import (
     Docente, Genero, Departamento, GradoAcademico, Lugar, Periodo, 
     Sede, Dirigido, PerfilCurso, Autoridad)
@@ -28,6 +29,7 @@ admin.site.register(ExperienciaDocente)
 admin.site.register(ParticipacionInstructor)
 admin.site.register(ValorCalificacion)
 admin.site.register(CargoAutoridad)
+admin.site.register(Carrera)
     
 class InstructorAdmin(admin.ModelAdmin):
     # Personalización de cómo se muestra la información de un Docente

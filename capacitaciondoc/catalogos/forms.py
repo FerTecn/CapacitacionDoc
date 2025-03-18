@@ -2,7 +2,7 @@ from django import forms
 from .models import (
     CargoAutoridad, ExperienciaDocente, ExperienciaLaboral, FormacionAcademica, FormatoConstancia, FormatoDepartamento, 
     GradoAcademico, Lugar, ParticipacionInstructor, Sede, 
-    Instructor, Docente, Autoridad,
+    Instructor, Docente, Autoridad, Carrera,
     Departamento, Dirigido, Genero, PerfilCurso, Periodo, ValorCalificacion)
 
 #GRADO ACADEMICO
@@ -576,3 +576,14 @@ class FormatoConstanciaUpdateForm(forms.ModelForm):
                 'id': 'headerimg-input',  # ID para JavaScript
             }),
         }
+
+class CarreraForm(forms.ModelForm):
+    class Meta:
+        model=Carrera
+        fields = '__all__'
+        labels={ 'carrera': 'Carrera',}
+        
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in iter(self.fields):
+            self.fields[field].widget.attrs.update({'class': 'form-control'})
