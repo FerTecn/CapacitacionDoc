@@ -1,5 +1,5 @@
 from django.db import models
-from catalogos.models import Instructor
+from catalogos.models import Autoridad, Instructor
 from catalogos.models import Periodo
 from catalogos.models import Sede
 from catalogos.models import Dirigido
@@ -57,6 +57,7 @@ class FichaTecnica(models.Model):
     elementosDidacticos = models.TextField()
     competencias = models.TextField()
     fuentes = models.TextField()
+    jefeDesarrolloAcademico = models.ForeignKey(Autoridad, on_delete=models.SET_NULL, null=True)
     
     def __str__(self):
         return f"Ficha de {self.curso.nombre} {self.curso.instructor} {self.servicio}"

@@ -145,7 +145,8 @@ def fichatecnicaver(request, curso_id):
 @permission_required('plancapacitacion.add_fichatecnica', raise_exception=True)
 def fichatecnicacrear(request, curso_id):
     curso = get_object_or_404(RegistroCurso, id=curso_id)
-    ficha, created = FichaTecnica.objects.get_or_create(curso=curso)
+    autoridad = get_object_or_404(Autoridad, puesto__cargo_masculino='Jefe de Desarrollo Académico', estatus=True)
+    ficha, created = FichaTecnica.objects.get_or_create(curso=curso, jefeDesarrolloAcademico=autoridad)
 
     if request.method == 'POST':
         form = FichaTecnicaForm(request.POST, instance=ficha)
@@ -187,14 +188,6 @@ def fichatecnicacrear(request, curso_id):
 def fichatecnicapdf(request, curso_id):
     curso = get_object_or_404(RegistroCurso, id=curso_id)
     ficha = get_object_or_404(FichaTecnica, curso=curso)
-
-    # Obtiene la autoridad que contenga cargo Jefe de Des. Academico
-    # Dado que Jefe es el mismo id para Jefa, obtenemos a través del cargo en masculino
-    jefe = get_object_or_404(Autoridad, puesto__cargo_masculino="Jefe de Desarrollo Académico", estatus=True)
-
-    # Para obtener el caego según el género, llamamos la funcion get_puesto() que
-    # devuelve el puesto de la autoridad según su género
-    cargo_jefe = jefe.get_puesto()
 
     buffer = BytesIO()
     doc = SimpleDocTemplate(buffer, pagesize=letter,
@@ -279,8 +272,8 @@ def fichatecnicapdf(request, curso_id):
     # **Firmas y Sello (agregados al final)**
     Story.append(Spacer(1, 100))
     data_table = [
-        [ficha.curso.instructor, "", f"{jefe.nombre} {jefe.apPaterno} {jefe.apMaterno}"],
-        ["Nombre y Firma del Facilitador", "Sello", f"Nombre y Firma del\n {cargo_jefe}"],
+        [ficha.curso.instructor, "", f"{ficha.jefeDesarrolloAcademico.get_full_name()}"],
+        ["Nombre y Firma del Facilitador", "Sello", f"Nombre y Firma {'de la' if ficha.jefeDesarrolloAcademico.genero.genero == 'Femenino' else 'del'}\n {ficha.jefeDesarrolloAcademico.get_puesto()}"],
     ]
     table = Table(data_table, [200, 100, 200])
     table.setStyle(TableStyle([

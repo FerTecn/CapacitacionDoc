@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-chbjqwkzxi%ry*^j&2zs$7^oh(9+-+=!dxaw1#-j@s#nwyq#s(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'django_browser_reload',
     
     'catalogos',
     'encuesta',
@@ -126,6 +128,7 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Manejo de imágenes
 MEDIA_URL = '/media/'
@@ -146,3 +149,6 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 #     BASE_DIR / "static",  # Reemplaza "BASE_DIR" por tu directorio base si es necesario
 # ]
 # STATIC_ROOT = BASE_DIR / 'staticfiles_collected'
+CSRF_TRUSTED_ORIGINS = [
+    'https://yeti-funny-yak.ngrok-free.app',
+]
