@@ -58,14 +58,6 @@ def generar_constancia_pdf(request, evento_id, user_id):
     if not constancia:
         messages.warning(request, "Constancia no encontrada.")
         return redirect('home')
-
-    # Obtiene la autoridad que contenga cargo director
-    # Dado que director es el mismo id para directora, obtenemos a través de cargo en masculino
-    autoridad = get_object_or_404(Autoridad, puesto__cargo_masculino="Director", estatus=True)
-
-    # Para obtener el cargo según el género, llamamos la funcion get_puesto() que
-    # devuelve el puesto de la autoridad según su género
-    cargo = autoridad.get_puesto()
     
     datos = {
         "nombre_receptor": user.first_name,
@@ -75,11 +67,11 @@ def generar_constancia_pdf(request, evento_id, user_id):
         "fecha_fin": constancia.curso.fechaFin.strftime("%d de %B de %Y"),
         "duracion": f"{constancia.curso.curso.horas} horas",
         "fecha_emision": constancia.fecha.strftime("%d de %B de %Y"),
-        "firmante": autoridad.get_full_name(),
-        "cargo_firmante": cargo,
+        "firmante": constancia.director.get_full_name(),
+        "cargo_firmante": constancia.director.get_puesto(),
         "ruta_fondo": '',
         "ruta_logo": os.path.join(settings.MEDIA_ROOT, f'formatos/constancia/{evento.fechaInicio.year}', 'header.png'),
-        "ruta_firma": os.path.join(settings.MEDIA_ROOT, f'autoridades/{autoridad.puesto.cargo_masculino}/{autoridad.get_full_name()}', 'firma.png'),
+        "ruta_firma": os.path.join(settings.MEDIA_ROOT, f'autoridades/{constancia.director.puesto.cargo_masculino}/{constancia.director.get_full_name()}', 'firma.png'),
     }
 
     response = HttpResponse(content_type='application/pdf')
@@ -265,6 +257,16 @@ def generarconstanciadocente(request, evento_id, user_id):
     
     docente = get_object_or_404(Docente, user_id=user_id)
     evento = get_object_or_404(Evento, id=evento_id)
+    # Verificar si ya existe constancia
+    constancia_existente = ConstanciaDocente.objects.filter(
+        curso=evento,
+        docente=docente
+    ).first()
+
+    if constancia_existente:
+        return redirect('descargar_constancia', evento_id=evento.id, user_id=docente.user.id)
+
+    director = get_object_or_404(Autoridad, puesto__cargo_masculino='Director', estatus = True)
 
     inscrito = Inscripcion.objects.filter(evento__id=evento_id, usuario=docente.user).exists()
     if not inscrito:
@@ -281,16 +283,18 @@ def generarconstanciadocente(request, evento_id, user_id):
         messages.warning(request, "El docente debe aprobar el curso para poder generar la constancia.")
         return redirect('estatus_constancia_docente', evento_id=evento.id, user_id=docente.user.id)
     
-    constancia = ConstanciaDocente(
-        curso=evento,
-        docente=docente,
-        calificacion=calificacion,
-        encuesta=encuesta,
-        fecha=evento.fechaFin
-    )
 
     try:
-        constancia.save()
+        constancia = ConstanciaDocente.objects.create(
+            curso=evento,
+            docente=docente,
+            defaults={
+                'calificacion': calificacion,
+                'encuesta': encuesta,
+                'fecha': evento.fechaFin,
+                'director': director
+            }
+        )
         return redirect('descargar_constancia', evento_id=evento.id, user_id=docente.user.id)
     except ValidationError as e:
         messages.warning(request, str(e))
@@ -300,16 +304,26 @@ def generarconstanciainstructor(request, evento_id, user_id):
     evento = get_object_or_404(Evento, id=evento_id)
     instructor = get_object_or_404(Instructor, user_id=user_id)
 
+    constancia_existente = ConstanciaInstructor.objects.filter(
+        curso=evento,
+        instructor=instructor
+    ).first()
+
+    if constancia_existente:
+        return redirect('descargar_constancia', evento_id=evento.id, user_id=user_id)
+    
+    director = get_object_or_404(Autoridad, puesto__cargo_masculino='Director', estatus = True)
+
     # Comprobar que el instructor corresponde al evento del curso
     if evento.curso.instructor.user.id == user_id:
-        constancia = ConstanciaInstructor(
-            curso=evento,
-            instructor=instructor,
-            fecha=evento.fechaFin
-        )
 
         try:
-            constancia.save()
+            constancia = ConstanciaInstructor.objects.create(
+                curso=evento,
+                instructor=instructor,
+                fecha=evento.fechaFin,
+                director=director
+            )
             return redirect('descargar_constancia', evento_id=evento.id, user_id=user_id)
         except ValidationError as e:
             messages.warning(request, str(e))
