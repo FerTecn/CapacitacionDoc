@@ -1,0 +1,180 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}- Realizar evaluación a instructor{% endblock %}
+
+{% block styles %}
+<style>
+    /* Estilos para el interruptor */
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 34px;
+    }
+
+    /* Ocultar el checkbox por defecto */
+    .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    /* Estilos para el slider */
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: 0.4s;
+        border-radius: 34px;
+    }
+
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 26px;
+        width: 26px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        transition: 0.4s;
+        border-radius: 50%;
+    }
+
+    input:checked + .slider {
+        background-color: #2196F3;
+    }
+
+    input:checked + .slider:before {
+        transform: translateX(26px);
+    }
+
+    /* Estilo redondeado para el slider */
+    .slider.round {
+        border-radius: 34px;
+    }
+
+    .slider.round:before {
+        border-radius: 50%;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<form method="post">
+    {% csrf_token %}
+    <div class="d-flex align-items-start flex-column mb-3">
+        <a href="{% url 'criteriosseleccionlista' %}" class="btn btn-secondary btn-icon-split mr-2">
+            <span class="icon text-white-50">
+                <i class="fas fa-arrow-left"></i>
+            </span>
+            <span class="text">Cancelar y volver</span>
+        </a>
+    </div>
+
+    <h1 class="h3 mb-2 text-gray-800">Modificar criterios para evaluar al Instructor</h1>
+    <div class="card mb-4">
+        <div class="card-body">
+            Lee las instrucciones para poder modifcar la evaluzación del instructor.
+        </div>
+    </div>
+    
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white text-center">
+            <h4 class="m-0 font-weight-bold text-white">Instrucciones para la evaluación</h4>
+        </div>
+        <div class="card-body">
+            <ol>
+                <li>Evalúe de acuerdo con la siguiente escala:</li>
+                <div class="w-50 mx-auto">
+                    <table class="table table-bordered table-sm">
+                        <thead>
+                            <th>Valor cuantitativo</th>
+                            <th>Valor cualitativo</th>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>Cumple con el criterio</td>
+                            </tr>
+                            <tr>
+                                <td>0</td>
+                                <td>No cumple con el criterio</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <li>De acuerdo con cada criterio de la tabla, el jefe de Departamento Académico (cursos de actualización) y Jefe de Desarrollo Académico, (Cursos de formación) deberá colocar en la columna derecha el valor cuantitativo que corresponda, al valor cualitativo que la persona instructora evidencie.</li>
+                <li>Se considera aceptable la evaluación si cumple con al menos <strong>8</strong> de los <strong>10</strong> puntos, y se considera excelente la evaluación si cumple con al menos <strong>9</strong> de los <strong>10</strong> puntos, Considerando que, para la evaluación de dichos criterios, se hacen referencia a la actualización, capacitación y formación del profesorado, así como el diseño e impartición de cursos.</li>
+                <li>El instrumento se llena con los documentos soporte en mano, que avalen y hagan evidente el cumplimiento de los criterios, de acuerdo con el valor asignado</li>
+                <li>La persona titular del Departamento de Desarrollo Académico debe resguardar los documentos y evidencias solicitados a la persona instructora.</li>
+                <li>A este formato se le debe adjuntar en el sistema de diplomados, en no más de dos hojas ejecutivas el CV de la persona instructora (formato libre) y la ficha técnica del curso.</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white text-center">
+            <h4 class="m-0 font-weight-bold text-white">Criterios de Evaluación</h4>
+        </div>
+        <div class="card-body">
+            <div class="form-row">
+                <div class="form-group col-md-4 align-items-center">
+                    <label class="font-weight-bold">{{ form.noSolicitud.label_tag}}</label>
+                    {{ form.noSolicitud }}  
+                </div>
+                <div class="form-group col-md-4 align-items-center">
+                    <label class="font-weight-bold">Instructor: </label>
+                    {{ curso.instructor.user.get_user_full_name }}  
+                </div>
+                <div class="form-group col-md-4 align-items-center">
+                    <label class="font-weight-bold">RFC:</label>
+                    {{ curso.instructor.RFC }}  
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-4 align-items-center">
+                    <label class="font-weight-bold">Nombre del curso a impartir: </label>
+                    {{ curso.nombre }}  
+                </div>
+                <div class="form-group col-md-4 align-items-center">
+                    <label class="font-weight-bold">Áreas de adscripción: </label>
+                    PENDIENTE 
+                </div>
+                <div class="form-group col-md-4 align-items-center">
+                    <label class="font-weight-bold">Total de horas: </label>
+                    {{ curso.horas }}  
+                </div>
+            </div>
+            <hr>
+            <table class="table table-bordered">
+                <thead class="text-center">
+                    <tr>
+                        <th>Competencias básicas de la persona instructora</th>
+                        <th >Criterio</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for field in form %}
+                        {% if field.name|slice:':8' == 'criterio' %}
+                            <tr>
+                                <td>{{ field.label }}</td>
+                                <td class="text-center">
+                                    <div>0<label class="switch">{{ field }}<span class="slider round"></span></label>1</div>
+                                </td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="d-flex align-items-end flex-column mb-3">
+        <button type="submit" class="btn btn-success ml-2">Actualizar</button>
+    </div>
+</form>
+{% endblock %}

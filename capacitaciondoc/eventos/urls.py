@@ -35,4 +35,11 @@ urlpatterns = [
     path('oficiocrear/<int:docente_id>/', views.oficiocrear, name='oficiocrear'),
     path('oficioactualziar/<int:oficio_id>/', views.oficioactualizar, name='oficioactualizar'),
     path('descargar_oficio/<int:oficio_id>/', views.descargar_oficio, name='descargar_oficio'),
+
+    #Criterios de seleccion del Instructor
+    path('criteriosseleccionlista/', views.criteriosseleccionlista, name='criteriosseleccionlista'),
+    path('criteriosseleccionver/<int:curso_id>/', views.criteriosseleccionver, name='criteriosseleccionver'),
+    path('criteriosseleccioncrear/<int:curso_id>/', views.criteriosseleccioncrear, name='criteriosseleccioncrear'),
+    path('criteriosseleccionactualizar/<int:curso_id>/', views.criteriosseleccionactualizar, name='criteriosseleccionactualizar'),
+    path('criteriosseleccionpdf/<int:curso_id>/', views.criteriosseleccionpdf, name='criteriosseleccionpdf'),
 ]

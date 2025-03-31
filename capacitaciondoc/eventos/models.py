@@ -4,7 +4,7 @@ from django.core.exceptions import ValidationError
 from django.utils.text import slugify
 from django.db import models
 from django.conf import settings
-from catalogos.models import Docente, Lugar, Instructor, ValorCalificacion
+from catalogos.models import Autoridad, Docente, Lugar, Instructor, ValorCalificacion
 from plancapacitacion.models import RegistroCurso
 
 
@@ -117,3 +117,67 @@ class Evidencia(models.Model):
         else:
             self.evidencia = False
         super().save(*args, **kwargs)
+
+class CriteriosSeleccionInstructor(models.Model):
+    noSolicitud = models.CharField(max_length=40)
+    curso = models.ForeignKey(RegistroCurso, on_delete=models.SET_NULL, null=True)
+    fecha = models.DateField(auto_now_add=True)
+
+    criterio1 = models.BooleanField(default=False)
+    criterio2 = models.BooleanField(default=False)
+    criterio3 = models.BooleanField(default=False)
+    criterio4 = models.BooleanField(default=False)
+    criterio5 = models.BooleanField(default=False)
+    criterio6 = models.BooleanField(default=False)
+    criterio7 = models.BooleanField(default=False)
+    criterio8 = models.BooleanField(default=False)
+    criterio9 = models.BooleanField(default=False)
+    criterio10 = models.BooleanField(default=False)
+    
+    # Nuevos campos
+    total = models.PositiveSmallIntegerField(default=0, editable=False)
+    aceptado = models.BooleanField(default=False, verbose_name="Aceptado")
+    
+    evaluador = models.ForeignKey(
+        Autoridad,
+        on_delete=models.SET_NULL,
+        null=True,
+        verbose_name="Evaluador",
+        related_name='evaluador_instructor'
+    )
+    
+    titular = models.ForeignKey(
+        Autoridad,
+        on_delete=models.SET_NULL,
+        null=True,
+        verbose_name="Titular",
+        related_name='titular'
+    )
+
+    class Meta:
+        verbose_name = "Criterio de selección de instructor"
+        verbose_name_plural = "Criterios de selección de instructores"
+
+    def __str__(self):
+        return f"{self.noSolicitud} - {self.curso} - {self.evaluador}"
+
+    def calcular_total(self):
+        """Calcula el número de criterios cumplidos"""
+        criterios = [
+            self.criterio1, self.criterio2, self.criterio3,
+            self.criterio4, self.criterio5, self.criterio6,
+            self.criterio7, self.criterio8, self.criterio9,
+            self.criterio10
+        ]
+        return sum(1 for criterio in criterios if criterio)
+
+    def save(self, *args, **kwargs):
+        """Actualiza total y aceptado automáticamente al guardar"""
+        self.total = self.calcular_total()
+        self.aceptado = self.total >= 8  # True si cumple 8 o más criterios
+        super().save(*args, **kwargs)
+
+    @property
+    def porcentaje_cumplimiento(self):
+        """Devuelve el porcentaje de criterios cumplidos"""
+        return (self.total / 10) * 100 if self.total > 0 else 0

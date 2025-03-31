@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Evento
+from .models import CriteriosSeleccionInstructor, Evento
 from .models import Asistencia
 from .models import OficioComision
 from .models import Inscripcion
@@ -33,4 +33,5 @@ class EvidenciaAdmin(admin.ModelAdmin):
 admin.site.register(Evidencia, EvidenciaAdmin)
 
 admin.site.register(Calificacion)
+admin.site.register(CriteriosSeleccionInstructor)
 

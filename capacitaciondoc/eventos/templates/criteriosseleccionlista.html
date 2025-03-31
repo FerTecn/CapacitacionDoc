@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}- Criterios de Selección de Instructor{% endblock %}
+
+{% block styles %}
+<!-- Custom styles for this page -->
+<link href="{% static 'vendor/datatables/dataTables.bootstrap4.min.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<!-- Page Heading -->
+<h1 class="h3 mb-2 text-gray-800">Criterios de Selección de Instructor</h1>
+<div class="card mb-4">
+    <div class="card-body">
+        Aquí puedes evaluar al instructor para la seleccion del instructor
+    </div>
+</div>
+
+{% if messages %}
+    <div class="messages-container">
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Cerrar">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+<!-- DataTales Example -->
+<div class="card shadow mb-4">
+    <div class="card-header py-3 d-flex justify-content-between align-items-center">
+        <h4 class="m-0 font-weight-bold text-primary">Lista de Cursos</h4>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Periodo</th>
+                        <th>Horas</th>
+                        <th>Instructor</th>
+                        <th>Opciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for curso in cursos %}
+                    <tr id="curso-{{ curso.id }}">
+                        <td>{{curso.nombre}}</td>
+                        <td>{{curso.periodo}}</td>
+                        <td>{{curso.horas}}</td>
+                        <td>{{curso.instructor}}</td>
+                        <td>
+                            <!-- Opciones -->
+                            {% comment %} {% if perms.plancapacitacion.view_registrocurso %} {% endcomment %}
+                            {% with evaluacion=curso.criteriosseleccioninstructor_set.first %}
+                                {% if not evaluacion %}
+                                    <a href="{% url "criteriosseleccioncrear" curso.id %}" class="btn btn-success btn-sm">Crear</a>
+                                {% else %}
+                                    <a href="{% url 'criteriosseleccionver' curso.id %}" class="btn btn-info btn-sm">Ver</a>
+                                    <a href="{% url 'criteriosseleccionactualizar' curso.id %}" class="btn btn-warning btn-sm">Modificar</a>
+                                    <a href="{% url 'criteriosseleccionpdf' curso.id %}" class="btn btn-primary btn-sm">Descargar</a>
+                                {% endif %}
+                            {% endwith %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<!-- Page level plugins -->
+<script src="{% static 'vendor/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
+
+<!-- Page level custom scripts -->
+<script src="{% static 'js/demo/datatables-demo.js' %}"></script>
+{% endblock %}

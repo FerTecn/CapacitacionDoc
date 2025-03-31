@@ -11,10 +11,12 @@ from django.http import HttpResponseRedirect, HttpResponse
 
 from django.core.files.storage import FileSystemStorage #Para archivos y directorios
 
+from plancapacitacion.models import RegistroCurso 
 
-from .forms import DepartamentoForm, EventoForm, EvidenciaForm, OficioComisionForm
-from .models import Asistencia, Calificacion, Evento, Evidencia, Inscripcion, OficioComision
-from catalogos.models import Departamento, Docente, Lugar, Instructor, GradoAcademico, ValorCalificacion
+
+from .forms import CriteriosSeleccionForm, DepartamentoForm, EventoForm, EvidenciaForm, OficioComisionForm
+from .models import Asistencia, Calificacion, CriteriosSeleccionInstructor, Evento, Evidencia, Inscripcion, OficioComision
+from catalogos.models import Autoridad, Departamento, Docente, Lugar, Instructor, GradoAcademico, ValorCalificacion
 
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.units import cm
@@ -797,6 +799,266 @@ def descargar_oficio(request, oficio_id):
 
     buffer.seek(0)
     filename = f"Oficio-Comision-{docente.user.first_name}.pdf"
+    response = HttpResponse(buffer, content_type="application/pdf")
+    response['Content-Disposition'] = f'inline; filename="{filename}"'
+
+    return response
+
+@login_required(login_url='signin')
+def criteriosseleccionlista(request):
+    cursos = RegistroCurso.objects.all()
+    return render(request, 'criteriosseleccionlista.html', {'cursos': cursos})
+
+def criteriosseleccionver(request, curso_id):
+    curso = get_object_or_404(RegistroCurso, id=curso_id)
+    evaluacion = get_object_or_404(CriteriosSeleccionInstructor, curso=curso)
+    form = CriteriosSeleccionForm(instance=evaluacion, readonly=True)
+    return render(request, 'criteriosseleccionver.html', {'form': form, 'curso': curso, 'evaluacion': evaluacion})
+
+def criteriosseleccioncrear(request, curso_id):
+    curso = get_object_or_404(RegistroCurso, id=curso_id)
+    evaluador = get_object_or_404(
+        Autoridad,
+        puesto__cargo_masculino="Director",
+        estatus=True
+    )
+    titular = get_object_or_404(
+        Autoridad,
+        puesto__cargo_masculino="Jefe de Desarrollo Académico",
+        estatus=True
+    )
+    if request.method == 'POST':
+        form = CriteriosSeleccionForm(request.POST)
+        if form.is_valid():
+            evaluacion = form.save(commit=False)
+            evaluacion.curso = curso
+            evaluacion.evaluador = evaluador
+            evaluacion.titular = titular
+            evaluacion.save()
+            messages.success(request, 'Criterios de Selección creados exitosamente.')
+            return redirect('criteriosseleccionlista')
+        else:
+            print(form.errors)
+    else:
+        form = CriteriosSeleccionForm()
+    return render(request, 'criteriosseleccioncrear.html', {'form': form, 'curso': curso})
+
+def criteriosseleccionactualizar(request, curso_id):
+    curso = get_object_or_404(RegistroCurso, id=curso_id)
+    evaluacion = get_object_or_404(CriteriosSeleccionInstructor, curso=curso)
+    if request.method == 'POST':
+        form = CriteriosSeleccionForm(request.POST, instance=evaluacion)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Criterios de Selección actualizados exitosamente.')
+            return redirect('criteriosseleccionlista')
+    else:
+        form = CriteriosSeleccionForm(instance=evaluacion)
+    return render(request, 'criteriosseleccionactualizar.html', {'form': form, 'curso': curso})
+
+def criteriosseleccionpdf(request, curso_id):
+    curso = get_object_or_404(RegistroCurso, id=curso_id)
+    evaluacion = get_object_or_404(CriteriosSeleccionInstructor, curso=curso)
+
+    # Crear el documento PDF
+    buffer = BytesIO()
+    doc = BaseDocTemplate(buffer, pagesize=letter,
+                            leftMargin=1.5 * cm, rightMargin=1.5 * cm,
+                            topMargin=1.5 * cm, bottomMargin=1.5 * cm)
+    
+    font_path_regular = os.path.join(settings.BASE_DIR, 'static', 'fonts', 'Montserrat-Regular.ttf')
+    font_path_bold = os.path.join(settings.BASE_DIR, 'static', 'fonts', 'Montserrat-Bold.ttf')
+
+    if os.path.exists(font_path_regular):
+        pdfmetrics.registerFont(TTFont('Montserrat-Regular', font_path_regular))
+
+    if os.path.exists(font_path_bold):
+        pdfmetrics.registerFont(TTFont('Montserrat-Bold', font_path_bold))
+    
+    styles = getSampleStyleSheet()
+
+    style_normal = ParagraphStyle(
+        'MontserratNormal',
+        parent=styles['Normal'],
+        fontName='Montserrat-Regular', 
+        fontSize=10,
+        spaceAfter=8,
+        alignment=TA_JUSTIFY,
+    )
+
+    style_normal_center = ParagraphStyle(
+        'MontserratNormal',
+        parent=styles['Normal'],
+        fontName='Montserrat-Regular', 
+        fontSize=10,
+        spaceAfter=8,
+        alignment=TA_CENTER,
+    )
+
+    style_normal_right = ParagraphStyle(
+        'MontserratNormal',
+        parent=styles['Normal'],
+        fontName='Montserrat-Regular', 
+        fontSize=10,
+        spaceAfter=8,
+        alignment=TA_RIGHT,
+    )
+    
+    style_bold = ParagraphStyle(
+        'MontserratNormal',
+        parent=styles['Normal'],
+        fontName='Montserrat-Bold', 
+        fontSize=10,
+        spaceAfter=8,
+    )
+
+    style_bold_center = ParagraphStyle(
+        'MontserratNormal',
+        parent=styles['Normal'],
+        fontName='Montserrat-Bold', 
+        fontSize=10,
+        spaceAfter=8,
+        alignment=TA_CENTER,
+    )
+
+    style_bold_right = ParagraphStyle(
+        'MontserratNormal',
+        parent=styles['Normal'],
+        fontName='Montserrat-Bold', 
+        fontSize=10,
+        spaceAfter=8,
+        alignment=TA_RIGHT,
+    )
+
+    # Definir un marco para el contenido
+    frame = Frame(doc.leftMargin, doc.bottomMargin, doc.width, doc.height, id='normal')
+
+    # Crear una plantilla de página con encabezado y pie de página
+    plantilla = PageTemplate(id='plantilla', frames=frame)
+    doc.addPageTemplates([plantilla])
+
+
+    # Definir el contenido del PDF
+    Story = []
+
+    #Seccion de datos del docmento
+    data = [
+        ["No. de solicitud", evaluacion.noSolicitud],
+        ["Nombre del curso", evaluacion.curso.nombre],
+        ["Instructor", evaluacion.curso.instructor.user.get_user_full_name()],
+        ["Total de horas", evaluacion.curso.horas],
+        ["Fecha de evaluación", evaluacion.fecha],
+        ["Evaluador", evaluacion.evaluador.get_full_name()],
+        ["Titular", evaluacion.titular.get_full_name()],
+    ]
+
+    Story.append(Paragraph(f'{data[0][0]}: {data[0][1]}', style_normal_right))
+    Story.append(Paragraph(f'{data[1][0]}: {data[1][1]}', style_normal))
+    Story.append(Paragraph(f'{data[2][0]}: {data[2][1]}', style_normal))
+    Story.append(Paragraph(f'{data[3][0]}: {data[3][1]}', style_normal))
+    Story.append(Paragraph(f'{data[4][0]}: {data[4][1]}', style_normal))
+    Story.append(Spacer(1, 12))
+
+    Story.append(Paragraph("INSTRUCCIONES PARA EL LLENADO", style_bold))
+    data_instructions =[
+        "1.  Evalúe de acuerdo con la siguiente escala:",
+        "2.  De acuerdo con cada criterio de la tabla, el jefe de Departamento Académico (cursos de actualización) y Jefe de Desarrollo Académico, (Cursos de formación) deberá colocar en la columna derecha el valor cuantitativo que corresponda, al valor cualitativo que la persona instructora evidencie. ",
+        "3.	 Se considera aceptable la evaluación si cumple con al menos 8 de los 10 puntos, Considerando que, para la evaluación de dichos criterios, se hacen referencia a la actualización, capacitación y formación del profesorado, así como el diseño e impartición de cursos. ",
+        "5.	El instrumento se llena con los documentos soporte en mano, que avalen y hagan evidente el cumplimiento de los criterios, de acuerdo con el valor asignado.",
+        "6.	La persona titular del Departamento de Desarrollo Académico debe resguardar los documentos y evidencias solicitados a la persona instructora.",
+        "7.	A este formato se le debe adjuntar en el sistema de diplomados, en no más de dos hojas ejecutivas el CV de la persona instructora (formato libre) y la ficha técnica del curso.",
+    ]
+    Story.append(Paragraph(data_instructions[0], style_normal))
+
+    encabezado_data = [
+        ["Valor cuantitativo", "Valor cualitativo"],
+        ["1", Paragraph("Cumple con el criterio", style_normal)],
+        ["0", Paragraph("No cumple con el criterio", style_normal)],
+    ]
+    table = Table(encabezado_data, colWidths=[100, 150])
+    table.setStyle(TableStyle([
+        ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+        ("FONTNAME", (0, 0), (-1, -1), "Montserrat-Regular"),
+        ("BACKGROUND", (0, 0), (-1, 0), colors.grey),
+        ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+        ("GRID", (0, 0), (-1, -1), 1, colors.grey),
+        ("VALIGN", (0, 1), (-1, -1), "TOP"),
+    ]))
+    Story.append(table)
+    Story.append(Spacer(1, 12))
+
+    for instruction in data_instructions[1:]:
+        Story.append(Paragraph(instruction, style_normal))
+    Story.append(Spacer(1, 12))
+
+    data_criterios = [
+        ['Conocimiento en la temática a impartir el curso', evaluacion.criterio1],
+        ['Dominio, preferentemente, de los temas que se estudian en el curso', evaluacion.criterio2],
+        ['Experiencia sólida impartiendo el curso en el área específica', evaluacion.criterio3],
+        ['Manejo y uso de plataformas de aprendizaje (Moodle, Teams, Classroom, Zoom, etc.)', evaluacion.criterio4],
+        ['Habilidades de comunicación: transmitir conceptos de manera clara y comprensible', evaluacion.criterio5],
+        ['Innovación y actualización (últimas tendencias, desarrollos y mejores prácticas)', evaluacion.criterio6],
+        ['Organización y planificación del curso: Tiene un plan claro y bien estructurado', evaluacion.criterio7],
+        ['Disponibilidad y compromiso', evaluacion.criterio8],
+        ['Ética profesional: actúa con integridad y confidencialidad', evaluacion.criterio9],
+        ['Feedback y recomendaciones: desempeño, acciones o comportamiento', evaluacion.criterio10],
+    ]
+
+    data_criterios_formated = [
+        [Paragraph("Competencias básicas de la persona instructora", style_bold_center), Paragraph("Criterio", style_bold_center)],
+    ]
+    for i, (criterio, valor) in enumerate(data_criterios, start=1):
+        data_criterios_formated.append([Paragraph(f'{i}. {criterio}', style_normal), Paragraph(str(1 if valor else 0), style_normal_center)])
+
+    data_criterios_formated.append([Paragraph("TOTAL DEL PUNTAJE", style_bold_right), Paragraph(str(evaluacion.total), style_normal_center)])
+
+    table_criterios = Table(data_criterios_formated, colWidths=[430, 70])
+    table_criterios.setStyle(TableStyle([
+        ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+        ("FONTNAME", (0, 0), (-1, -1), "Montserrat-Regular"),
+        ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+        ("GRID", (0, 0), (-1, -1), 1, colors.grey),
+        ("VALIGN", (0, 1), (-1, -1), "TOP"),
+    ]))
+
+    Story.append(table_criterios)
+
+    Story.append(Spacer(1, 12))
+    data_aceptado = [
+        [Paragraph("<b>Aceptado:</b>", style_bold_right),
+        Paragraph("Sí" if evaluacion.aceptado else "No", style_normal)]
+    ]
+
+    tabla_aceptado = Table(data_aceptado, colWidths=[100, 50])
+    tabla_aceptado.setStyle(TableStyle([
+        ('VALIGN', (0,0), (-1,-1), 'MIDDLE'),
+        ('LEFTPADDING', (0,0), (0,0), 0),
+        ('ALIGN', (0, 0), (-1, -1), "RIGHT"),
+    ]))
+
+    Story.append(tabla_aceptado)
+
+    Story.append(Spacer(1, 100))
+
+    data_table = [
+        ['Nombre', "", "Nombre"],
+        ["Nombre y Firma del Facilitador", "", f"Nombre y Firma"],
+    ]
+    table = Table(data_table, [200, 100, 200])
+    table.setStyle(TableStyle([
+        ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+        ("FONTNAME", (0, 1), (-1, 1), "Helvetica-Bold"),
+        ('LINEBELOW', (0,0), (0,0), 1, colors.black),
+        ('LINEBELOW', (2,0), (2,0), 1, colors.black),
+        ("BOTTOMPADDING", (0, 0), (-1, 0), 8),
+        ("VALIGN", (0, 0), (-1, -1), "TOP"),
+    ]))
+    Story.append(table)
+    # Crear el documento PDF
+    doc.build(Story)
+
+    buffer.seek(0)
+    filename = f"CriteriosSeleccionInstructor.pdf"
     response = HttpResponse(buffer, content_type="application/pdf")
     response['Content-Disposition'] = f'inline; filename="{filename}"'
 
