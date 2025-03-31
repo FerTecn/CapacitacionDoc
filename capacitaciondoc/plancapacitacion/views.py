@@ -1,7 +1,7 @@
 from django.shortcuts import render, render, get_object_or_404, redirect
-from catalogos.models import Autoridad
-from .models import FichaTecnica, RegistroCurso, ValidarCurso
-from .forms import ContenidoTematicoFormSet, CriterioEvaluacionFormSet, CursoForm, FichaTecnicaForm
+from catalogos.models import Autoridad, Carrera, Departamento
+from .models import ConcentradoDiagnostico, DeteccionNecesidades, FichaTecnica, RegistroCurso, ValidarCurso
+from .forms import ActividadAsignaturaFormSet, ActividadModulosEspecialidadFormSet, AsignaturaDeteccionNecesidadesForm, AsignaturaDeteccionNecesidadesFormSet, ContenidoTematicoFormSet, CriterioEvaluacionFormSet, CursoForm, FichaTecnicaForm
 from .utils import cell_text_processor, text_processor, draw_table
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
@@ -299,3 +299,99 @@ def fichatecnicapdf(request, curso_id):
     response = HttpResponse(buffer, content_type="application/pdf")
     response['Content-Disposition'] = f'inline; filename="{filename}"'
     return response
+
+def diagnosticonecesidadesdepartamentoslista(request):
+    departamentos = Departamento.objects.all()
+    return render(request, 'diagnosticodepartamentoslista.html', {'departamentos': departamentos})
+
+def diagnosticonecesidadescrear(request, departamento_id):
+    departamento = get_object_or_404(Departamento, id=departamento_id)
+    jefeDepAcademico = Autoridad.objects.filter(puesto__cargo_masculino = "Jefe de Departamento Académico", estatus = True).first()
+    presidenteAcademia = Autoridad.objects.filter(puesto__cargo_masculino = "Presidente de Academia", estatus = True).first()
+
+    if request.method == 'POST':
+        diagnostico, created = DeteccionNecesidades.objects.get_or_create(departamento=departamento, jefeDepAcademico=jefeDepAcademico, presidenteAcademia=presidenteAcademia)
+        form_set = AsignaturaDeteccionNecesidadesFormSet(request.POST, instance=diagnostico, prefix='diagnosticonecesidades')
+        if form_set.is_valid():
+            form_set.save()
+            messages.success(request, "Datos de la diagnostico de necesidades actualizados correctamente.")
+            return redirect('diagnosticodepartamentoslista')
+
+    else:
+        form_set = AsignaturaDeteccionNecesidadesFormSet(prefix='diagnosticonecesidades')
+
+    return render(request, 'diagnosticonecesidadescrear.html', {
+        'form_set': form_set, 
+        'departamento': departamento, 
+        'jefeDepAcademico': jefeDepAcademico, 
+        'presidenteAcademia': presidenteAcademia
+        })
+
+def diagnosticonecesidadesactualizar(request, departamento_id):
+    departamento = get_object_or_404(Departamento, id=departamento_id)
+    diagnostico = DeteccionNecesidades.objects.filter(departamento=departamento).first()
+
+    if request.method == 'POST':
+        form_set = AsignaturaDeteccionNecesidadesFormSet(request.POST, instance=diagnostico, prefix='diagnosticonecesidades')
+        if form_set.is_valid():
+            form_set.save()
+            messages.success(request, "Datos de la diagnostico de necesidades actualizados correctamente.")
+            return redirect('diagnosticodepartamentoslista')
+
+    else:
+        form_set = AsignaturaDeteccionNecesidadesFormSet(instance=diagnostico, prefix='diagnosticonecesidades')
+
+    return render(request, 'diagnosticonecesidadesactualizar.html', {'form_set': form_set, 'diagnostico': diagnostico})
+
+def concentradonecesidadescrear(request, departamento_id):
+    departamento = get_object_or_404(Departamento, id=departamento_id)
+    jefeDepAcademico = Autoridad.objects.filter(puesto__cargo_masculino = "Jefe de Departamento Académico", estatus = True).first()
+    presidenteAcademia = Autoridad.objects.filter(puesto__cargo_masculino = "Presidente de Academia", estatus = True).first()
+    carreras = Carrera.objects.all()
+    
+    if request.method == 'POST':
+        concentrado, created = ConcentradoDiagnostico.objects.get_or_create(departamento=departamento, jefeDepAcademico=jefeDepAcademico, presidenteAcademia=presidenteAcademia)
+        asignatura_formset = ActividadAsignaturaFormSet(request.POST, instance=concentrado, prefix='actividadasignatura')
+        modulos_esp_formset = ActividadModulosEspecialidadFormSet(request.POST, instance=concentrado, prefix='actividadmodulosesp')
+        if asignatura_formset.is_valid() and modulos_esp_formset.is_valid():
+            asignatura_formset.save()
+            modulos_esp_formset.save()
+            messages.success(request, "Datos del concentrado de necesidades actualizados correctamente.")
+            return redirect('diagnosticodepartamentoslista')
+        else:
+            print(f'{asignatura_formset.errors} asignatura')
+            print(f'{modulos_esp_formset.errors} modulos')
+    else:
+        asignatura_formset = ActividadAsignaturaFormSet(prefix='actividadasignatura')
+        modulos_esp_formset = ActividadModulosEspecialidadFormSet(prefix='actividadmodulosesp')
+    return render(request, 'concentradonecesidadescrear.html', {
+        'departamento': departamento,
+        'jefeDepAcademico': jefeDepAcademico,
+        'presidenteAcademia': presidenteAcademia,
+        'asignatura_formset': asignatura_formset,
+        'modulos_esp_formset': modulos_esp_formset,
+        'carreras': carreras,
+        })
+
+def concentradonecesidadesactualizar(request, departamento_id):
+    departamento = get_object_or_404(Departamento, id=departamento_id)
+    concentrado = ConcentradoDiagnostico.objects.filter(departamento=departamento).first()
+    carreras = Carrera.objects.all()
+
+    if request.method == 'POST':
+        asignatura_formset = ActividadAsignaturaFormSet(request.POST, instance=concentrado, prefix='actividadasignatura')
+        modulos_esp_formset = ActividadModulosEspecialidadFormSet(request.POST, instance=concentrado, prefix='actividadmodulosesp')
+        if asignatura_formset.is_valid() and modulos_esp_formset.is_valid():
+            asignatura_formset.save()
+            modulos_esp_formset.save()
+            messages.success(request, "Datos del concentrado de necesidades actualizados correctamente.")
+            return redirect('diagnosticodepartamentoslista')
+    else:
+        asignatura_formset = ActividadAsignaturaFormSet(instance=concentrado, prefix='actividadasignatura')
+        modulos_esp_formset = ActividadModulosEspecialidadFormSet(instance=concentrado, prefix='actividadmodulosesp')
+    return render(request, 'concentradonecesidadesactualizar.html', {
+        'concentrado': concentrado,
+        'carreras': carreras,
+        'asignatura_formset': asignatura_formset,
+        'modulos_esp_formset': modulos_esp_formset,
+        })

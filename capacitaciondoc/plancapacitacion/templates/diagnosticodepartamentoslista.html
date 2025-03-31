@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}- Diagnóstico de necesidades{% endblock %}
+
+{% block styles %}
+<!-- Custom styles for this page -->
+<link href="{% static 'vendor/datatables/dataTables.bootstrap4.min.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<!-- Page Heading -->
+<h1 class="h3 mb-2 text-gray-800">Crear un diagnóstico de necesidades de formación y actualización docente y profesional</h1>
+<div class="card mb-4">
+    <div class="card-body">
+        Aquí puedes crear un diagnóstico de necesidades de formación y actualización docente y profesional.
+    </div>
+</div>
+{% if messages %}
+    <div class="messages-container">
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Cerrar">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+<!-- DataTales Example -->
+<div class="card shadow mb-4">
+    <div class="card-header py-3 d-flex justify-content-between align-items-center">
+        <h4 class="m-0 font-weight-bold text-primary">Lista de Departamentos</h4>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Periodo</th>
+                        <th>Horas</th>
+                        <th>Instructor</th>
+                        <th>Diagnóstico</th>
+                        <th>Concentrado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for departamento in departamentos %}
+                    <tr id="departamento-{{ departamento.id }}">
+                        <td>{{departamento.nomenclatura}}</td>
+                        <td>{{departamento.numerodepartamento}}</td>
+                        <td>{{departamento.departamento}}</td>
+                        <td>{{departamento.nombreJefe}} {{departamento.apParternoJefe}} {{ departamento.apMaternoJefe }}</td>
+                        <td>
+                            <!-- Opciones -->
+                            {% with diagnostico=departamento.deteccionnecesidades_set.first %}
+                                {% if not diagnostico %}
+                                    <a href="{% url "diagnosticonecesidadescrear" departamento.id %}" class="btn btn-success btn-sm">Crear</a>
+                                {% else %}
+                                    <a href="{% url 'diagnosticonecesidadesactualizar' departamento.id %}" class="btn btn-info btn-sm">Modificar</a>
+                                {% endif %}
+                            {% endwith %}
+                        </td>
+                        <td>
+                            <!-- Opciones -->
+                            {% with concentrado=departamento.concentradodiagnostico_set.first %}
+                                {% if not concentrado %}
+                                    <a href="{% url "concentradonecesidadescrear" departamento.id %}" class="btn btn-success btn-sm">Crear</a>
+                                {% else %}
+                                    <a href="{% url 'concentradonecesidadesactualizar' departamento.id %}" class="btn btn-info btn-sm">Modificar</a>
+                                {% endif %}
+                            {% endwith %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<!-- Page level plugins -->
+<script src="{% static 'vendor/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
+
+<!-- Page level custom scripts -->
+<script src="{% static 'js/demo/datatables-demo.js' %}"></script>
+{% endblock %}

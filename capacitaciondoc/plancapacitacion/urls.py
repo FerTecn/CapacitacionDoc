@@ -19,4 +19,10 @@ urlpatterns = [
     path('fichatecnica/<int:curso_id>/', views.fichatecnicaver, name='fichatecnicaver'),
     path('fichatecnica/datos/<int:curso_id>/', views.fichatecnicacrear, name='fichatecnicacrear'),
     path('descargar-ficha/<int:curso_id>/', views.fichatecnicapdf, name='generarficha'),
+
+    path('diagnosticodepartamentoslista/', views.diagnosticonecesidadesdepartamentoslista, name='diagnosticodepartamentoslista'),
+    path('diagnosticonecesidadescrear/<int:departamento_id>/', views.diagnosticonecesidadescrear, name='diagnosticonecesidadescrear'),
+    path('diagnosticonecesidadesactualizar/<int:departamento_id>/', views.diagnosticonecesidadesactualizar, name='diagnosticonecesidadesactualizar'),
+    path('concentradonecesidadescrear/<int:departamento_id>/', views.concentradonecesidadescrear, name='concentradonecesidadescrear'),
+    path('concentradonecesidadesactualizar/<int:departamento_id>/', views.concentradonecesidadesactualizar, name='concentradonecesidadesactualizar'),
 ]

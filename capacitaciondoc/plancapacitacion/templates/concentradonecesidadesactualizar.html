@@ -1,0 +1,316 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}- Crear diagnóstico de necesidades{% endblock %}
+{% block styles %}
+<style>
+    {% comment %} Ocultamos el input y su etiqueta de eliminar, ya que es necesario pero no debemos verlo {% endcomment %}
+    input[name*="-DELETE"] {
+        display: none;
+    }
+    label[for*="-DELETE"] {
+        display: none;
+    }
+</style>    
+{% endblock styles %}
+{% block content %}
+<div class="d-flex align-items-start flex-column mb-3">
+    <a href="{% url 'diagnosticodepartamentoslista' %}" class="btn btn-secondary btn-icon-split mr-2">
+        <span class="icon text-white-50">
+            <i class="fas fa-arrow-left"></i>
+        </span>
+        <span class="text">Cancelar y volver</span>
+    </a>
+</div>
+
+{% if messages %}
+    {% for message in messages %}
+        {% if "ficha" in message.extra_tags %}
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        {% endif %}
+    {% endfor %}
+{% endif %}
+
+<form method="post">
+    {% csrf_token %}
+    {{ asignatura_formset.management_form }}
+    {{ modulos_esp_formset.management_form }}
+
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white text-center">
+            <h4 class="m-0 font-weight-bold text-white">Diagnóstico de necesidades de Formación y Actualización<br>Docente y Profesional</h4>
+        </div>
+        <div class="card-body">
+            <div class="form-row">
+                <div class="form-group col-md-4 ">
+                    <b>Departamento:</b>
+                    {{ concentrado.departamento.departamento }}
+                </div>
+                <div class="form-group col-md-4 ">
+                    <b>Fecha de realziación del diagnóstico:</b>
+                    {{ concentrado.fecha_realizacion }}
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6 ">
+                    <b>{{ jefeDepAcademico.get_puesto }}</b>
+                    {{ jefeDepAcademico.get_full_name }}
+                </div>
+                <div class="form-group col-md-6 ">
+                    <b>{{ presidenteAcademia.get_puesto }}</b>
+                    {{ presidenteAcademia.get_full_name }}
+                </div>
+            </div>
+            <hr>
+            <div class="form-row">
+                <div class="form-group col-md-12 ">
+                    <b>a)	PRIORIZAR LAS ASIGNATURAS EN LAS QUE REQUIERA LA FORMACIÓN O ACTUALIZACIÓN DE LOS Y LAS PROFESOR(AS) EN LOS MÓDULOS DE ESPECIALIDAD, AVALADOS POR LA ACADEMIA.</b>
+                </div>
+            </div>
+
+            <div id="asignaturas_formset">
+                {% for form in asignatura_formset %}
+                    <div class="asignaturas_form">
+                        <div class="form-row border rounded p-4 mb-4 bg-light">
+                            {{ form.id }}
+                            <div class="form-group col-md-10">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <b>{{ form.actividad.label_tag }}</b>
+                                        {{ form.actividad }}
+                                    </div>
+                                    <div class="col-md-2">
+                                        <b>{{ form.tipo.label_tag }}</b>
+                                        {{ form.tipo }}
+                                    </div>
+                                    <div class="col-md-2">
+                                        <b>{{ form.noProfesores.label_tag }}</b>
+                                        {{ form.noProfesores }}
+                                    </div>
+                                    <div class="col-md-4">
+                                        <b>{{ form.fecha_realizacion.label_tag }}</b>
+                                        {{ form.fecha_realizacion }}
+                                    </div>
+                                </div>
+                            </div>
+                            {{ form.DELETE }}  <!-- Campo oculto DELETE -->
+                            <div class="form-group col-md-2 text-center">
+                                <button type="button" class="btn btn-danger eliminar_actividad_asignaturas">
+                                    <i class="fas fa-trash"></i> Eliminar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="text-center">
+                <button type="button" id="agregar_actividad_asignaturas" class="btn btn-success ">
+                    <i class="fas fa-plus"></i> Agregar otro contenido
+                </button>
+            </div>
+
+            <div id="modulos_formset">
+                {% for form in modulos_esp_formset %}
+                    <div class="modulos_form">
+                        <div class="form-row border rounded p-4 mb-4 bg-light">
+                            {{ form.id }}
+                            <div class="form-group col-md-10">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <b>{{ form.actividad.label_tag }}</b>
+                                        {{ form.actividad }}
+                                    </div>
+                                    <div class="col-md-2">
+                                        <b>{{ form.tipo.label_tag }}</b>
+                                        {{ form.tipo }}
+                                    </div>
+                                    <div class="col-md-2">
+                                        <b>{{ form.noProfesores.label_tag }}</b>
+                                        {{ form.noProfesores }}
+                                    </div>
+                                    <div class="col-md-4">
+                                        <b>{{ form.fechaRealizacion.label_tag }}</b>
+                                        {{ form.fechaRealizacion }}
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12 mt-4">
+                                        <h6 class="font-weight-bold">Seleccione las carreras:</h6>
+                                        <div class="border rounded p-1 bg-white">
+                                            {% for carrera in carreras %}
+                                                <button type="button" class="btn btn-icon-split carrera-btn m-1" data-id="{{ carrera.id }}">
+                                                    <span class="icon text-white-50 d-none justify-content-center align-items-center"><i class="fa-solid fa-circle-check"></i></span>
+                                                    <span class="text">{{ carrera.carrera }}</span>
+                                                </button>
+                                            {% endfor %}
+                                            {{ form.carreras }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {{ form.DELETE }}  <!-- Campo oculto DELETE -->
+                            <div class="form-group col-md-2 text-center">
+                                <button type="button" class="btn btn-danger eliminar_actividad_modulos">
+                                    <i class="fas fa-trash"></i> Eliminar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="text-center">
+                <button type="button" id="agregar_actividad_modulos" class="btn btn-success ">
+                    <i class="fas fa-plus"></i> Agregar otro contenido
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex align-items-end flex-column mb-3">
+        <button type="submit" class="btn btn-success ml-2">Crear diagnóstico</button>
+    </div>
+</form>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        function updateTotalForms(containerId, totalFormsId) {
+            document.getElementById(totalFormsId).value = document.getElementById(containerId).querySelectorAll('.asignaturas_form, .modulos_form').length;
+        }
+
+        function addDeleteButton(formElement, className) {
+            const deleteButton = formElement.querySelector(className);
+            const deleteInput = formElement.querySelector('input[name*="-DELETE"]');
+
+            deleteButton.addEventListener('click', function () {
+                if (deleteInput) {
+                    deleteInput.checked = true; // Marcarlo para eliminación en Django
+                }
+                formElement.style.display = "none"; // Ocultar en el DOM pero sin eliminar
+                updateTotalForms(formElement.parentElement.id, `id_${formElement.parentElement.id}-TOTAL_FORMS`);
+            });
+        }
+
+        /*** Agregar Contenido Temático ***/
+        document.getElementById('agregar_actividad_asignaturas')?.addEventListener('click', function() {
+            const formsetContainer = document.getElementById('asignaturas_formset');
+            const totalForms = document.getElementById('id_actividadasignatura-TOTAL_FORMS');
+            const formCount = parseInt(totalForms.value);
+
+            const newForm = formsetContainer.querySelector('.asignaturas_form').cloneNode(true);
+            newForm.innerHTML = newForm.innerHTML.replace(/-\d+-/g, `-${formCount}-`);
+
+            newForm.querySelectorAll('input, textarea').forEach(input => input.value = '');
+            const deleteInput = newForm.querySelector('input[name*="-DELETE"]');
+            if (deleteInput) deleteInput.checked = false; // Asegurar que no se marque para borrar
+
+            addDeleteButton(newForm, '.eliminar_actividad_asignaturas');
+            formsetContainer.appendChild(newForm);
+            totalForms.value = formCount + 1;
+        });
+
+        /*** Agregar Criterios de Evaluación ***/
+        document.getElementById('agregar_actividad_modulos')?.addEventListener('click', function() {
+            const formsetContainer = document.getElementById('modulos_formset');
+            const totalForms = document.getElementById('id_actividadmodulosesp-TOTAL_FORMS');
+            const formCount = parseInt(totalForms.value);
+
+            const newForm = formsetContainer.querySelector('.modulos_form').cloneNode(true);
+            newForm.innerHTML = newForm.innerHTML.replace(/-\d+-/g, `-${formCount}-`);
+
+            newForm.querySelectorAll('input, textarea').forEach(input => input.value = '');
+            const deleteInput = newForm.querySelector('input[name*="-DELETE"]');
+            if (deleteInput) deleteInput.checked = false;
+
+            addDeleteButton(newForm, '.eliminar_actividad_modulos');
+            formsetContainer.appendChild(newForm);
+            totalForms.value = formCount + 1;
+        });
+
+        /*** Habilitar eliminación en los elementos existentes ***/
+        document.querySelectorAll('.asignaturas_form').forEach(form => addDeleteButton(form, '.eliminar_actividad_asignaturas'));
+        document.querySelectorAll('.modulos_form').forEach(form => addDeleteButton(form, '.eliminar_actividad_modulos'));
+    });
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        function setupCarreraSelection(form) {
+            const inputCarreras = form.querySelector("select[name$='-carreras']");
+            const buttons = form.querySelectorAll(".carrera-btn");
+            const selectedCarreras = new Set();
+    
+            inputCarreras.classList.add("d-none"); // Ocultar el select de Django
+    
+            // Lista de colores disponibles
+            const colors = ["primary", "danger", "warning", "success", "info"];
+    
+            buttons.forEach(button => {
+                const carreraId = button.getAttribute("data-id");
+                const icon = button.querySelector(".icon");
+    
+                // Si el botón es de un formulario recién agregado, reiniciar sus clases
+                button.classList.remove("btn-primary", "btn-danger", "btn-warning", "btn-success", "btn-info", "btn-outline-primary", "btn-outline-danger", "btn-outline-warning", "btn-outline-success", "btn-outline-info");
+                icon.classList.add("d-none")
+                icon.classList.remove("d-flex")
+                // Asignar un color aleatorio nuevo
+                const randomColor = colors[Math.floor(Math.random() * colors.length)];
+                button.classList.add(`btn-outline-${randomColor}`);
+                button.dataset.color = randomColor;
+    
+                // Si la carrera ya estaba seleccionada en el select, marcar el botón
+                for (let option of inputCarreras.options) {
+                    if (option.selected && option.value === carreraId) {
+                        selectedCarreras.add(carreraId);
+                        button.classList.remove(`btn-outline-${button.dataset.color}`);
+                        button.classList.add(`btn-${button.dataset.color}`);
+                        icon.classList.add("d-flex");
+                        icon.classList.remove("d-none");
+                    }
+                }
+    
+                button.addEventListener("click", function () {
+                    if (selectedCarreras.has(carreraId)) {
+                        selectedCarreras.delete(carreraId);
+                        button.classList.remove(`btn-${button.dataset.color}`);
+                        button.classList.add(`btn-outline-${button.dataset.color}`);
+                        icon.classList.add("d-none");
+                        icon.classList.remove("d-flex");
+                    } else {
+                        selectedCarreras.add(carreraId);
+                        button.classList.remove(`btn-outline-${button.dataset.color}`);
+                        button.classList.add(`btn-${button.dataset.color}`);
+                        icon.classList.add("d-flex");
+                        icon.classList.remove("d-none");
+                    }
+    
+                    // Actualizar el select de Django
+                    for (let option of inputCarreras.options) {
+                        option.selected = selectedCarreras.has(option.value);
+                    }
+                });
+            });
+        }
+    
+        // Aplicar la configuración a los formsets ya generados
+        document.querySelectorAll(".modulos_form").forEach(setupCarreraSelection);
+    
+        // Cuando se agrega un nuevo formulario, inicializar sus botones correctamente
+        document.getElementById("agregar_actividad_modulos")?.addEventListener("click", function () {
+            setTimeout(() => {
+                const newForm = document.querySelector(".modulos_form:last-of-type"); // Último formulario agregado
+                if (newForm && !newForm.dataset.init) {
+                    setupCarreraSelection(newForm);
+                    newForm.dataset.init = "true";  // Evitar doble inicialización
+                }
+            }, 100); // Esperar a que el DOM se actualice
+        });
+    });
+</script>
+{% endblock %}

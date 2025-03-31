@@ -1,9 +1,12 @@
 from django.db import models
-from catalogos.models import Autoridad, Instructor
+from catalogos.models import Autoridad, Carrera, Departamento, Instructor
 from catalogos.models import Periodo
 from catalogos.models import Sede
 from catalogos.models import Dirigido
 from catalogos.models import PerfilCurso
+
+from django.core.validators import MinValueValidator
+from django.utils.translation import gettext_lazy as _
 
 # Create your models here.
 class RegistroCurso(models.Model):
@@ -82,3 +85,66 @@ class CriterioEvaluacion(models.Model):
 
     class Meta:
         verbose_name_plural="Criterios de Evaluación"
+
+class DeteccionNecesidades(models.Model):
+    departamento = models.ForeignKey(Departamento, on_delete=models.SET_NULL, null=True)
+    fecha = models.DateField(auto_now_add=True)
+    jefeDepAcademico = models.ForeignKey(Autoridad, on_delete=models.SET_NULL, null=True, related_name="jefeDepAcademico")
+    presidenteAcademia = models.ForeignKey(Autoridad, on_delete=models.SET_NULL, null=True, related_name="presidenteAcademia")
+
+class AsignaturaDeteccionNecesidades(models.Model):
+    deteccionNecesidades = models.ForeignKey(DeteccionNecesidades, on_delete=models.SET_NULL, null=True)
+    asignatura = models.CharField(max_length=200)
+    contenido = models.TextField()
+    noProfesores = models.IntegerField()
+    periodoInicio = models.DateField()
+    periodoFin = models.DateField()
+
+class ConcentradoDiagnostico(models.Model):
+    departamento = models.ForeignKey(Departamento, on_delete=models.SET_NULL, null=True)
+    fecha_realizacion = models.DateField(auto_now_add=True)
+    jefeDepAcademico = models.ForeignKey(Autoridad, on_delete=models.SET_NULL, null=True, related_name="jefe_dep_academico")
+    presidenteAcademia = models.ForeignKey(Autoridad, on_delete=models.SET_NULL, null=True, related_name="presidente_academia")
+
+class ActividadAsignatura(models.Model):
+    diagnostico = models.ForeignKey(ConcentradoDiagnostico, on_delete=models.SET_NULL, null=True)
+    actividad = models.CharField(max_length=200)
+    tipo = models.CharField(max_length=200, choices=[
+        ('Taller', 'Taller'),
+        ('Curso', 'Curso'),
+        ('Conferencia', 'Conferencia'),
+    ])
+    noProfesores = models.PositiveSmallIntegerField(validators=[MinValueValidator(1)])
+    fecha_realizacion = models.DateField()
+
+    @property
+    def mes_anio(self):
+        """Formato MM/AAAA para la fecha"""
+        return self.fecha_prevista.strftime("%m/%Y")
+
+    def __str__(self):
+        return f"{self.nombre_actividad} ({self.get_tipo_display()})"
+
+class ActividadModulosEspecialidad(models.Model):
+    diagnostico = models.ForeignKey(ConcentradoDiagnostico, on_delete=models.SET_NULL, null=True)
+    actividad = models.CharField(max_length=200)
+    tipo = models.CharField(max_length=200, choices=[
+        ('Taller', 'Taller'),
+        ('Curso', 'Curso'),
+        ('Conferencia', 'Conferencia'),
+    ])
+    carreras = models.ManyToManyField(Carrera, verbose_name="Carreras atendidas")
+    noProfesores = models.PositiveSmallIntegerField(validators=[MinValueValidator(1)])
+    fechaRealizacion = models.DateField()
+
+    @property
+    def carreras_lista(self):
+        """Devuelve string con nombres de carreras"""
+        return ", ".join(c.carrera for c in self.carreras.all())
+
+    @property
+    def mes_anio(self):
+        return self.fecha_prevista.strftime("%m/%Y")
+
+    def __str__(self):
+        return f"{self.actividad} ({self.carreras_lista})"

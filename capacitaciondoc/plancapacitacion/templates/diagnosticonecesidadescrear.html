@@ -1,0 +1,174 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}- Crear diagnóstico de necesidades{% endblock %}
+{% block styles %}
+<style>
+    {% comment %} Ocultamos el input y su etiqueta de eliminar, ya que es necesario pero no debemos verlo {% endcomment %}
+    input[name*="-DELETE"] {
+        display: none;
+    }
+    label[for*="-DELETE"] {
+        display: none;
+    }
+</style>    
+{% endblock styles %}
+{% block content %}
+<div class="d-flex align-items-start flex-column mb-3">
+    <a href="{% url 'diagnosticodepartamentoslista' %}" class="btn btn-secondary btn-icon-split mr-2">
+        <span class="icon text-white-50">
+            <i class="fas fa-arrow-left"></i>
+        </span>
+        <span class="text">Cancelar y volver</span>
+    </a>
+</div>
+
+{% if messages %}
+    {% for message in messages %}
+        {% if "ficha" in message.extra_tags %}
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        {% endif %}
+    {% endfor %}
+{% endif %}
+
+<form method="post">
+    {% csrf_token %}
+    {{ form_set.management_form }}
+
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white text-center">
+            <h4 class="m-0 font-weight-bold text-white">Diagnóstico de necesidades de Formación y Actualización<br>Docente y Profesional</h4>
+        </div>
+        <div class="card-body">
+            <div class="form-row">
+                <div class="form-group col-md-4 ">
+                    <b>Departamento:</b>
+                    {{ departamento }}
+                </div>
+                <div class="form-group col-md-4 ">
+                    <b>Fecha de realziación del diagnóstico:</b>
+                    Realizando
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6 ">
+                    <b>{{ jefeDepAcademico.get_puesto }}</b>
+                    {{ jefeDepAcademico.get_full_name }}
+                </div>
+                <div class="form-group col-md-6 ">
+                    <b>{{ presidenteAcademia.get_puesto }}</b>
+                    {{ presidenteAcademia.get_full_name }}
+                </div>
+            </div>
+            <hr>
+            <div class="form-row">
+                <div class="form-group col-md-12 ">
+                    <b>a)	PRIORIZAR LAS ASIGNATURAS EN LAS QUE REQUIERA LA FORMACIÓN O ACTUALIZACIÓN DE LOS Y LAS PROFESOR(AS) EN LOS MÓDULOS DE ESPECIALIDAD, AVALADOS POR LA ACADEMIA.</b>
+                    {{ form.introduccion }}
+                </div>
+            </div>
+
+            <div id="contenidos-formset">
+                {% for form in form_set %}
+                    <div class="contenido-form">
+                        <div class="form-row border rounded p-4 mb-4 bg-light">
+                            {{ form.id }}
+                            <div class="form-group col-md-10">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <b>{{ form.asignatura.label_tag }}</b>
+                                        {{ form.asignatura }}
+                                    </div>
+                                    <div class="col-md-6">
+                                        <b>{{ form.contenido.label_tag }}</b>
+                                        <i>Insertar un salto de parrafo (ENTER) entre cada contenido temático.</i>
+                                        {{ form.contenido }}
+                                    </div>
+                                    <div class="form-group col-md-2 ">
+                                        <b>{{ form.noProfesores.label_tag }}</b><br>
+                                        {{ form.noProfesores }}
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-md-4 ">
+                                        <b>{{ form.periodoInicio.label_tag }}</b><br>
+                                        {{ form.periodoInicio }}
+                                    </div>
+                                    <div class="form-group col-md-4 ">
+                                        <b>{{ form.periodoFin.label_tag }}</b><br>
+                                        {{ form.periodoFin }}
+                                    </div>
+                                </div>
+                            </div>
+                            {{ form.DELETE }}  <!-- Campo oculto DELETE -->
+                            <div class="form-group col-md-2 text-center">
+                                <button type="button" class="btn btn-danger eliminar-contenido">
+                                    <i class="fas fa-trash"></i> Eliminar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="text-center">
+                <button type="button" id="agregar-contenido" class="btn btn-success ">
+                    <i class="fas fa-plus"></i> Agregar otro contenido
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex align-items-end flex-column mb-3">
+        <button type="submit" class="btn btn-success ml-2">Crear diagnóstico</button>
+    </div>
+</form>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        function updateTotalForms(containerId, totalFormsId) {
+            document.getElementById(totalFormsId).value = document.getElementById(containerId).querySelectorAll('.contenido-form').length;
+        }
+
+        function addDeleteButton(formElement, className) {
+            const deleteButton = formElement.querySelector(className);
+            const deleteInput = formElement.querySelector('input[name*="-DELETE"]');
+
+            deleteButton.addEventListener('click', function () {
+                if (deleteInput) {
+                    deleteInput.checked = true; // Marcarlo para eliminación en Django
+                }
+                formElement.style.display = "none"; // Ocultar en el DOM pero sin eliminar
+                updateTotalForms(formElement.parentElement.id, `id_${formElement.parentElement.id}-TOTAL_FORMS`);
+            });
+        }
+
+        /*** Agregar Contenido Temático ***/
+        document.getElementById('agregar-contenido')?.addEventListener('click', function() {
+            const formsetContainer = document.getElementById('contenidos-formset');
+            const totalForms = document.getElementById('id_diagnosticonecesidades-TOTAL_FORMS');
+            const formCount = parseInt(totalForms.value);
+
+            const newForm = formsetContainer.querySelector('.contenido-form').cloneNode(true);
+            newForm.innerHTML = newForm.innerHTML.replace(/-\d+-/g, `-${formCount}-`);
+
+            newForm.querySelectorAll('input, textarea').forEach(input => input.value = '');
+            const deleteInput = newForm.querySelector('input[name*="-DELETE"]');
+            if (deleteInput) deleteInput.checked = false; // Asegurar que no se marque para borrar
+
+            addDeleteButton(newForm, '.eliminar-contenido');
+            formsetContainer.appendChild(newForm);
+            totalForms.value = formCount + 1;
+        });
+
+        /*** Habilitar eliminación en los elementos existentes ***/
+        document.querySelectorAll('.contenido-form').forEach(form => addDeleteButton(form, '.eliminar-contenido'));
+    });
+</script>
+{% endblock %}
