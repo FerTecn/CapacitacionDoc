@@ -23,8 +23,6 @@ from reportlab.lib.units import cm
 from reportlab.lib.enums import TA_JUSTIFY, TA_CENTER, TA_RIGHT
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfbase import pdfmetrics
-from reportlab.pdfbase.ttfonts import TTFont
-from reportlab.pdfbase import pdfmetrics
 from reportlab.platypus import BaseDocTemplate, PageTemplate, Paragraph, Table, TableStyle, Spacer, Image, Frame
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib import colors
@@ -860,6 +858,8 @@ def criteriosseleccionpdf(request, curso_id):
     curso = get_object_or_404(RegistroCurso, id=curso_id)
     evaluacion = get_object_or_404(CriteriosSeleccionInstructor, curso=curso)
 
+    locale.setlocale(locale.LC_TIME, 'spanish')
+
     # Crear el documento PDF
     buffer = BytesIO()
     doc = BaseDocTemplate(buffer, pagesize=letter,
@@ -875,12 +875,19 @@ def criteriosseleccionpdf(request, curso_id):
     if os.path.exists(font_path_bold):
         pdfmetrics.registerFont(TTFont('Montserrat-Bold', font_path_bold))
     
+    pdfmetrics.registerFontFamily(
+        'Montserrat-Regular',
+        normal='Montserrat-Regular',
+        bold='Montserrat-Bold'
+    )
+    
     styles = getSampleStyleSheet()
 
     style_normal = ParagraphStyle(
         'MontserratNormal',
         parent=styles['Normal'],
         fontName='Montserrat-Regular', 
+        allowHtml=True,
         fontSize=10,
         spaceAfter=8,
         alignment=TA_JUSTIFY,
@@ -944,19 +951,20 @@ def criteriosseleccionpdf(request, curso_id):
     #Seccion de datos del docmento
     data = [
         ["No. de solicitud", evaluacion.noSolicitud],
-        ["Nombre del curso", evaluacion.curso.nombre],
-        ["Instructor", evaluacion.curso.instructor.user.get_user_full_name()],
+        ["Nombre del instructor(a)", evaluacion.curso.instructor.user.get_user_full_name()],
+        ["RFC", evaluacion.curso.instructor.RFC],
+        ["Nombre del curso a impartir", evaluacion.curso.nombre],
         ["Total de horas", evaluacion.curso.horas],
-        ["Fecha de evaluación", evaluacion.fecha],
+        ["Fecha de evaluación", evaluacion.fecha.strftime("%d de %B del %Y")],
         ["Evaluador", evaluacion.evaluador.get_full_name()],
         ["Titular", evaluacion.titular.get_full_name()],
     ]
 
-    Story.append(Paragraph(f'{data[0][0]}: {data[0][1]}', style_normal_right))
-    Story.append(Paragraph(f'{data[1][0]}: {data[1][1]}', style_normal))
-    Story.append(Paragraph(f'{data[2][0]}: {data[2][1]}', style_normal))
-    Story.append(Paragraph(f'{data[3][0]}: {data[3][1]}', style_normal))
-    Story.append(Paragraph(f'{data[4][0]}: {data[4][1]}', style_normal))
+    Story.append(Paragraph(f'<b>{data[0][0]}</b>: {data[0][1]}', style_normal_right))
+    Story.append(Paragraph(f'<b>{data[1][0]}</b>: {data[1][1]}&nbsp;&nbsp;&nbsp;<b>{data[2][0]}</b>: {data[2][1]}', style_normal))
+    Story.append(Paragraph(f'<b>{data[3][0]}</b>: {data[3][1]}', style_normal))
+    Story.append(Paragraph(f'<b>{data[4][0]}</b>: {data[4][1]}', style_normal))
+    Story.append(Paragraph(f'<b>{data[5][0]}</b>: {data[5][1]}', style_normal))
     Story.append(Spacer(1, 12))
 
     Story.append(Paragraph("INSTRUCCIONES PARA EL LLENADO", style_bold))
@@ -1047,7 +1055,6 @@ def criteriosseleccionpdf(request, curso_id):
     table = Table(data_table, [200, 100, 200])
     table.setStyle(TableStyle([
         ("ALIGN", (0, 0), (-1, -1), "CENTER"),
-        ("FONTNAME", (0, 1), (-1, 1), "Helvetica-Bold"),
         ('LINEBELOW', (0,0), (0,0), 1, colors.black),
         ('LINEBELOW', (2,0), (2,0), 1, colors.black),
         ("BOTTOMPADDING", (0, 0), (-1, 0), 8),
