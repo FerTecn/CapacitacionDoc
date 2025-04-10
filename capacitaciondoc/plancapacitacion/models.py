@@ -86,6 +86,7 @@ class CriterioEvaluacion(models.Model):
     class Meta:
         verbose_name_plural="Criterios de Evaluación"
 
+# Deteccionnecesidades
 class DeteccionNecesidades(models.Model):
     departamento = models.ForeignKey(Departamento, on_delete=models.SET_NULL, null=True)
     fecha = models.DateField(auto_now_add=True)
@@ -99,7 +100,9 @@ class AsignaturaDeteccionNecesidades(models.Model):
     noProfesores = models.IntegerField()
     periodoInicio = models.DateField()
     periodoFin = models.DateField()
+    instructores = models.ManyToManyField(Instructor)
 
+# ConcentradoDiagnostico
 class ConcentradoDiagnostico(models.Model):
     departamento = models.ForeignKey(Departamento, on_delete=models.SET_NULL, null=True)
     fecha_realizacion = models.DateField(auto_now_add=True)

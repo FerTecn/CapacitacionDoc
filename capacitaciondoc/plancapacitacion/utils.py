@@ -67,7 +67,6 @@ def draw_table(data_table, col_widths, style):
             else:
                 # Si la columna es donde se requiere viñetas, se usa el procesador de celdas
                 if columna_actividades and i==2:
-                    print("Si")
                     contenido = cell_text_processor(contenido)
                 else:
                     contenido = contenido
@@ -86,5 +85,44 @@ def draw_table(data_table, col_widths, style):
         ("BACKGROUND", (0, 1), (-1, -1), colors.white),
         ("GRID", (0, 0), (-1, -1), 1, colors.grey),
         ("VALIGN", (0, 1), (-1, -1), "TOP"),
+    ]))
+    return table
+
+
+def draw_table_firma(data_table, col_widths):
+    table = Table(data_table, colWidths=col_widths)
+    table.setStyle(TableStyle([
+        ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+        ("GRID", (0, 0), (-1, -1), 0.5, colors.black),
+        ("VALIGN", (0, 0), (-1, -1), "TOP"),
+    ]))
+    return table
+
+def draw_table_diagnosticos(data_table, col_widths, style_bold_center, style_normal_center):
+    processed_data = []
+    for row_idx, fila in enumerate(data_table):
+        processed_row = []
+        for col_idx, celda in enumerate(fila):
+            # Encabezado (primera fila) - style_bold_center
+            if row_idx == 0:
+                paragraph = Paragraph(str(celda), style_bold_center)
+            else:
+                # Aplicar viñetas solo a la columna "Contenidos Temáticos" (col_idx == 1)
+                if col_idx == 1 and "Contenidos Temáticos" in data_table[0]:
+                    contenido = cell_text_processor(str(celda))
+                else:
+                    contenido = str(celda)
+                paragraph = Paragraph(contenido, style_normal_center)
+            processed_row.append(paragraph)
+        processed_data.append(processed_row)
+
+    table = Table(processed_data, colWidths=col_widths)
+    table.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (-1, 0), colors.grey),  # Fondo gris para encabezado
+        ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),  # Texto blanco encabezado
+        ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+        ("VALIGN", (0, 0), (-1, -1), "TOP"),
+        ("GRID", (0, 0), (-1, -1), 0.5, colors.grey),  # Bordes negros
+        ("FONTNAME", (0, 0), (-1, 0), "Montserrat-Bold"),  # Negrita para encabezado
     ]))
     return table

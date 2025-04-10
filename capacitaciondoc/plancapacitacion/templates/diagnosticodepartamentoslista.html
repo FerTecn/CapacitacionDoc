@@ -45,6 +45,7 @@
                         <th>Instructor</th>
                         <th>Diagnóstico</th>
                         <th>Concentrado</th>
+                        <th>PDF</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -73,6 +74,13 @@
                                     <a href="{% url 'concentradonecesidadesactualizar' departamento.id %}" class="btn btn-info btn-sm">Modificar</a>
                                 {% endif %}
                             {% endwith %}
+                        </td>
+                        <td>
+                            {% if departamento.deteccionnecesidades_set.first and departamento.concentradodiagnostico_set.first %}
+                                <a href="{% url 'concentradonecesidadespdf' departamento.id %}" class="btn btn-primary btn-sm">Descargar</a>
+                            {% else %}
+                                <button href="" class="btn btn-warning btn-sm" disabled>Pendiente</button>
+                            {% endif %}
                         </td>
                     </tr>
                     {% endfor %}

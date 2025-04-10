@@ -25,4 +25,5 @@ urlpatterns = [
     path('diagnosticonecesidadesactualizar/<int:departamento_id>/', views.diagnosticonecesidadesactualizar, name='diagnosticonecesidadesactualizar'),
     path('concentradonecesidadescrear/<int:departamento_id>/', views.concentradonecesidadescrear, name='concentradonecesidadescrear'),
     path('concentradonecesidadesactualizar/<int:departamento_id>/', views.concentradonecesidadesactualizar, name='concentradonecesidadesactualizar'),
+    path('descargarpdfnecesidades/<int:departamento_id>/', views.pdfdiagnostico, name='concentradonecesidadespdf'),
 ]

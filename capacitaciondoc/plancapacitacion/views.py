@@ -1,8 +1,9 @@
+from django.conf import settings
 from django.shortcuts import render, render, get_object_or_404, redirect
-from catalogos.models import Autoridad, Carrera, Departamento
-from .models import ConcentradoDiagnostico, DeteccionNecesidades, FichaTecnica, RegistroCurso, ValidarCurso
+from catalogos.models import Autoridad, Carrera, Departamento, Instructor
+from .models import AsignaturaDeteccionNecesidades, ConcentradoDiagnostico, DeteccionNecesidades, FichaTecnica, RegistroCurso, ValidarCurso
 from .forms import ActividadAsignaturaFormSet, ActividadModulosEspecialidadFormSet, AsignaturaDeteccionNecesidadesForm, AsignaturaDeteccionNecesidadesFormSet, ContenidoTematicoFormSet, CriterioEvaluacionFormSet, CursoForm, FichaTecnicaForm
-from .utils import cell_text_processor, text_processor, draw_table
+from .utils import cell_text_processor, draw_table_diagnosticos, draw_table_firma, text_processor, draw_table
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from eventos.models import Evento
@@ -11,12 +12,16 @@ from django.contrib import messages
 
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.units import cm
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Table, TableStyle, Spacer, PageBreak
+from reportlab.platypus import BaseDocTemplate, Frame, SimpleDocTemplate, PageTemplate, Paragraph, Table, TableStyle, Spacer, PageBreak
 from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.enums import TA_JUSTIFY, TA_CENTER
 
+from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.pdfbase import pdfmetrics
 
+import os
+import locale
 from io import BytesIO
 
 # Create your views here.
@@ -308,6 +313,7 @@ def diagnosticonecesidadescrear(request, departamento_id):
     departamento = get_object_or_404(Departamento, id=departamento_id)
     jefeDepAcademico = Autoridad.objects.filter(puesto__cargo_masculino = "Jefe de Departamento Académico", estatus = True).first()
     presidenteAcademia = Autoridad.objects.filter(puesto__cargo_masculino = "Presidente de Academia", estatus = True).first()
+    instructores = Instructor.objects.all()
 
     if request.method == 'POST':
         diagnostico, created = DeteccionNecesidades.objects.get_or_create(departamento=departamento, jefeDepAcademico=jefeDepAcademico, presidenteAcademia=presidenteAcademia)
@@ -317,6 +323,9 @@ def diagnosticonecesidadescrear(request, departamento_id):
             messages.success(request, "Datos de la diagnostico de necesidades actualizados correctamente.")
             return redirect('diagnosticodepartamentoslista')
 
+        else:
+            print(form_set.errors)
+
     else:
         form_set = AsignaturaDeteccionNecesidadesFormSet(prefix='diagnosticonecesidades')
 
@@ -324,12 +333,14 @@ def diagnosticonecesidadescrear(request, departamento_id):
         'form_set': form_set, 
         'departamento': departamento, 
         'jefeDepAcademico': jefeDepAcademico, 
-        'presidenteAcademia': presidenteAcademia
+        'presidenteAcademia': presidenteAcademia,
+        'instructores': instructores
         })
 
 def diagnosticonecesidadesactualizar(request, departamento_id):
     departamento = get_object_or_404(Departamento, id=departamento_id)
     diagnostico = DeteccionNecesidades.objects.filter(departamento=departamento).first()
+    instructores = Instructor.objects.all()
 
     if request.method == 'POST':
         form_set = AsignaturaDeteccionNecesidadesFormSet(request.POST, instance=diagnostico, prefix='diagnosticonecesidades')
@@ -341,7 +352,7 @@ def diagnosticonecesidadesactualizar(request, departamento_id):
     else:
         form_set = AsignaturaDeteccionNecesidadesFormSet(instance=diagnostico, prefix='diagnosticonecesidades')
 
-    return render(request, 'diagnosticonecesidadesactualizar.html', {'form_set': form_set, 'diagnostico': diagnostico})
+    return render(request, 'diagnosticonecesidadesactualizar.html', {'form_set': form_set, 'diagnostico': diagnostico, 'instructores': instructores})
 
 def concentradonecesidadescrear(request, departamento_id):
     departamento = get_object_or_404(Departamento, id=departamento_id)
@@ -395,3 +406,165 @@ def concentradonecesidadesactualizar(request, departamento_id):
         'asignatura_formset': asignatura_formset,
         'modulos_esp_formset': modulos_esp_formset,
         })
+
+def pdfdiagnostico(request, departamento_id):
+    departamento = get_object_or_404(Departamento, id=departamento_id)
+    diagnostico = DeteccionNecesidades.objects.filter(departamento=departamento_id).first()
+    asignaturas = AsignaturaDeteccionNecesidades.objects.filter(deteccionNecesidades=diagnostico)
+    
+
+    locale.setlocale(locale.LC_TIME, 'spanish')
+    buffer = BytesIO()
+    doc = BaseDocTemplate(buffer, pagesize=letter,
+                            leftMargin=2 * cm, rightMargin=2 * cm,
+                            topMargin=1.5 * cm, bottomMargin=1.5 * cm)
+
+    font_path_regular = os.path.join(settings.BASE_DIR, 'static', 'fonts', 'Montserrat-Regular.ttf')
+    font_path_bold = os.path.join(settings.BASE_DIR, 'static', 'fonts', 'Montserrat-Bold.ttf')
+
+    if os.path.exists(font_path_regular):
+        pdfmetrics.registerFont(TTFont('Montserrat-Regular', font_path_regular))
+
+    if os.path.exists(font_path_bold):
+        pdfmetrics.registerFont(TTFont('Montserrat-Bold', font_path_bold))
+    
+    pdfmetrics.registerFontFamily(
+        'Montserrat-Regular',
+        normal='Montserrat-Regular',
+        bold='Montserrat-Bold'
+    )
+    
+    styles = getSampleStyleSheet()
+
+    style_normal = ParagraphStyle(
+        'MontserratNormal',
+        parent=styles['Normal'],
+        fontName='Montserrat-Regular', 
+        allowHtml=True,
+        fontSize=8,
+        spaceAfter=8,
+        alignment=TA_JUSTIFY,
+    )
+
+    style_normal_center = ParagraphStyle(
+        'MontserratNormal',
+        parent=styles['Normal'],
+        fontName='Montserrat-Regular', 
+        fontSize=8,
+        spaceAfter=8,
+        alignment=TA_CENTER,
+    )
+    
+    style_bold = ParagraphStyle(
+        'MontserratNormal',
+        parent=styles['Normal'],
+        fontName='Montserrat-Bold', 
+        fontSize=8,
+        spaceAfter=8,
+        alignment=TA_JUSTIFY,
+    )
+
+    style_bold_center = ParagraphStyle(
+        'MontserratNormal',
+        parent=styles['Normal'],
+        fontName='Montserrat-Bold', 
+        fontSize=8,
+        spaceAfter=8,
+        alignment=TA_CENTER,
+    )
+
+    # Lista para almacenar contenido
+    Story = []
+
+    documento = Paragraph("Nombre del documento: Formato para el diagnóstico de Necesidades de Formación y Actualización Docente y Profesional", style_bold)
+    revision = Paragraph("Revisión: 0", style_bold)
+    referencia = Paragraph("Referencia: ITAPI-AD-PO-003-02", style_bold)
+    codigo = Paragraph("Código: ITAPI-AD-PO-003-02", style_bold)
+    pagina = Paragraph("Página: 1", style_bold)
+
+
+    # **Encabezado**
+    encabezado = [
+        ['logo', documento, codigo],
+        ['', '', revision],
+        ['', referencia, pagina],
+    ]
+
+    tabla_encabezado = Table(encabezado, colWidths=[70, 300, 120])
+    tabla_encabezado.setStyle(TableStyle([
+        ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+        ("ALIGN", (0, 0), (0, 0), "CENTER"),  # Logo centrado
+        ("ALIGN", (1, 0), (1, 1), "CENTER"),  # Título y subtítulo centrados
+        ("ALIGN", (2, 0), (2, 2), "RIGHT"),   # Fecha, folio, página a la derecha
+        ("SPAN", (0, 0), (0, 2)),             # Logo ocupa tres filas
+        ('SPAN', (1, 0), (1, 1)),
+        ("GRID", (0, 0), (-1, -1), 0.5, colors.black),
+    ]))
+
+    def encabezado(canvas, doc):
+        tabla_encabezado.wrapOn(canvas, doc.width, doc.topMargin)
+        tabla_encabezado.drawOn(canvas, doc.leftMargin, doc.height + doc.topMargin - tabla_encabezado._height)
+
+    frame = Frame(doc.leftMargin, doc.bottomMargin, doc.width, doc.height - 3 * cm, id='normal')
+
+    # Crear una plantilla de página con encabezado y pie de página
+    plantilla = PageTemplate(id='plantilla', frames=frame, onPage=encabezado)
+    doc.addPageTemplates([plantilla])
+
+    titulo = Paragraph("INSTITUTO TÉCNICO DE APIZACO", style_bold_center)
+    subtitulo = Paragraph("Departamento de Desarrollo Académico", style_bold_center)
+
+    Story.append(titulo)
+    Story.append(Spacer(1, -10))
+    Story.append(subtitulo)
+
+    
+
+    documento = Paragraph("DIAGNÓSTICO DE NECIDADES DE FORMACIÓN Y ACTUALIZACIÓN DOCENTE Y PROFESIONAL", style_bold_center)
+    Story.append(documento)
+
+    Story.append(Spacer(1, 12))
+
+    Story.append(Paragraph(f"<b>Departamento:</b> {departamento.departamento}", style_normal))
+    Story.append(Paragraph(f"<b>Fecha de realización del diagnóstico:</b> {diagnostico.fecha.strftime('%d de %B del %Y')}", style_normal))
+    Story.append(Spacer(1, 12))
+
+    firma_jefe = [
+        [Paragraph(request.user.get_user_full_name(), style_normal_center),''],
+        [Paragraph('Jefe(a) del Departamento Académico', style_bold), Paragraph('Firma', style_bold_center)],
+    ]
+
+    firma_presidente = [
+        [Paragraph(request.user.get_user_full_name(), style_normal_center),''],
+        [Paragraph('Presidente de Academia', style_bold), Paragraph('Firma', style_bold_center)],
+    ]
+    
+    Story.append(draw_table_firma(firma_jefe, [doc.width / 2, doc.width / 2]))
+    Story.append(Spacer(1, 12))
+    Story.append(draw_table_firma(firma_presidente, [doc.width / 2, doc.width / 2]))
+
+    text = Paragraph("a)  a)	PRIORIZAR LAS ASIGNATURAS EN LAS QUE REQUIERA LA FORMACIÓN O ACTUALIZACIÓN DE LOS Y LAS PROFESOR(AS) EN LOS MÓDULOS DE ESPECIALIDAD, AVALADOS POR LA ACADEMIA.", style_bold)
+    Story.append(text)
+
+    table = [
+        ["Asignaturas en las que se requiere", "Contenidos Temáticos", "No. Profesores", "Periodo", "Facilitadores(as)"],
+    ]
+
+    for data in asignaturas:
+        instructores = ", ".join([str(instructor) for instructor in data.instructores.all()])
+        table.append([data.asignatura, data.contenido, str(data.noProfesores), f'{data.periodoInicio} - {data.periodoFin}', instructores])
+
+    
+
+    Story.append(draw_table_diagnosticos(table, [doc.width / 5, doc.width / 5, doc.width / 5, doc.width / 5, doc.width / 5], style_bold_center, style_normal_center))
+    # Agregar salto de página si es necesario
+    Story.append(PageBreak())
+
+    # Generar PDF
+    doc.build(Story)
+
+    buffer.seek(0)
+    filename = f"Hola.pdf"
+    response = HttpResponse(buffer, content_type="application/pdf")
+    response['Content-Disposition'] = f'inline; filename="{filename}"'
+    return response

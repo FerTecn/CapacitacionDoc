@@ -94,13 +94,25 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="form-group col-md-4 ">
+                                    <div class="form-group col-md-3 ">
                                         <b>{{ form.periodoInicio.label_tag }}</b><br>
                                         {{ form.periodoInicio }}
                                     </div>
-                                    <div class="form-group col-md-4 ">
+                                    <div class="form-group col-md-3 ">
                                         <b>{{ form.periodoFin.label_tag }}</b><br>
                                         {{ form.periodoFin }}
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <h6 class="font-weight-bold">Seleccione los facilitadores:</h6>
+                                        <div class="border rounded p-1 bg-white">
+                                            {% for instructor in instructores %}
+                                                <button type="button" class="btn btn-icon-split instructor-btn m-1" data-id="{{ instructor.id }}">
+                                                    <span class="icon text-white-50 d-none justify-content-center align-items-center"><i class="fa-solid fa-circle-check"></i></span>
+                                                    <span class="text">{{ instructor }}</span>
+                                                </button>
+                                            {% endfor %}
+                                            {{ form.instructores }}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -168,6 +180,81 @@
 
         /*** Habilitar eliminación en los elementos existentes ***/
         document.querySelectorAll('.contenido-form').forEach(form => addDeleteButton(form, '.eliminar-contenido'));
+    });
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        function setupInstructorSelection(form) {
+            const inputInstructores = form.querySelector("select[name$='-instructores']");
+            const buttons = form.querySelectorAll(".instructor-btn");
+            const selectedInstructores = new Set();
+    
+            inputInstructores.classList.add("d-none"); // Ocultar el select de Django
+    
+            // Lista de colores disponibles
+            const colors = ["primary", "danger", "warning", "success", "info"];
+    
+            buttons.forEach(button => {
+                const instructorId = button.getAttribute("data-id");
+                const icon = button.querySelector(".icon");
+    
+                // Si el botón es de un formulario recién agregado, reiniciar sus clases
+                button.classList.remove("btn-primary", "btn-danger", "btn-warning", "btn-success", "btn-info", "btn-outline-primary", "btn-outline-danger", "btn-outline-warning", "btn-outline-success", "btn-outline-info");
+                icon.classList.add("d-none")
+                icon.classList.remove("d-flex")
+                // Asignar un color aleatorio nuevo
+                const randomColor = colors[Math.floor(Math.random() * colors.length)];
+                button.classList.add(`btn-outline-${randomColor}`);
+                button.dataset.color = randomColor;
+    
+                // Si la instructor ya estaba seleccionada en el select, marcar el botón
+                for (let option of inputInstructores.options) {
+                    if (option.selected && option.value === instructorId) {
+                        selectedInstructores.add(instructorId);
+                        button.classList.remove(`btn-outline-${button.dataset.color}`);
+                        button.classList.add(`btn-${button.dataset.color}`);
+                        icon.classList.add("d-flex");
+                        icon.classList.remove("d-none");
+                    }
+                }
+    
+                button.addEventListener("click", function () {
+                    if (selectedInstructores.has(instructorId)) {
+                        selectedInstructores.delete(instructorId);
+                        button.classList.remove(`btn-${button.dataset.color}`);
+                        button.classList.add(`btn-outline-${button.dataset.color}`);
+                        icon.classList.add("d-none");
+                        icon.classList.remove("d-flex");
+                    } else {
+                        selectedInstructores.add(instructorId);
+                        button.classList.remove(`btn-outline-${button.dataset.color}`);
+                        button.classList.add(`btn-${button.dataset.color}`);
+                        icon.classList.add("d-flex");
+                        icon.classList.remove("d-none");
+                    }
+    
+                    // Actualizar el select de Django
+                    for (let option of inputInstructores.options) {
+                        option.selected = selectedInstructores.has(option.value);
+                    }
+                });
+            });
+        }
+    
+        // Aplicar la configuración a los formsets ya generados
+        document.querySelectorAll(".contenido-form").forEach(setupInstructorSelection);
+    
+        // Cuando se agrega un nuevo formulario, inicializar sus botones correctamente
+        document.getElementById("agregar-contenido")?.addEventListener("click", function () {
+            setTimeout(() => {
+                const newForm = document.querySelector(".contenido-form:last-of-type"); // Último formulario agregado
+                if (newForm && !newForm.dataset.init) {
+                    setupInstructorSelection(newForm);
+                    newForm.dataset.init = "true";  // Evitar doble inicialización
+                }
+            }, 100); // Esperar a que el DOM se actualice
+        });
     });
 </script>
 {% endblock %}
