@@ -817,12 +817,12 @@ def criteriosseleccioncrear(request, curso_id):
     curso = get_object_or_404(RegistroCurso, id=curso_id)
     evaluador = get_object_or_404(
         Autoridad,
-        puesto__cargo_masculino="Director",
+        puesto__cargo_masculino="Jefe de Departamento Académico",
         estatus=True
     )
     titular = get_object_or_404(
         Autoridad,
-        puesto__cargo_masculino="Jefe de Desarrollo Académico",
+        puesto__cargo_masculino="Jefe de Subdirección Académica",
         estatus=True
     )
     if request.method == 'POST':
@@ -1049,10 +1049,20 @@ def criteriosseleccionpdf(request, curso_id):
     Story.append(Spacer(1, 100))
 
     data_table = [
-        ['Nombre', "", "Nombre"],
-        ["Nombre y Firma del Facilitador", "", f"Nombre y Firma"],
+        [f'{evaluacion.evaluador.get_full_name()}<br/>{evaluacion.evaluador.get_puesto()}', "", f'{evaluacion.titular.get_full_name()}<br/>{evaluacion.titular.get_puesto()}'],
+        ["Nombre, puesto y Firma de la persona titular del Departamento Académico", "", "Nombre, puesto y Firma de la persona titular de la Subdirección Académica"],
     ]
-    table = Table(data_table, [200, 100, 200])
+
+    data_processed = []
+    for fila in data_table:
+        processed_row = []
+        for celda in fila:
+            celda = Paragraph(celda, style_normal_center)
+            processed_row.append(celda)
+        data_processed.append(processed_row)
+
+
+    table = Table(data_processed, [200, 100, 200])
     table.setStyle(TableStyle([
         ("ALIGN", (0, 0), (-1, -1), "CENTER"),
         ('LINEBELOW', (0,0), (0,0), 1, colors.black),
