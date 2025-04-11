@@ -120,10 +120,10 @@ class ActividadAsignatura(models.Model):
     noProfesores = models.PositiveSmallIntegerField(validators=[MinValueValidator(1)])
     fecha_realizacion = models.DateField()
 
-    @property
+    
     def mes_anio(self):
         """Formato MM/AAAA para la fecha"""
-        return self.fecha_prevista.strftime("%m/%Y")
+        return self.fecha_realizacion.strftime("%B de %Y")
 
     def __str__(self):
         return f"{self.nombre_actividad} ({self.get_tipo_display()})"
@@ -140,14 +140,12 @@ class ActividadModulosEspecialidad(models.Model):
     noProfesores = models.PositiveSmallIntegerField(validators=[MinValueValidator(1)])
     fechaRealizacion = models.DateField()
 
-    @property
     def carreras_lista(self):
         """Devuelve string con nombres de carreras"""
         return ", ".join(c.carrera for c in self.carreras.all())
 
-    @property
     def mes_anio(self):
-        return self.fecha_prevista.strftime("%m/%Y")
+        return self.fechaRealizacion.strftime("%B de %Y")
 
     def __str__(self):
         return f"{self.actividad} ({self.carreras_lista})"

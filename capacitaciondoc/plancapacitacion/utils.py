@@ -98,31 +98,31 @@ def draw_table_firma(data_table, col_widths):
     ]))
     return table
 
-def draw_table_diagnosticos(data_table, col_widths, style_bold_center, style_normal_center):
+def draw_table_diagnosticos(data_table, col_widths, style_header, style_body):
     processed_data = []
     for row_idx, fila in enumerate(data_table):
         processed_row = []
         for col_idx, celda in enumerate(fila):
-            # Encabezado (primera fila) - style_bold_center
+            # Encabezado (primera fila) - style_header
             if row_idx == 0:
-                paragraph = Paragraph(str(celda), style_bold_center)
+                paragraph = Paragraph(str(celda), style_header)
             else:
                 # Aplicar viñetas solo a la columna "Contenidos Temáticos" (col_idx == 1)
-                if col_idx == 1 and "Contenidos Temáticos" in data_table[0]:
+                if (col_idx == 1 and "Contenidos Temáticos" in data_table[0]) or (col_idx == 2 and "Carrera(s) atendida(s)" in data_table[0]):
                     contenido = cell_text_processor(str(celda))
                 else:
                     contenido = str(celda)
-                paragraph = Paragraph(contenido, style_normal_center)
+                paragraph = Paragraph(contenido, style_body)
             processed_row.append(paragraph)
         processed_data.append(processed_row)
 
     table = Table(processed_data, colWidths=col_widths)
     table.setStyle(TableStyle([
-        ("BACKGROUND", (0, 0), (-1, 0), colors.grey),  # Fondo gris para encabezado
+        # ("BACKGROUND", (0, 0), (-1, 0), colors.grey),  # Fondo gris para encabezado
         ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),  # Texto blanco encabezado
         ("ALIGN", (0, 0), (-1, -1), "CENTER"),
         ("VALIGN", (0, 0), (-1, -1), "TOP"),
-        ("GRID", (0, 0), (-1, -1), 0.5, colors.grey),  # Bordes negros
+        ("GRID", (0, 0), (-1, -1), 0.5, colors.black),  # Bordes negros
         ("FONTNAME", (0, 0), (-1, 0), "Montserrat-Bold"),  # Negrita para encabezado
     ]))
     return table
