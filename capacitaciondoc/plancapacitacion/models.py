@@ -11,7 +11,7 @@ from django.utils.translation import gettext_lazy as _
 # Create your models here.
 class RegistroCurso(models.Model):
     clave = models.CharField(max_length=10)
-    nombre=models.CharField(max_length=40)
+    nombre=models.CharField(max_length=100)
     objetivo=models.TextField(max_length=200)
     periodo=models.ForeignKey(Periodo, on_delete=models.CASCADE)
     sede=models.ForeignKey(Sede, on_delete=models.CASCADE)

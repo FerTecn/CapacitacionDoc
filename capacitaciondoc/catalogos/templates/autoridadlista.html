@@ -43,9 +43,7 @@
             <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                 <thead>
                     <tr>
-                        <th>Nombre</th>
-                        <th>Apellido Paterno</th>
-                        <th>Apellido Materno</th>
+                        <th>Nombre Completo</th>
                         <th>Género</th>
                         <th>Puesto</th>
                         <th>Estatus</th>
@@ -55,9 +53,7 @@
                 <tbody>
                     {% for autoridad in autoridades %}
                     <tr id="autoridad-{{ autoridad.id }}">
-                        <td>{{autoridad.nombre}}</td>
-                        <td>{{autoridad.apPaterno}}</td>
-                        <td>{{autoridad.apMaterno}}</td>
+                        <td>{{autoridad.nombre}} {{autoridad.apPaterno}} {{autoridad.apMaterno}}</td>
                         <td>{{autoridad.genero}}</td>
                         <td>{{autoridad.get_puesto}}</td> <!-- Obtiene el nombre del puesto según el género-->
                         <td><button class="btn btn-sm btn-{% if autoridad.estatus %}success{%else%}danger{% endif %}" disabled>{% if autoridad.estatus %}Activo{%else%}Inactivo{% endif %}</button></td>

@@ -4,6 +4,7 @@ from .models import (
     GradoAcademico, Lugar, ParticipacionInstructor, Sede, 
     Instructor, Docente, Autoridad, Carrera,
     Departamento, Dirigido, Genero, PerfilCurso, Periodo, ValorCalificacion)
+from usuarios.models import CustomUser
 
 #GRADO ACADEMICO
 class GradoAcForm(forms.ModelForm):
@@ -42,39 +43,21 @@ class SedeForm(forms.ModelForm):
     
 #INSTRUCTORES
 class AñadirInstructorForm(forms.ModelForm):
+    # Campos del usuario (CustomUser)
+    first_name = forms.CharField(label="Nombre(s)")
+    last_name_paterno = forms.CharField(label="Apellido paterno")
+    last_name_materno = forms.CharField(label="Apellido materno")
+    curp = forms.CharField(label="CURP", max_length=18)
+
     class Meta:
-        model= Instructor
-        fields = '__all__'
-        labels={'apPaterno': 'Apellido paterno',
-                'apMaterno': 'Apellido materno',
-                'fechaNac': 'Fecha de nacimiento',
-                'telefono': 'Teléfono',
-                'institucion': 'Institución académica',
-                'grado': 'Grado académico',
-                'cedulaProf': 'Cédula profesional',
-                'curso': 'Nombre del curso',
-                'nombreEmpresa': 'Nombre de la empresa y/o Institución',
-                'duracionHoras': 'Duración de horas',}
-            
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        placeholders = {
-            'fechaParticipacion': 'dd/mm/aa',
-            'periodo': 'Ejemplo: Enero 2022 - Junio 2022',
-            'fechaParticipacion':'Ejemplo: Enero 2022 - Junio 2022',}
-        
-        for field in self.fields:
-            self.fields[field].widget.attrs.update({
-                'class': 'form-control',
-                'placeholder': placeholders.get(field, ''), 
-         })
-        
-        # Configurar fechaNac como campo de tipo date
-        self.fields['fechaNac'].widget = forms.DateInput(
-            attrs={
-                'type': 'date', 
-                'class': 'form-control',
-            })
+        model = CustomUser
+        fields = ['first_name', 'last_name_paterno', 'last_name_materno', 'curp']
+
+    def clean_curp(self):
+        curp = self.cleaned_data['curp']
+        if CustomUser.objects.filter(curp=curp).exists():
+            raise forms.ValidationError("Este CURP ya está registrado.")
+        return curp
 
 class ActualizarInstructorForm(forms.ModelForm):
     # Campos del modelo CustomUser

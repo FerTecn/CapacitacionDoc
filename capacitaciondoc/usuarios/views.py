@@ -4,6 +4,10 @@ from django.http import HttpResponseForbidden
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.models import Group
 from django.db import IntegrityError
+from django.contrib.auth import get_user_model
+from django.contrib.auth.forms import SetPasswordForm
+from django.contrib.auth.views import PasswordResetConfirmView
+from django.urls import reverse_lazy
 
 from catalogos.models import Docente, Instructor
 from .forms import SignupForm, SigninForm
@@ -122,3 +126,44 @@ def custom_404_view(request, exception=None):
     # Obtener la URL previa usando HTTP_REFERER
     previous_url = request.META.get('HTTP_REFERER', None)
     return render(request, '404.html', {'previous_url': previous_url}, status=404)
+
+# Vista para recuperar la contraseña usando la CURP
+def password_reset(request):
+    if request.method == 'POST':
+        curp = request.POST.get('curp')
+        User = get_user_model()
+        try:
+            user = User.objects.get(curp=curp)  # Buscar usuario por CURP
+        except User.DoesNotExist:
+            messages.error(request, "La CURP no es válida.")
+            return redirect('password_reset')
+
+        # Si la CURP es válida, redirigir a la vista para cambiar la contraseña
+        return redirect('password_reset_confirm', curp=curp)
+    
+    return render(request, 'password_reset.html')
+
+# Vista para confirmar el restablecimiento de la contraseña
+def password_reset_confirm(request, curp):
+    User = get_user_model()
+    try:
+        user = User.objects.get(curp=curp)
+    except User.DoesNotExist:
+        raise Http404("Usuario no encontrado")
+
+    if request.method == 'POST':
+        form = SetPasswordForm(user, request.POST)
+        if form.is_valid():
+            form.save()  # Guarda la nueva contraseña
+            return redirect('password_reset_complete')  # Redirige a la página de confirmación
+    else:
+        form = SetPasswordForm(user)
+
+    return render(request, 'password_reset_confirm.html', {'form': form})
+
+# Vista para completar el restablecimiento de contraseña
+def password_reset_complete(request):
+    messages.success(request, "Tu contraseña ha sido restablecida con éxito.")
+    
+    # Renderizar la plantilla de confirmación
+    return render(request, 'password_reset_complete.html')

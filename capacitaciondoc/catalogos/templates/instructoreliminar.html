@@ -10,7 +10,7 @@
     </div>
     <div class="card-body">
       <h1 class="card-title">Eliminar instructor</h1>
-      <p class="mb-4">¿Estás seguro de que deseas eliminar el instrcutor <strong>{{ instructor.nombre }} {{ instructor.apPaterno }} {{ instructor.apMaterno }}</strong>?</p>
+      <p class="mb-4">¿Estás seguro de que deseas eliminar el instructor <strong>{{ instructor.user.first_name }} {{ instructor.user.last_name_paterno }} {{ instructor.user.last_name_materno }}</strong>?</p>
       
       <form method="post">
         {% csrf_token %}

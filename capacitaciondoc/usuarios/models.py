@@ -33,14 +33,14 @@ class CustomUser(AbstractUser):
         max_length=50,
         choices=[
             ('Docente', 'Docente'), 
-            ('Instructor', 'Instructor'), 
+            #('Instructor', 'Instructor'), 
             ('Jefe de Capacitación', 'Jefe de Capacitación'),
             ('Jefe Académico', 'Jefe Académico'),
             ('Subdirección', 'Subdirección')
         ],
         verbose_name="Rol"
     )
-    email = models.EmailField(unique=True, verbose_name="Correo electrónico")
+    email = models.EmailField(unique=True, blank=True, null=True,verbose_name="Correo electrónico")
 
     USERNAME_FIELD = 'curp'  #Agregado: Define al CURP como el identificador inicial para permitir el Login con CURP
     objects = CustomUserManager()  # Asigna el nuevo UserManager

@@ -9,7 +9,7 @@ from usuarios.models import CustomUser
 # Create your models here.
 class Instructor(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
-    clave = models.CharField(max_length=10)
+    clave = models.CharField(max_length=10, null=True)
     fechaNac=models.DateField(null=True)
     RFC = models.CharField(max_length=13, null=True)
     telefono=models.CharField(max_length=10, null=True)    
@@ -80,7 +80,7 @@ class Lugar(models.Model):
         verbose_name_plural = 'Lugares'
     
 class Sede(models.Model):
-    clave=models.CharField(max_length=10)
+    clave=models.CharField(max_length=15)
     sede = models.CharField(max_length=100) 
     
     def __str__(self):
@@ -152,7 +152,7 @@ class Periodo(models.Model):
         
     
     def __str__(self):
-        return f"{self.clave}"
+        return f"{self.clave} - {self.inicioPeriodo} - {self.finPeriodo}"
     
     class Meta:
         verbose_name_plural = 'Periodos'

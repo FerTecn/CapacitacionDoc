@@ -178,7 +178,7 @@
 
 
     <!-- Nav Item - Encuesta Collapse Menu -->
-    {% if request.user.rol != "Instructor" and request.user.rol != "Jefe Académico" and request.user.rol != "Subdirección" %}
+    {% if request.user.rol != "Instructor" and request.user.rol != "Jefe Académico" and request.user.rol != "Subdirección" and request.user.rol != "Jefe de Capacitación"%}
     <li class="nav-item {% if '/encuesta' in request.path %}active{% endif %}">
         <a class="nav-link" href="{% url 'encuesta' %}">
             <i class="fas fa-fw fa-poll"></i>

@@ -252,7 +252,7 @@ def cambiarinstructor(request, evento_id):
     
 #INSCRIPCION
 @login_required(login_url='signin')
-@permission_required('eventos.view_evento', raise_exception=True)
+#@permission_required('eventos.view_evento', raise_exception=True)
 def inscripcionlista(request):
     usuario = request.user
     hoy = now().date()
@@ -331,7 +331,7 @@ def inscripcionlista(request):
     })
 
 @login_required(login_url='signin')
-@permission_required('eventos.view_evento', raise_exception=True)
+#@permission_required('eventos.view_evento', raise_exception=True)
 def vercurso(request, evento_id):
     evento = get_object_or_404(Evento, id=evento_id)
     inscritos = Inscripcion.objects.filter(evento=evento).select_related('usuario__docente')
@@ -370,7 +370,7 @@ def invalidarinscripcion(request, evento_id):
     return redirect('inscripcionlista')
 
 @login_required(login_url='signin')
-@permission_required('eventos.view_asistencia', raise_exception=True)
+#@permission_required('eventos.view_asistencia', raise_exception=True)
 def listacursosasistencia(request):
     # Filtrar eventos que tienen lugar, fecha y hora definidos
     eventos = Evento.objects.filter(
@@ -386,7 +386,7 @@ def listacursosasistencia(request):
     })
 
 @login_required(login_url='signin')
-@permission_required('eventos.view_calificacion', raise_exception=True)
+#@permission_required('eventos.view_calificacion', raise_exception=True)
 def listacursoscalificacion(request):
     # Filtrar eventos que tienen lugar, fecha y hora definidos
     eventos = Evento.objects.filter(
@@ -402,21 +402,21 @@ def listacursoscalificacion(request):
     })
 
 @login_required(login_url='signin')
-@permission_required('eventos.view_asistencia', raise_exception=True)
+#@permission_required('eventos.view_asistencia', raise_exception=True)
 def detalle_curso_asistencia(request, evento_id):
     evento = get_object_or_404(Evento, id=evento_id)
     inscritos = Inscripcion.objects.filter(evento=evento).select_related('usuario__docente')
     return render(request, 'detallecursoasistencia.html', {'evento': evento, 'inscritos': inscritos})
 
 @login_required(login_url='signin')
-@permission_required('eventos.view_calificacion', raise_exception=True)
+#@permission_required('eventos.view_calificacion', raise_exception=True)
 def detalle_curso_calificacion(request, evento_id):
     evento = get_object_or_404(Evento, id=evento_id)
     inscritos = Inscripcion.objects.filter(evento=evento).select_related('usuario__docente')
     return render(request, 'detallecursocalificacion.html', {'evento': evento, 'inscritos': inscritos})
 
 @login_required(login_url='signin')
-@permission_required('eventos.change_evidencia', raise_exception=True)
+#@permission_required('eventos.change_evidencia', raise_exception=True)
 def evidencia(request, evento_id):
     evento = get_object_or_404(Evento, id=evento_id)
     evidencia = Evidencia.objects.filter(evento=evento).first()
@@ -454,7 +454,7 @@ def generar_dias_semana(evento):
     return dias_semana
 
 @login_required(login_url='signin')
-@permission_required('eventos.add_asistencia', raise_exception=True)
+#@permission_required('eventos.add_asistencia', raise_exception=True)
 def tomar_asistencia(request, evento_id):
     evento = get_object_or_404(Evento, id=evento_id)
     inscripciones = Inscripcion.objects.filter(evento=evento).select_related('usuario__docente')
@@ -491,7 +491,7 @@ def tomar_asistencia(request, evento_id):
     })
 
 @login_required(login_url='signin')
-@permission_required('eventos.add_calificacion', raise_exception=True)
+#@permission_required('eventos.add_calificacion', raise_exception=True)
 def asignar_calificacion(request, evento_id):
     evento = get_object_or_404(Evento, id=evento_id)
     inscripciones = Inscripcion.objects.filter(evento=evento, aceptado=True)  # Solo docentes aceptados

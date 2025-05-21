@@ -288,12 +288,10 @@ def generarconstanciadocente(request, evento_id, user_id):
         constancia = ConstanciaDocente.objects.create(
             curso=evento,
             docente=docente,
-            defaults={
-                'calificacion': calificacion,
-                'encuesta': encuesta,
-                'fecha': evento.fechaFin,
-                'director': director
-            }
+            calificacion=calificacion,
+            encuesta=encuesta,
+            fecha=evento.fechaFin,
+            director=director
         )
         return redirect('descargar_constancia', evento_id=evento.id, user_id=docente.user.id)
     except ValidationError as e:

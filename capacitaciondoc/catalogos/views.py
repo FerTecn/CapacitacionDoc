@@ -11,6 +11,10 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Table, TableStyle
 from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet
 
+from catalogos.forms import AñadirInstructorForm
+from catalogos.models import Instructor
+from usuarios.models import CustomUser
+
 from io import BytesIO
 from .utils import draw_table
 
@@ -196,17 +200,23 @@ def sedeeliminar(request, sede_id):
 
 #INSTRUCTORES
 @login_required(login_url='signin')
-@permission_required('catalogos.view_instructor', raise_exception=True)
 def instructorlista(request):
-    if request.user.rol == 'Instructor': #Si eres Instructor, ves tu registro
+    if request.user.rol == 'Instructor':
         try:
-            instructores = Instructor.objects.filter(user=request.user).select_related('user')
+            instructor = Instructor.objects.get(user=request.user)
         except Instructor.DoesNotExist:
             return HttpResponseForbidden("No tienes un perfil de instructor asociado.")
-    else:
-        instructores = Instructor.objects.select_related('user')
-    
+
+        # Solo ese instructor se ve a sí mismo
+        return render(request, 'instructorlista.html', {'instructores': [instructor]})
+
+    # Para los demás (jefes, etc.)
+    if not request.user.has_perm('catalogos.view_instructor'):
+        return HttpResponseForbidden("No tienes permiso para ver la lista de instructores.")
+
+    instructores = Instructor.objects.select_related('user')
     return render(request, 'instructorlista.html', {'instructores': instructores})
+
 
 @login_required(login_url='signin')
 @permission_required('catalogos.add_instructor', raise_exception=True)
@@ -214,15 +224,36 @@ def instructorcrear(request):
     if request.method == 'POST':
         form = AñadirInstructorForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect('instructorlista') 
+            # Crear el usuario con los campos básicos
+            curp = form.cleaned_data['curp']
+            user = CustomUser.objects.create_user(
+                username=curp,
+                curp=curp,
+                first_name=form.cleaned_data['first_name'],
+                last_name_paterno=form.cleaned_data['last_name_paterno'],
+                last_name_materno=form.cleaned_data['last_name_materno'],
+                password='Temporal123.',
+                rol='Instructor',
+            )
+
+            # Crear el instructor con clave temporal y otros campos en null o vacíos
+            Instructor.objects.create(
+                user=user,
+                clave=None,  
+                fechaNac=None,
+                RFC=None,
+                telefono=None
+            )
+
+            return redirect('instructorlista')
     else:
         form = AñadirInstructorForm()
 
     return render(request, 'instructorcrear.html', {'form': form})
 
+
 @login_required(login_url='signin')
-@permission_required('catalogos.view_instructor', raise_exception=True)
+#@permission_required('catalogos.view_instructor', raise_exception=True)
 def instructorver(request, instructor_id=None):
     if request.user.rol == 'Instructor':
         # Verificar si el registro que intenta acceder es suyo
@@ -252,7 +283,7 @@ def instructorver(request, instructor_id=None):
     })
 
 @login_required(login_url='signin')
-@permission_required('catalogos.view_instructor', raise_exception=True)
+#@permission_required('catalogos.view_instructor', raise_exception=True)
 def generar_cv_pdf(request, instructor_id=None):
     locale.setlocale(locale.LC_TIME, 'spanish')  # Establecer la localización para formatear la fecha a español
     if request.user.rol == 'Instructor':
@@ -338,7 +369,7 @@ def generar_cv_pdf(request, instructor_id=None):
     return response
 
 @login_required(login_url='signin')
-@permission_required('catalogos.change_instructor', raise_exception=True)
+#@permission_required('catalogos.change_instructor', raise_exception=True)
 def instructoractualizar(request, instructor_id=None):
     if request.user.rol == 'Instructor':
         # Si es un instructor, solo puede editar su propio registro

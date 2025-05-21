@@ -9,6 +9,7 @@ from django.urls import reverse
 from eventos.models import Evento
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
+from django.http import Http404
 
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.units import cm
@@ -123,7 +124,7 @@ def invalidar_curso(request, curso_id):
     return HttpResponseRedirect(reverse('validarcursolista'))
 
 @login_required(login_url='signin')
-@permission_required('plancapacitacion.view_fichatecnica', raise_exception=True)
+#@permission_required('plancapacitacion.view_fichatecnica', raise_exception=True)
 def cursosfichas(request):
     if request.user.rol == "Instructor":
         cursos = RegistroCurso.objects.filter(instructor__user=request.user)
@@ -132,7 +133,7 @@ def cursosfichas(request):
     return render(request, 'cursosfichas.html', {'cursos': cursos})
 
 @login_required(login_url='signin')
-@permission_required('plancapacitacion.view_fichatecnica', raise_exception=True)
+#@permission_required('plancapacitacion.view_fichatecnica', raise_exception=True)
 def fichatecnicaver(request, curso_id):
     ficha = get_object_or_404(FichaTecnica, curso=curso_id)
     # Obtener las relaciones relacionadas con el curso
@@ -147,7 +148,7 @@ def fichatecnicaver(request, curso_id):
     })
 
 @login_required(login_url='signin')
-@permission_required('plancapacitacion.add_fichatecnica', raise_exception=True)
+#@permission_required('plancapacitacion.add_fichatecnica', raise_exception=True)
 def fichatecnicacrear(request, curso_id):
     curso = get_object_or_404(RegistroCurso, id=curso_id)
     autoridad = get_object_or_404(Autoridad, puesto__cargo_masculino='Jefe de Desarrollo Académico', estatus=True)
@@ -189,7 +190,7 @@ def fichatecnicacrear(request, curso_id):
     })
 
 @login_required(login_url='signin')
-@permission_required('plancapacitacion.view_fichatecnica', raise_exception=True)
+#@permission_required('plancapacitacion.view_fichatecnica', raise_exception=True)
 def fichatecnicapdf(request, curso_id):
     curso = get_object_or_404(RegistroCurso, id=curso_id)
     ficha = get_object_or_404(FichaTecnica, curso=curso)
