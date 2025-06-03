@@ -3,6 +3,8 @@ from django.http import HttpResponseForbidden, HttpResponse
 from django.shortcuts import render, redirect, render, get_object_or_404
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
+import os
+from django.conf import settings
 
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.units import cm
@@ -1047,6 +1049,27 @@ def formatodepartamentoactualizar(request, formato_id):
     return render(request, 'formatodepartamentoactualizar.html', {'form': form, 'formato': formato})
 
 @login_required(login_url='signin')
+@permission_required('catalogos.delete_formatodepartamento', raise_exception=True)
+def eliminar_imagen_departamento(request, tipo_imagen, formato_id):
+    formato = get_object_or_404(FormatoDepartamento, id=formato_id)
+
+    if tipo_imagen == 'header':
+        formato.header.delete(save=False)
+        formato.header = None
+        mensaje = "Header eliminado correctamente."
+    elif tipo_imagen == 'footer':
+        formato.footer.delete(save=False)
+        formato.footer = None
+        mensaje = "Footer eliminado correctamente."
+    else:
+        messages.error(request, "Tipo de imagen no válido.")
+        return redirect('formatoslista')
+
+    formato.save()
+    messages.success(request, mensaje)
+    return redirect('formatodepartamentoactualizar', formato_id=formato.id)
+
+@login_required(login_url='signin')
 @permission_required('catalogos.add_formatoconstancia', raise_exception=True)
 def formatoconstanciacrear(request):
     if request.method == 'POST':
@@ -1056,7 +1079,7 @@ def formatoconstanciacrear(request):
 
             # Verificar si ya existe un formato con el mismo departamento y año
             if FormatoConstancia.objects.filter(year=year).exists():
-                messages.warning(request, "Ya existe un formato para de este año.")
+                messages.warning(request, "Ya existe un formato para este año.")
                 return render(request, 'formatoconstanciacrear.html', {'form': form})
             
             form.save()
@@ -1089,7 +1112,38 @@ def formatoconstanciaactualizar(request, formato_id):
             print(form.errors)
     else:
         form = FormatoConstanciaForm(instance=formato)
-    return render(request, 'formatoconstanciaactualizar.html', {'form': form, 'formato': formato})
+    return render(request, 'formatoconstanciaactualizar.html', {'form': form, 'formato': formato, 'año': formato.year,})
+
+@login_required(login_url='signin')
+@permission_required('catalogos.delete_formatoconstancia', raise_exception=True)
+def eliminar_imagen_constancia(request, tipo_imagen, año):
+    formato = get_object_or_404(FormatoConstancia, year=año)
+
+    if tipo_imagen == 'header':
+        formato.header.delete()
+        formato.header = None
+        mensaje = "Header eliminado correctamente."
+    elif tipo_imagen == 'footer':
+        formato.footer.delete()
+        formato.footer = None
+        mensaje = "Footer eliminado correctamente."
+    elif tipo_imagen == 'fondo':
+        formato.fondo.delete()
+        formato.fondo = None
+        mensaje = "Fondo eliminado correctamente."
+    elif tipo_imagen == 'margend':
+        formato.margend.delete()
+        formato.margend = None
+        mensaje = "Margen derecho eliminado correctamente."
+    else:
+        messages.error(request, "Tipo de imagen no válido.")
+        return redirect('formatoslista')
+
+    formato.save()
+    messages.success(request, mensaje)
+
+    # 🔁 Redirige correctamente con el formato_id
+    return redirect('formatoconstanciaactualizar', formato_id=formato.id)
 
 #CARRERAS
 @login_required(login_url='signin')

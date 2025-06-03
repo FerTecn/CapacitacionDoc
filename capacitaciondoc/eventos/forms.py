@@ -6,10 +6,11 @@ from .models import CriteriosSeleccionInstructor, Evento, Evidencia, OficioComis
 class EventoForm(forms.ModelForm):
     class Meta:
         model = Evento
-        fields = ['fechaInicio', 'fechaFin', 'horaInicio', 'horaFin', 'lugar']
+        fields = ['fechaInicio', 'fechaFin', 'horaInicio', 'horaFin', 'lugar', 'cupo_inscritos']
         labels ={
             'fechaInicio': 'Fecha de inicio',
             'fechaFin': 'Fecha de culminación',
+            'cupo_inscritos': '¿Cuántos docentes deseas inscribir?',
         }
         widgets = {
             'fechaInicio': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}, format='%Y-%m-%d'),
@@ -17,6 +18,11 @@ class EventoForm(forms.ModelForm):
             'horaInicio': forms.TimeInput(attrs={'type': 'time', 'class': 'form-control'}),
             'horaFin': forms.TimeInput(attrs={'type': 'time', 'class': 'form-control'}),
             'lugar': forms.Select(attrs={'class': 'form-control'}),
+            'cupo_inscritos': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'min': 1,
+                'max': 35,
+                'required': True}),
         }
 
     def clean(self):
@@ -27,10 +33,21 @@ class EventoForm(forms.ModelForm):
         horaFin = cleaned_data.get('horaFin')
         curso = self.instance.curso
         periodo = curso.periodo
+        cupo = cleaned_data.get('cupo_inscritos')
 
-        # Validar fechas
-        if fechaInicio and fechaFin and fechaInicio > fechaFin:
-            raise forms.ValidationError("La fecha de inicio no puede ser posterior a la fecha de fin.")
+        curso = self.instance.curso
+        periodo = curso.periodo if curso else None
+
+        # Validación del cupo
+        if cupo is not None:
+            if cupo < 1:
+                self.add_error('cupo_inscritos', "El mínimo de docentes es 15.")
+            elif cupo > 35:
+                self.add_error('cupo_inscritos', "El máximo de docentes es 35.")
+
+            # Validar fechas
+            if fechaInicio and fechaFin and fechaInicio > fechaFin:
+                raise forms.ValidationError("La fecha de inicio no puede ser posterior a la fecha de fin.")
 
         # Validar horas
         if horaInicio and horaFin and horaInicio >= horaFin:

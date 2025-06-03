@@ -18,9 +18,9 @@
                     
                     <div class="list-group-item">
                         <h5 class="mb-1">{{ evento.curso.nombre }}</h5>
-                        <p><strong>Periodo:</strong> {{ evento.curso.periodo }}</p>
-                        <p><strong>Horas:</strong> {{ evento.curso.horas }}</p>
-                        <p><strong>Lugar:</strong>{{ evento.lugar }}</p>
+                        <p><strong>Periodo: </strong> {{ evento.curso.periodo.clave }}</p>
+                        <p><strong>Horas: </strong> {{ evento.curso.horas }}</p>
+                        <p><strong>Lugar: </strong>{{ evento.lugar }}</p>
                         <a href="{% url 'detalle_curso_asistencia' evento.id %}" class="btn btn-info btn-sm">Ver detalles del curso</a>
                     </div>
                 </div>

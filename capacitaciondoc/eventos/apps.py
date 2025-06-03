@@ -52,6 +52,7 @@ class EventosConfig(AppConfig):
                 )
 
                 # Grupo Jefe Académico: solo puede ver los eventos, no puede inscribirse
+                
                 academico_group.permissions.add(
                     *permisos_eventos.filter(codename__startswith='view'),
                     *permisos_oficios_comision,

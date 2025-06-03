@@ -152,7 +152,16 @@ class Periodo(models.Model):
         
     
     def __str__(self):
-        return f"{self.clave} - {self.inicioPeriodo} - {self.finPeriodo}"
+        import locale
+        try:
+            locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')  # Linux/Mac
+        except locale.Error:
+            locale.setlocale(locale.LC_TIME, 'Spanish_Spain.1252')  # Windows
+
+        texto = f"{self.clave} - ({self.inicioPeriodo.strftime('%d %B %Y')} a {self.finPeriodo.strftime('%d %B %Y')})"
+        
+        locale.setlocale(locale.LC_TIME, '')  # Restaurar a configuración por defecto
+        return texto
     
     class Meta:
         verbose_name_plural = 'Periodos'
@@ -265,9 +274,32 @@ def formato_departamento_upload_path(instance, filename):
     return os.path.join(folder_path, filename)
 
 def formato_constancia_upload_path(instance, filename):
-    """Guarda los archivos en: media/formatos/constancia/año/ siempre como 'header.png'."""
+    """Guarda los archivos en: media/formatos/constancia/año/ con nombres fijos."""
     folder_path = os.path.join("formatos", "constancia", str(instance.year))
-    return os.path.join(folder_path, "header.png")  # Siempre guardado como "header.png"
+    filename_lower = filename.lower()
+
+    if instance._meta.get_field("header").attname in filename_lower:
+        filename = "header.png"
+    elif instance._meta.get_field("margend").attname in filename_lower:
+        filename = "margend.png"
+    elif instance._meta.get_field("fondo").attname in filename_lower:
+        filename = "fondo.png"
+    elif instance._meta.get_field("footer").attname in filename_lower:
+        filename = "footer.png"
+    else:
+        # Fallback por comparación directa con campos del modelo
+        if instance.header and instance.header.name == filename:
+            filename = "header.png"
+        elif instance.margend and instance.margend.name == filename:
+            filename = "margend.png"
+        elif instance.fondo and instance.fondo.name == filename:
+            filename = "fondo.png"
+        elif instance.footer and instance.footer.name == filename:
+            filename = "footer.png"
+        else:
+            filename = "archivo.png"  # nombre genérico si no se detecta
+
+    return os.path.join(folder_path, filename)
 
 class FormatoDepartamento(models.Model):
     header = models.ImageField(upload_to=formato_departamento_upload_path)
@@ -281,6 +313,9 @@ class FormatoDepartamento(models.Model):
 
 class FormatoConstancia(models.Model):
     header = models.ImageField(upload_to=formato_constancia_upload_path)
+    margend = models.ImageField(upload_to=formato_constancia_upload_path, null=True, blank=True)
+    fondo = models.ImageField(upload_to=formato_constancia_upload_path, null=True, blank=True)
+    footer = models.ImageField(upload_to=formato_constancia_upload_path, null=True, blank=True)
     year = models.IntegerField(
         choices=[(r, r) for r in range(1980, datetime.datetime.now().year + 2)], 
         default=datetime.datetime.now().year

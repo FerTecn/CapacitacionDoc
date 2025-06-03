@@ -53,7 +53,7 @@
                     {% for curso in cursos %}
                     <tr id="curso-{{ curso.id }}">
                         <td>{{curso.nombre}}</td>
-                        <td>{{curso.periodo}}</td>
+                        <td>{{curso.periodo.clave }}</td>
                         <td>{{curso.horas}}</td>
                         <td>{{curso.instructor}}</td>
                         <td>

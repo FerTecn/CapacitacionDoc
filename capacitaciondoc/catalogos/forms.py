@@ -531,6 +531,9 @@ class FormatoConstanciaForm(forms.ModelForm):
         fields = '__all__'
         labels = {
             'header': 'Imagen de encabezado',
+            'margend': 'Margen derecho',
+            'fondo': 'Fondo',
+            'footer': 'Imagen de pie de encabezado',
             'año': 'Año',
             'vigente': 'Formato vigente',
         }
@@ -539,6 +542,21 @@ class FormatoConstanciaForm(forms.ModelForm):
                 'class': 'btn btn-primary',  # Clase CSS para estilos
                 'accept': 'image/*',  # Aceptar solo imágenes
                 'id': 'headerimg-input',  # ID para JavaScript
+            }),
+            'margend': forms.FileInput(attrs={
+                'class': 'btn btn-secondary',
+                'accept': 'image/*',
+                'id': 'margendimg-input',
+            }),
+            'fondo': forms.FileInput(attrs={
+                'class': 'btn btn-secondary',
+                'accept': 'image/*',
+                'id': 'fondoimg-input',
+            }),
+            'footer': forms.FileInput(attrs={
+                'class': 'btn btn-secondary',
+                'accept': 'image/*',
+                'id': 'footerimg-input',
             }),
             'year': forms.Select(attrs={'class': 'form-control',}),
         }
@@ -549,6 +567,9 @@ class FormatoConstanciaUpdateForm(forms.ModelForm):
         exclude = ('year',)
         labels = {
             'header': 'Imagen de encabezado',
+            'margend': 'Margen derecho',
+            'fondo': 'Fondo',
+            'footer': 'Imagen de pie de encabezado',
             'año': 'Año',
             'vigente': 'Formato vigente',
         }
@@ -557,6 +578,21 @@ class FormatoConstanciaUpdateForm(forms.ModelForm):
                 'class': 'btn btn-primary',  # Clase CSS para estilos
                 'accept': 'image/*',  # Aceptar solo imágenes
                 'id': 'headerimg-input',  # ID para JavaScript
+            }),
+            'margend': forms.FileInput(attrs={
+                'class': 'btn btn-secondary',
+                'accept': 'image/*',
+                'id': 'margendimg-input',
+            }),
+            'fondo': forms.FileInput(attrs={
+                'class': 'btn btn-secondary',
+                'accept': 'image/*',
+                'id': 'fondoimg-input',
+            }),
+            'footer': forms.FileInput(attrs={
+                'class': 'btn btn-secondary',
+                'accept': 'image/*',
+                'id': 'footerimg-input',
             }),
         }
 

@@ -52,7 +52,7 @@
                     {% for evento in eventos%}
                     <tr>
                         <td>{{ evento.curso.nombre }}</td>
-                        <td>{{ evento.curso.periodo }}</td>
+                        <td>{{ evento.curso.periodo.clave }}</td>
                         <td>{{ evento.curso.horas }}</td>
                         <td>{{ evento.curso.instructor }}</td>
                         <td>

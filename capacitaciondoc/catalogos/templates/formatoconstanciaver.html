@@ -4,6 +4,26 @@
 {% block title %}- Ver Formato de constancia{% endblock %}
 
 {% block content %}
+<style>
+    .img-preview-box {
+        width: 100%;
+        height: 300px; /* Altura uniforme para todas */
+        overflow: hidden;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        background-color: #f8f9fc;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .preview-img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+</style>
+
 <div class="d-flex align-items-start flex-column mb-3">
     <a href="{% url 'formatoslista' %}" class="btn btn-secondary btn-icon-split mr-2">
         <span class="icon text-white-50">
@@ -25,15 +45,55 @@
 </div>
 <hr>
 <div class="form-row mb-4">
-    <strong>{{form.header.label_tag}}</strong>
+    <strong>{{ form.header.label_tag }}</strong>
     {% if formato.header %}
-        <img src="{{ formato.header.url }}" 
-        alt="Encabezado para el formato de constancias del año {{formato.year}}"
-        class="border rounded"
-        style="width: 100%;"
-        >
+        <div class="img-preview-box">
+            <img src="{{ formato.header.url }}" 
+                 alt="Encabezado para el formato de constancias del año {{ formato.year }}"
+                 class="preview-img">
+        </div>
     {% else %}
         <div class="text-center mt-4">No hay encabezado</div>
     {% endif %}
 </div>
+
+<div class="form-row mb-4">
+    <strong>{{ form.margend.label_tag }}</strong>
+    {% if formato.margend %}
+        <div class="img-preview-box">
+            <img src="{{ formato.margend.url }}" 
+                 alt="Margen para el formato de constancias del año {{ formato.year }}"
+                 class="preview-img">
+        </div>
+    {% else %}
+        <div class="text-center mt-4">No hay margen</div>
+    {% endif %}
+</div>
+
+<div class="form-row mb-4">
+    <strong>{{ form.fondo.label_tag }}</strong>
+    {% if formato.fondo %}
+        <div class="img-preview-box">
+            <img src="{{ formato.fondo.url }}" 
+                 alt="Fondo para el formato de constancias del año {{ formato.year }}"
+                 class="preview-img">
+        </div>
+    {% else %}
+        <div class="text-center mt-4">No hay fondo</div>
+    {% endif %}
+</div>
+
+<div class="form-row mb-4">
+    <strong>{{ form.footer.label_tag }}</strong>
+    {% if formato.footer %}
+        <div class="img-preview-box">
+            <img src="{{ formato.footer.url }}" 
+                 alt="Footer para el formato de constancias del año {{ formato.year }}"
+                 class="preview-img">
+        </div>
+    {% else %}
+        <div class="text-center mt-4">No hay footer</div>
+    {% endif %}
+</div>
+
 {% endblock %}

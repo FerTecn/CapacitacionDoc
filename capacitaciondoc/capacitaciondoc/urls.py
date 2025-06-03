@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from usuarios.views import custom_403_view, custom_404_view, home
+from capacitaciondoc.views import avisoprivacidad
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -28,6 +29,7 @@ urlpatterns = [
     path('eventos/', include('eventos.urls')),
     path('encuesta/', include('encuesta.urls')),
     path('reportes/', include('reportes.urls')),
+    path('avisoprivacidad/', avisoprivacidad, name='avisoprivacidad'),
 ]
 # Asignar la vista personalizada
 handler403 = custom_403_view

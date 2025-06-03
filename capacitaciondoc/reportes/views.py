@@ -69,8 +69,10 @@ def generar_constancia_pdf(request, evento_id, user_id):
         "fecha_emision": constancia.fecha.strftime("%d de %B de %Y"),
         "firmante": constancia.director.get_full_name(),
         "cargo_firmante": constancia.director.get_puesto(),
-        "ruta_fondo": '',
         "ruta_logo": os.path.join(settings.MEDIA_ROOT, f'formatos/constancia/{evento.fechaInicio.year}', 'header.png'),
+        "ruta_fondo": os.path.join(settings.MEDIA_ROOT, f'formatos/constancia/{evento.fechaInicio.year}', 'fondo.png'),
+        "ruta_margend": os.path.join(settings.MEDIA_ROOT, f'formatos/constancia/{evento.fechaInicio.year}', 'margend.png'),
+        "ruta_footer": os.path.join(settings.MEDIA_ROOT, f'formatos/constancia/{evento.fechaInicio.year}', 'footer.png'),
         "ruta_firma": os.path.join(settings.MEDIA_ROOT, f'autoridades/{constancia.director.puesto.cargo_masculino}/{constancia.director.get_full_name()}', 'firma.png'),
     }
 
@@ -85,17 +87,25 @@ def generar_constancia_pdf(request, evento_id, user_id):
     # Fondo del certificado
     if os.path.exists(datos["ruta_fondo"]):
         fondo = datos["ruta_fondo"]
-        c.drawImage(fondo, 0, 0, width=ancho, height=alto, mask='auto')
+        c.drawImage(fondo, 0, 0, width=ancho, height=alto / 2, mask='auto')
     
     # Logotipo
     if os.path.exists(datos["ruta_logo"]):
         logo = datos["ruta_logo"]
-        logo_ancho_original = 924
-        logo_alto_original = 126
-        escala = (ancho - 100) / logo_ancho_original
-        logo_ancho = logo_ancho_original * escala
-        logo_alto = logo_alto_original * escala
-        c.drawImage(logo, (ancho - logo_ancho) / 2, alto - logo_alto - 50, width=logo_ancho, height=logo_alto, mask='auto')
+        logo_ancho = 15 * 28.35  # 15 cm en puntos
+        logo_alto = 2.5 * 28.35  # 2.5 cm 
+        x = (ancho - logo_ancho) / 2  # centrado horizontalmente
+        y = alto - logo_alto - 50     # posición vertical 
+        c.drawImage(logo, x, y, width=logo_ancho, height=logo_alto, mask='auto')
+        
+    # Margen
+    if os.path.exists(datos["ruta_margend"]):
+        margend = datos["ruta_margend"]
+        margend_ancho = 2 * 28.35  
+        margend_alto = alto  
+        x = ancho - margend_ancho  
+        y = 0   
+        c.drawImage(margend, x, y, width=margend_ancho, height=margend_alto, mask='auto')
 
     # Encabezado y texto con contraste
     c.setFont("Montserrat-Bold", 18)
@@ -142,6 +152,15 @@ def generar_constancia_pdf(request, evento_id, user_id):
     c.drawCentredString(ancho / 2, alto - 670, datos["firmante"].upper())
     c.setFont("Montserrat-Bold", 13)
     c.drawCentredString(ancho / 2, alto - 690, datos["cargo_firmante"].upper())
+    
+    # Pie de página
+    if os.path.exists(datos["ruta_footer"]):
+        footer = datos["ruta_footer"]
+        footer_ancho = 15 * 28.35  
+        footer_alto = 2 * 28.35  
+        x = (ancho - footer_ancho) / 2  # centrado horizontalmente
+        y = 30    # posición vertical 
+        c.drawImage(footer, x, y, width=footer_ancho, height=footer_alto, mask='auto')
 
     # Guardar el PDF
     c.showPage()

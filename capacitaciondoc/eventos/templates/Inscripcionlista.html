@@ -35,7 +35,15 @@
                     <div class="font-weight-bold text-gray mb-1">{{ evento.horaInicio }} - {{evento.horaFin}}</div>
                     {% if perms.eventos.view_inscripcion %}
                     <a href="{% url 'vercurso' evento.id %}" class="btn btn-info btn-sm btn-block mb-2">Ver</a>{% endif %}
-                    <a href="{% url 'aceptarinscripcion' evento.id %}" class="btn btn-success btn-sm btn-block">Inscribirse</a>
+                    {% with inscritos=evento.inscripcion_set.count %}
+                        {% if inscritos < evento.cupo_inscritos %}
+                            <a href="{% url 'aceptarinscripcion' evento.id %}" class="btn btn-success btn-sm btn-block">Postular inscripción</a>
+                        {% else %}
+                            <button class="btn btn-danger btn-sm btn-block" disabled style="color: white; cursor: not-allowed;">
+                                Cupo lleno
+                            </button> 
+                        {% endif %}
+                    {% endwith %}
                 </div>
             </div>
         </div>
@@ -57,8 +65,8 @@
                     <div class="font-weight-bold text-gray mb-1">{{ evento.horaInicio }} - {{evento.horaFin}}</div>
                     {% if perms.eventos.view_inscripcion %}
                     <a href="{% url 'vercurso' evento.id %}" class="btn btn-info btn-sm btn-block mb-2">Ver</a>{% endif %}
-                    {% if perms.eventos.change_inscripcion %}
-                    <a href="{% url 'invalidarinscripcion' evento.id %}" class="btn btn-warning btn-sm btn-block">Invalidar</a>{% endif %}
+                    <!--{% if perms.eventos.change_inscripcion %}
+                    <a href="{% url 'invalidarinscripcion' evento.id %}" class="btn btn-warning btn-sm btn-block">Invalidar</a>{% endif %}-->
                 </div>
             </div>
         </div>
@@ -80,8 +88,8 @@
                     <div class="font-weight-bold text-gray mb-1">{{ evento.horaInicio }} - {{evento.horaFin}}</div>
                     {% if perms.eventos.view_inscripcion %}
                     <a href="{% url 'vercurso' evento.id %}" class="btn btn-info btn-sm btn-block mb-2">Ver</a>{% endif %}
-                    {% if perms.eventos.change_inscripcion %}
-                    <a href="{% url 'invalidarinscripcion' evento.id %}" class="btn btn-warning btn-sm btn-block">Invalidar</a>{% endif %}
+                    <!--{% if perms.eventos.change_inscripcion %}
+                    <a href="{% url 'invalidarinscripcion' evento.id %}" class="btn btn-warning btn-sm btn-block">Invalidar</a>{% endif %}-->
                 </div>
             </div>
         </div>

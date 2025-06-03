@@ -20,7 +20,7 @@
 </div>
 <!-- Encabezado de página -->
 <!-- Page Heading -->
-<h1 class="h3 mb-0 text-gray-800">Información del curso e inscritos</h1>
+<h1 class="h3 mb-0 text-gray-800">Información del curso e inscritos</h1><br>
 <div class="card mb-4">
     <div class="card-header bg-primary text-white text-center">
         <h4 class="m-0 font-weight-bold text-white">Datos del curso</h4>
@@ -49,7 +49,11 @@
                 <div class="card-body">
                     <div class="form-row">
                         <div class="form-group col-md-4 align-items-center">
-                            <p><strong style="display: block;">Período del curso</strong> {{ evento.curso.periodo }}</p>
+                            <p><strong style="display: block;">Período del curso</strong>
+                                {{ evento.curso.periodo.clave }} <br>
+                                {{ evento.curso.periodo.inicioPeriodo|date:"d F Y"|capfirst }} -
+                                {{ evento.curso.periodo.finPeriodo|date:"d F Y"|capfirst }}
+                            </p>
                         </div>
                         <div class="form-group col-md-6 align-items-center">
                             <p><strong style="display: block;">Sede</strong> {{ evento.curso.sede }}</p>

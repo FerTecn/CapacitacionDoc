@@ -22,7 +22,12 @@
     </div>
     <div class="form-row">
         <div class="form-group col-md-4 align-items-center">
-            <p><strong style="display: block;">Período del curso</strong> {{ evento.curso.periodo }}</p>
+            <p><strong style="display: block;">Período del curso:</strong></p>
+            <p>{{ evento.curso.periodo.clave }}</p>
+            <i>
+                {{ evento.curso.periodo.inicioPeriodo|date:"d F Y"|capfirst }} a
+                {{ evento.curso.periodo.finPeriodo|date:"d F Y"|capfirst }}
+            </i>
         </div>
         <div class="form-group col-md-6 align-items-center">
             <p><strong style="display: block;">Sede</strong> {{ evento.curso.sede }}</p>
@@ -53,6 +58,11 @@
         <div class="form-group col-md-6">
             <p><strong>Horario del curso</strong></p>
             {{ evento.horaInicio }} <span class="mx-2">a</span> {{ evento.horaFin }}
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-12 ">
+            <p><strong>Cupo de docentes inscritos:</strong> {{ evento.cupo_inscritos }}</p>
         </div>
     </div>
 

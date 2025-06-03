@@ -6,6 +6,7 @@ from django.db import models
 from django.conf import settings
 from catalogos.models import Autoridad, Docente, Lugar, Instructor, ValorCalificacion
 from plancapacitacion.models import RegistroCurso
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 
 # Create your models here.
@@ -16,7 +17,11 @@ class Evento(models.Model):
     fechaFin = models.DateField(null=True, blank=True)
     horaInicio = models.TimeField(null=True, blank=True)  # Hora de inicio
     horaFin = models.TimeField(null=True, blank=True)  # Hora de fin
-    
+    cupo_inscritos = models.PositiveIntegerField(
+        default=1,
+        validators=[MinValueValidator(1), MaxValueValidator(35)],
+        verbose_name="Cantidad de docentes a inscribir"
+    )
     
     def __str__(self):
         return f"{self.curso} - {self.fechaInicio} a {self.fechaFin}"
@@ -42,6 +47,11 @@ class Inscripcion(models.Model):
             evento__horaFin__gt=self.evento.horaInicio
         ).exists():
             raise ValidationError("No puedes inscribirte en eventos con horarios empalmados.")
+        
+        """ Verifica que no se haya superado el cupo máximo del evento """
+        inscritos_actuales = Inscripcion.objects.filter(evento=self.evento).count()
+        if inscritos_actuales >= self.evento.cupo_inscritos:
+            raise ValidationError("Este curso ya ha alcanzado el cupo máximo de inscripciones.")
 
     def save(self, *args, **kwargs):
         """ Llama a la validación antes de guardar el objeto. """

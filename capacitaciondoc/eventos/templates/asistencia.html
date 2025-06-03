@@ -24,8 +24,9 @@
     <h1 class="h3 mb-2 text-gray-800"><center>Curso</center></h1>
     <p><strong>Nombre del curso: </strong>{{ evento.curso.nombre }}</p>
     <p><strong>Nombre del(a) instructor(a): </strong>{{ evento.curso.instructor }}</p>
-    <p><strong>Período: </strong>{{ evento.curso.periodo }}</p>
+    <p><strong>Período: </strong>{{ evento.curso.periodo.clave }}</p>
     <p><strong>Duración: </strong>{{ evento.curso.horas }} horas</p>
+    <p><strong>Docentes inscritos:</strong> {{ evento.cupo_inscritos }}</p>
 
     {% if messages %}
         <div class="messages-container">

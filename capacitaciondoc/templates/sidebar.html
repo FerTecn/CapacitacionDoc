@@ -169,10 +169,18 @@
     <!-- Eventos para Jefe Académico -->
     {% elif request.user.rol == "Jefe Académico" %}
     <li class="nav-item {% if '/eventos' in request.path %}active{% endif %}">
-        <a class="nav-link collapsed" href="{% url "oficioslista" %}">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseThree"
+            aria-expanded="true" aria-controls="collapseThree">
             <i class="fas fa-fw fa-calendar-day"></i>
-            <span>Oficio de comisión</span>
+            <span>Eventos</span>
         </a>
+        <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">Gestión Académica:</h6>
+                <a class="collapse-item" href="{% url 'oficioslista' %}">Oficio de comisión</a>
+                <a class="collapse-item" href="{% url 'validarinscripcionlista' %}">Inscripciones</a>
+            </div>
+        </div>
     </li>
     {% endif %}
 

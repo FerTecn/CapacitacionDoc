@@ -94,14 +94,21 @@ urlpatterns = [
     path('valorcalificacionactualizar/<int:valor_id>/', views.valorcalificacionactualizar, name='valorcalificacionactualizar'),
     path('valorcalificacioneliminar/<int:valor_id>/', views.valorcalificacioneliminar, name='valorcalificacioneliminar'),
 
+    #CONSTANCIAS
     path('formatoslista/', views.formatoslista, name='formatoslista'),
     path('formatodepartamentocrear/', views.formatodepartamentocrear, name='formatodepartamentocrear'),
     path('formatodepartamentover/<int:formato_id>/', views.formatodepartamentover, name='formatodepartamentover'),
     path('formatodepartamentoactualizar/<int:formato_id>/', views.formatodepartamentoactualizar, name='formatodepartamentoactualizar'),
+    path(
+    'eliminar-imagen-departamento/<str:tipo_imagen>/<int:formato_id>/',
+    views.eliminar_imagen_departamento,
+    name='eliminar_imagen_departamento'
+    ),
     path('formatoconstanciacrear/', views.formatoconstanciacrear, name='formatoconstanciacrear'),
     path('formatoconstanciaver/<int:formato_id>/', views.formatoconstanciaver, name='formatoconstanciaver'),
     path('formatoconstanciaactualizar/<int:formato_id>/', views.formatoconstanciaactualizar, name='formatoconstanciaactualizar'),
-    
+    path('eliminar-imagen/<str:tipo_imagen>/<int:año>/', views.eliminar_imagen_constancia, name='eliminar_imagen_constancia'),
+
     #CARRERAS
     path('carreralista/', views.carreralista, name='carreralista'),
     path('carreracrear/', views.carreracrear, name='carreracrear'),

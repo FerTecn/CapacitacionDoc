@@ -38,11 +38,11 @@
             <h4 class="m-0 font-weight-bold text-white">Detalles del curso</h4>
         </div>
         <div class="card-body row">
-            <div class="col-md-4">
+            <div class="col-md-5">
                 <h6><strong>Curso: </strong>{{evento.curso.nombre}}</h6>
                 <h6><strong>Duración: </strong>{{evento.curso.horas}} horas</h6>
             </div>
-            <div class="col-md-8">
+            <div class="col-md-7">
                 <h6><strong>Nombre del instructor: </strong>{{instructor}}</h6>
                 <a href="{% url "generar_constancia_instructor" evento.id instructor.user.id %}" class="btn btn-success">Generar constancia</a>
             </div>

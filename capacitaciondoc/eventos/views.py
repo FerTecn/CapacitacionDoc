@@ -174,82 +174,6 @@ def cambiarinstructor(request, evento_id):
         'instructor_actual': instructor_actual,
     })
     
-# def añadirinstructor(request, evento_id):
-#     evento = get_object_or_404(Evento, id=evento_id)
-#     instructores = Instructor.objects.all()  
-#     grados = GradoAcademico.objects.all()
-
-#     if request.method == 'POST':
-#         # Obtener los datos del formulario
-#         clave = request.POST.get('clave')
-#         nombre = request.POST.get('nombre')
-#         apPaterno = request.POST.get('apPaterno')
-#         apMaterno = request.POST.get('apMaterno')
-#         fechaNac = request.POST.get('fechaNac')  
-#         CURP = request.POST.get('CURP')  
-#         RFC = request.POST.get('RFC') 
-#         telefono = request.POST.get('telefono')  
-#         email = request.POST.get('email')  
-        
-#         # Formación académica
-#         institucion = request.POST.get('institucion')  
-#         grado_id = request.POST.get('grado')
-#         cedulaProf = request.POST.get('cedulaProf')  
-
-#         # Experiencia laboral
-#         puesto = request.POST.get('puesto')  
-#         empresa = request.POST.get('empresa')  
-
-#         # Experiencia docente
-#         materia = request.POST.get('materia')  
-#         periodo = request.POST.get('periodo')  
-
-#         # Participación como instructor
-#         curso = request.POST.get('curso') 
-#         nombreEmpresa = request.POST.get('nombreEmpresa')  
-#         duracionHoras = request.POST.get('duracionHoras')  
-#         fechaParticipacion = request.POST.get('fechaParticipacion')  
-
-#         # Obtener el grado académico relacionado
-#         grado = None
-#         if grado_id:
-#             grado = GradoAcademico.objects.get(id=grado_id)
-            
-#         # Crear el nuevo instructor
-#         nuevo_instructor = Instructor.objects.create(
-#             clave=clave,
-#             nombre=nombre,
-#             apPaterno=apPaterno,
-#             apMaterno=apMaterno,
-#             fechaNac=fechaNac,
-#             CURP=CURP,
-#             RFC=RFC,
-#             telefono=telefono,
-#             email=email,
-#             institucion=institucion,
-#             grado=grado,
-#             cedulaProf=cedulaProf,
-#             puesto=puesto,
-#             empresa=empresa,
-#             materia=materia,
-#             periodo=periodo,
-#             curso=curso,
-#             nombreEmpresa=nombreEmpresa,
-#             duracionHoras=duracionHoras,
-#             fechaParticipacion=fechaParticipacion,
-#         )
-
-#         # Asignar el nuevo instructor al evento
-#         evento.curso.instructor = nuevo_instructor
-#         evento.curso.save()
-
-#         return redirect('crearevento', evento_id=evento.id)  
-    
-#     return render(request, 'añadirinstructor.html', {
-#         'evento': evento,
-#         'grados': grados,
-#     })
-    
 #INSCRIPCION
 @login_required(login_url='signin')
 #@permission_required('eventos.view_evento', raise_exception=True)
@@ -1080,3 +1004,19 @@ def criteriosseleccionpdf(request, curso_id):
     response['Content-Disposition'] = f'inline; filename="{filename}"'
 
     return response
+
+
+#Vistas de Jefe academico donde ve las inscripciones
+
+def validarinscripcionlista(request):
+    eventos = Evento.objects.filter(
+        lugar__isnull=False, fechaInicio__isnull=False, fechaFin__isnull=False
+    ).order_by('curso__nombre')
+    
+    return render(request, 'validarinscripcionlista.html', {
+        'eventos': eventos
+    })
+
+def validardocente(request, evento_id):
+    evento = get_object_or_404(Evento, id=evento_id)
+    return render(request, 'validardocente.html', {'evento': evento})

@@ -62,24 +62,28 @@
                         <div class="form-group col-md-4 align-items-center">
                             <p><strong style="display: block;">Instructor</strong> {{ evento.curso.instructor }}</p>
                         </div>
-                        <div class="form-group col-md-2 align-items-center">
+                        <div class="form-group col-md-4 align-items-center">
                             <p><strong style="display: block;">Dirigido a</strong> {{ evento.curso.dirigido }}</p>
                         </div>
-                        <div class="form-group col-md-3 align-items-center">
+                        <div class="form-group col-md-4 align-items-center">
                             <p><strong style="display: block;">Perfil de Curso</strong> {{ evento.curso.perfilCurso }}</p>
                         </div>
                     </div>
                     <div class="form-row">
-                        <div class="form-group col-md-3 align-items-center">
+                        <div class="form-group col-md-4 align-items-center">
                             <p><strong style="display: block;">Lugar</strong>{{ evento.lugar}}</p>
                         </div>
-                        <div class="form-group col-md-6">
+                        <div class="form-group col-md-5">
                             <p><strong>Fecha del curso</strong></p>
                             {{ evento.fechaInicio }} - {{ evento.fechaFin }}
                         </div>
                         <div class="form-group col-md-3">
                             <p><strong>Horario del curso</strong></p>
                             {{ evento.horaInicio }} <span class="mx-2">a</span> {{ evento.horaFin }}
+                        </div>
+                        <div class="form-group col-md-6">
+                            <p><strong>Docentes inscritos</strong></p>
+                            {{ evento.cupo_inscritos }}
                         </div>
                     </div>
                 </div>
