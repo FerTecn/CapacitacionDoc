@@ -567,12 +567,12 @@ def pdfdiagnostico(request, departamento_id):
     Story.append(Spacer(1, 12))
 
     firma_jefe = [
-        [Paragraph(request.user.get_user_full_name(), style_normal_center),''],
+        [Paragraph(diagnostico.jefeDepAcademico.get_full_name(), style_normal_center),''],
         [Paragraph('Jefe(a) del Departamento Académico', style_bold), Paragraph('Firma', style_bold_center)],
     ]
 
     firma_presidente = [
-        [Paragraph(request.user.get_user_full_name(), style_normal_center),''],
+        [Paragraph(diagnostico.presidenteAcademia.get_full_name(), style_normal_center),''],
         [Paragraph('Presidente de Academia', style_bold), Paragraph('Firma', style_bold_center)],
     ]
     
@@ -614,12 +614,12 @@ def pdfdiagnostico(request, departamento_id):
     Story.append(Spacer(1, 12))
 
     firma_jefe2 = [
-        [Paragraph(request.user.get_user_full_name(), style_normal_center),''],
+        [Paragraph(concentrado.jefeDepAcademico.get_full_name(), style_normal_center),''],
         [Paragraph('Jefe(a) del Departamento Académico', style_bold), Paragraph('Firma', style_bold_center)],
     ]
 
     firma_presidente2 = [
-        [Paragraph(request.user.get_user_full_name(), style_normal_center),''],
+        [Paragraph(concentrado.presidenteAcademia.get_full_name(), style_normal_center),''],
         [Paragraph('Presidente de Academia', style_bold), Paragraph('Firma', style_bold_center)],
     ]
     
