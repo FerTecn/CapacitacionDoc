@@ -133,6 +133,7 @@ def eventodeshacer(request, evento_id):
     # Redirigir a la lista de eventos
     return redirect(reverse('eventolista'))
 
+@login_required(login_url='signin')
 def lugarcrearnuevo(request):
     if request.method == 'POST':
         nombre_edificio = request.POST.get('nombreEdificio')
@@ -153,6 +154,7 @@ def lugarcrearnuevo(request):
 
     return render(request, 'lugarcrearnuevo.html')
 
+@login_required(login_url='signin')
 def cambiarinstructor(request, evento_id):
     evento = get_object_or_404(Evento, id=evento_id)
     instructores = Instructor.objects.all()  # Obtener todos los instructores disponibles
@@ -731,12 +733,14 @@ def criteriosseleccionlista(request):
     cursos = RegistroCurso.objects.all()
     return render(request, 'criteriosseleccionlista.html', {'cursos': cursos})
 
+@login_required(login_url='signin')
 def criteriosseleccionver(request, curso_id):
     curso = get_object_or_404(RegistroCurso, id=curso_id)
     evaluacion = get_object_or_404(CriteriosSeleccionInstructor, curso=curso)
     form = CriteriosSeleccionForm(instance=evaluacion, readonly=True)
     return render(request, 'criteriosseleccionver.html', {'form': form, 'curso': curso, 'evaluacion': evaluacion})
 
+@login_required(login_url='signin')
 def criteriosseleccioncrear(request, curso_id):
     curso = get_object_or_404(RegistroCurso, id=curso_id)
     evaluador = get_object_or_404(
@@ -765,6 +769,7 @@ def criteriosseleccioncrear(request, curso_id):
         form = CriteriosSeleccionForm()
     return render(request, 'criteriosseleccioncrear.html', {'form': form, 'curso': curso})
 
+@login_required(login_url='signin')
 def criteriosseleccionactualizar(request, curso_id):
     curso = get_object_or_404(RegistroCurso, id=curso_id)
     evaluacion = get_object_or_404(CriteriosSeleccionInstructor, curso=curso)
@@ -778,6 +783,7 @@ def criteriosseleccionactualizar(request, curso_id):
         form = CriteriosSeleccionForm(instance=evaluacion)
     return render(request, 'criteriosseleccionactualizar.html', {'form': form, 'curso': curso})
 
+@login_required(login_url='signin')
 def criteriosseleccionpdf(request, curso_id):
     curso = get_object_or_404(RegistroCurso, id=curso_id)
     evaluacion = get_object_or_404(CriteriosSeleccionInstructor, curso=curso)
@@ -1007,7 +1013,7 @@ def criteriosseleccionpdf(request, curso_id):
 
 
 #Vistas de Jefe academico donde ve las inscripciones
-
+@login_required(login_url='signin')
 def validarinscripcionlista(request):
     eventos = Evento.objects.filter(
         lugar__isnull=False, fechaInicio__isnull=False, fechaFin__isnull=False
@@ -1017,6 +1023,8 @@ def validarinscripcionlista(request):
         'eventos': eventos
     })
 
+@login_required(login_url='signin')
 def validardocente(request, evento_id):
     evento = get_object_or_404(Evento, id=evento_id)
-    return render(request, 'validardocente.html', {'evento': evento})
+    inscritos = Inscripcion.objects.filter(evento=evento).select_related('usuario__docente')
+    return render(request, 'validardocente.html', {'evento': evento, 'inscritos': inscritos})

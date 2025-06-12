@@ -65,8 +65,8 @@
                     <div class="font-weight-bold text-gray mb-1">{{ evento.horaInicio }} - {{evento.horaFin}}</div>
                     {% if perms.eventos.view_inscripcion %}
                     <a href="{% url 'vercurso' evento.id %}" class="btn btn-info btn-sm btn-block mb-2">Ver</a>{% endif %}
-                    <!--{% if perms.eventos.change_inscripcion %}
-                    <a href="{% url 'invalidarinscripcion' evento.id %}" class="btn btn-warning btn-sm btn-block">Invalidar</a>{% endif %}-->
+                    {% if perms.eventos.change_inscripcion %}
+                    <a href="{% url 'invalidarinscripcion' evento.id %}" class="btn btn-warning btn-sm btn-block">Invalidar</a>{% endif %}
                 </div>
             </div>
         </div>
