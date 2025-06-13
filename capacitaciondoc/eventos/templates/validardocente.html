@@ -5,6 +5,22 @@
 
 {% block content %}
 
+{% if messages %}
+  {% for message in messages %}
+    <div class="alert 
+         {% if message.tags == 'error' %}alert-danger
+         {% elif message.tags == 'success' %}alert-success
+         {% else %}alert-info{% endif %}
+         alert-dismissible fade show" role="alert">
+      {{ message }}
+      <button type="button" class="close" data-dismiss="alert" aria-label="Cerrar">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+  {% endfor %}
+{% endif %}
+
+
 <div class="d-flex align-items-start flex-column mb-3">
     <a href="{% url 'validarinscripcionlista' %}" class="btn btn-secondary btn-icon-split mr-2">
         <span class="icon text-white-50">
@@ -20,11 +36,14 @@
     </div>
     <div class="card-body">
         <div class="form-row">
-            <div class="form-group col-md-4 align-items-center">
+            <div class="form-group col-md-3 align-items-center">
                 <p><strong style="display: block;">Clave</strong> {{ evento.curso.clave }}</p>
             </div>
-            <div class="form-group col-md-8 align-items-center">
+            <div class="form-group col-md-6 align-items-center">
                 <p><strong style="display: block;">Nombre del curso</strong> {{ evento.curso.nombre }}</p>
+            </div>
+            <div class="form-group col-md-3 align-items-center">
+                <p><strong style="display: block;">Limite de inscritos</strong> {{ evento.cupo_inscritos }}</p>
             </div>
         </div>
         <div class="form-row">
@@ -103,7 +122,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for inscripcion in inscripciones %}
+                    {% for inscripcion in inscritos %}
                         <tr>
                             <td>{{ forloop.counter }}</td>
                             <td>{{ inscripcion.usuario.first_name }} 
@@ -111,7 +130,7 @@
                                 {{ inscripcion.usuario.last_name_materno }}</td>
                             <td>{{ inscripcion.usuario.docente.departamento }}</td>
                             <td>
-                                {% if inscripcion.aceptado %}
+                               {% if inscripcion.aceptado %}
                                     <span class="badge badge-success">Aceptado</span>
                                 {% else %}
                                     <span class="badge badge-danger">Rechazado</span>
@@ -119,12 +138,12 @@
                             </td>
                             <td>
                                 {% if inscripcion.aceptado %}
-                                    <form method="post" action="{% url 'invalidar_inscripcion' inscripcion.id %}">
+                                    <form method="post" action="{% url 'invalidarinscripcion' inscripcion.id %}">
                                         {% csrf_token %}
                                         <button type="submit" class="btn btn-danger btn-sm">Invalidar inscripción</button>
                                     </form>
                                 {% else %}
-                                    <form method="post" action="{% url 'validar_inscripcion' inscripcion.id %}">
+                                    <form method="post" action="{% url 'validarinscripcion' inscripcion.id %}">
                                         {% csrf_token %}
                                         <button type="submit" class="btn btn-success btn-sm">Validar inscripción</button>
                                     </form>

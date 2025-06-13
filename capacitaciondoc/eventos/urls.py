@@ -15,12 +15,14 @@ urlpatterns = [
     #Inscripcion
     path('inscripcionlista/', views.inscripcionlista, name='inscripcionlista'),
     path('vercurso/<int:evento_id>/', views.vercurso, name='vercurso'),
-    path('aceptarinscripcion/<int:evento_id>/', views.aceptarinscripcion, name='aceptarinscripcion'),
-    path('invalidar/<int:evento_id>/', views.invalidarinscripcion, name='invalidarinscripcion'),
+    path('postularinscripcion/<int:evento_id>/', views.postularinscripcion, name='postularinscripcion'),
+    path('invalidar/<int:evento_id>/', views.invalidarpostulacion, name='invalidarpostulacion'),
     
     #Inscripciones que validara el jefe académico
     path('inscripciones/', views.validarinscripcionlista, name='validarinscripcionlista'),
     path('validardocente/<int:evento_id>/', views.validardocente, name='validardocente'),
+    path('validarinscripcion/<int:inscripcion_id>', views.validarinscripcion, name='validarinscripcion'),
+    path('invalidarinscripcion/<int:inscripcion_id>', views.invalidarinscripcion, name='invalidarinscripcion'),
 
     #Cursos y asistencias
     path('asistencia/', views.listacursosasistencia, name='asistencia'),
