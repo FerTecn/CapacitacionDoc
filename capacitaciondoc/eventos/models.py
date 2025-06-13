@@ -7,7 +7,7 @@ from django.conf import settings
 from catalogos.models import Autoridad, Docente, Lugar, Instructor, ValorCalificacion
 from plancapacitacion.models import RegistroCurso
 from django.core.validators import MaxValueValidator, MinValueValidator
-
+from django.db.models import Q
 
 # Create your models here.
 class Evento(models.Model):
@@ -40,22 +40,23 @@ class Inscripcion(models.Model):
         
         """ Verifica que la inscripción no tenga empalmes de horario con otras inscripciones del usuario. """
         if Inscripcion.objects.filter(
-            usuario=self.usuario,
-            evento__fechaInicio__lte=self.evento.fechaFin,
-            evento__fechaFin__gte=self.evento.fechaInicio,
-            evento__horaInicio__lt=self.evento.horaFin,
-            evento__horaFin__gt=self.evento.horaInicio
+            Q(usuario=self.usuario) &
+            ~Q(pk=self.pk) &
+            Q(evento__fechaInicio__lte=self.evento.fechaFin) &
+            Q(evento__fechaFin__gte=self.evento.fechaInicio) &
+            Q(evento__horaInicio__lt=self.evento.horaFin) &
+            Q(evento__horaFin__gt=self.evento.horaInicio)
         ).exists():
             raise ValidationError("No puedes inscribirte en eventos con horarios empalmados.")
         
         """ Verifica que no se haya superado el cupo máximo del evento """
-        inscritos_actuales = Inscripcion.objects.filter(evento=self.evento).count()
+        inscritos_actuales = Inscripcion.objects.filter(evento=self.evento, aceptado=True).exclude(pk=self.pk).count()
         if inscritos_actuales >= self.evento.cupo_inscritos:
             raise ValidationError("Este curso ya ha alcanzado el cupo máximo de inscripciones.")
 
     def save(self, *args, **kwargs):
-        """ Llama a la validación antes de guardar el objeto. """
-        self.clean()  # Llama a la validación
+        if self.aceptado:  # Solo validamos si se va a aceptar
+            self.clean()
         super().save(*args, **kwargs)
         
     def __str__(self):

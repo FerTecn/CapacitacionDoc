@@ -133,6 +133,7 @@ def eventodeshacer(request, evento_id):
     # Redirigir a la lista de eventos
     return redirect(reverse('eventolista'))
 
+@login_required(login_url='signin')
 def lugarcrearnuevo(request):
     if request.method == 'POST':
         nombre_edificio = request.POST.get('nombreEdificio')
@@ -153,6 +154,7 @@ def lugarcrearnuevo(request):
 
     return render(request, 'lugarcrearnuevo.html')
 
+@login_required(login_url='signin')
 def cambiarinstructor(request, evento_id):
     evento = get_object_or_404(Evento, id=evento_id)
     instructores = Instructor.objects.all()  # Obtener todos los instructores disponibles
@@ -194,12 +196,12 @@ def inscripcionlista(request):
     if es_docente:
         # Cursos disponibles (antes de la fecha de inicio y en los que no está inscrito)
         eventos_disponibles = eventos.filter(fechaInicio__gt=hoy).exclude(
-            id__in=Inscripcion.objects.filter(usuario=usuario).values_list('evento_id', flat=True)
+            id__in=Inscripcion.objects.filter(usuario=usuario, aceptado=True).values_list('evento_id', flat=True)
         )
 
         # Cursos en los que está inscrito (que aún no han finalizado)
         eventos_inscritos = eventos.filter(
-            id__in=Inscripcion.objects.filter(usuario=usuario).values_list('evento_id', flat=True),
+            id__in=Inscripcion.objects.filter(usuario=usuario, aceptado=True).values_list('evento_id', flat=True),
             fechaFin__gte=hoy
         )
 
@@ -252,6 +254,7 @@ def inscripcionlista(request):
         'cursos_vigentes': cursos_vigentes if not es_docente and not es_instructor else None,
         'cursos_proximos': cursos_proximos if not es_docente and not es_instructor else None,
         'cursos_terminados': cursos_terminados if not es_docente and not es_instructor else None,
+        
     })
 
 @login_required(login_url='signin')
@@ -264,25 +267,21 @@ def vercurso(request, evento_id):
 
 @login_required(login_url='signin')
 @permission_required('eventos.change_inscripcion', raise_exception=True)
-def aceptarinscripcion(request, evento_id):
+def postularinscripcion(request, evento_id):
     evento = get_object_or_404(Evento, id=evento_id)
-    
-    try:
-        # Verificar si el usuario ya está inscrito
-        if not Inscripcion.objects.filter(evento=evento, usuario=request.user).exists():
-            inscripcion = Inscripcion(evento=evento, usuario=request.user, aceptado=True)
-            inscripcion.save()
-            messages.success(request, f"Te has inscrito exitosamente al curso '{evento.curso.nombre}'.")
-        else:
-            messages.info(request, f"Ya estás inscrito en el curso '{evento.curso.nombre}'.")
-    except ValidationError as e:
-        messages.warning(request, f"Error: {e}")
 
-    return redirect('inscripcionlista')
+    if not Inscripcion.objects.filter(evento=evento, usuario=request.user).exists():
+        inscripcion = Inscripcion(evento=evento, usuario=request.user, aceptado=False)
+        inscripcion.save()  # saltar validaciones porque es solo postulación
+        messages.success(request, f"Has postulado tu inscripción al curso '{evento.curso.nombre}'. Espera validación.")
+    else:
+        messages.info(request, f"Ya estás postulado o inscrito en el curso '{evento.curso.nombre}'.")
+
+    return redirect('inscripcionlista')  
 
 @login_required(login_url='signin')
 @permission_required('eventos.change_inscripcion', raise_exception=True)
-def invalidarinscripcion(request, evento_id):
+def invalidarpostulacion(request, evento_id):
     evento = get_object_or_404(Evento, id=evento_id)
     # Verificar si el usuario está inscrito
     inscripcion = Inscripcion.objects.filter(evento=evento, usuario=request.user).first()
@@ -731,12 +730,14 @@ def criteriosseleccionlista(request):
     cursos = RegistroCurso.objects.all()
     return render(request, 'criteriosseleccionlista.html', {'cursos': cursos})
 
+@login_required(login_url='signin')
 def criteriosseleccionver(request, curso_id):
     curso = get_object_or_404(RegistroCurso, id=curso_id)
     evaluacion = get_object_or_404(CriteriosSeleccionInstructor, curso=curso)
     form = CriteriosSeleccionForm(instance=evaluacion, readonly=True)
     return render(request, 'criteriosseleccionver.html', {'form': form, 'curso': curso, 'evaluacion': evaluacion})
 
+@login_required(login_url='signin')
 def criteriosseleccioncrear(request, curso_id):
     curso = get_object_or_404(RegistroCurso, id=curso_id)
     evaluador = get_object_or_404(
@@ -765,6 +766,7 @@ def criteriosseleccioncrear(request, curso_id):
         form = CriteriosSeleccionForm()
     return render(request, 'criteriosseleccioncrear.html', {'form': form, 'curso': curso})
 
+@login_required(login_url='signin')
 def criteriosseleccionactualizar(request, curso_id):
     curso = get_object_or_404(RegistroCurso, id=curso_id)
     evaluacion = get_object_or_404(CriteriosSeleccionInstructor, curso=curso)
@@ -778,6 +780,7 @@ def criteriosseleccionactualizar(request, curso_id):
         form = CriteriosSeleccionForm(instance=evaluacion)
     return render(request, 'criteriosseleccionactualizar.html', {'form': form, 'curso': curso})
 
+@login_required(login_url='signin')
 def criteriosseleccionpdf(request, curso_id):
     curso = get_object_or_404(RegistroCurso, id=curso_id)
     evaluacion = get_object_or_404(CriteriosSeleccionInstructor, curso=curso)
@@ -1007,7 +1010,7 @@ def criteriosseleccionpdf(request, curso_id):
 
 
 #Vistas de Jefe academico donde ve las inscripciones
-
+@login_required(login_url='signin')
 def validarinscripcionlista(request):
     eventos = Evento.objects.filter(
         lugar__isnull=False, fechaInicio__isnull=False, fechaFin__isnull=False
@@ -1017,6 +1020,35 @@ def validarinscripcionlista(request):
         'eventos': eventos
     })
 
+@login_required(login_url='signin')
 def validardocente(request, evento_id):
     evento = get_object_or_404(Evento, id=evento_id)
-    return render(request, 'validardocente.html', {'evento': evento})
+    inscritos = Inscripcion.objects.filter(evento=evento).select_related('usuario__docente')
+    return render(request, 'validardocente.html', {'evento': evento, 'inscritos': inscritos})
+
+@login_required
+@permission_required('eventos.change_inscripcion', raise_exception=True)
+def validarinscripcion(request, inscripcion_id):
+    inscripcion = get_object_or_404(Inscripcion, id=inscripcion_id)
+    
+    if request.method == "POST":
+        try:
+            inscritos_actuales = Inscripcion.objects.filter(evento=inscripcion.evento, aceptado=True).exclude(pk=inscripcion.pk).count()
+            if inscritos_actuales >= inscripcion.evento.cupo_inscritos:
+                raise ValidationError("Ha alcanzado el máximo de inscritos")
+
+            inscripcion.aceptado = True
+            inscripcion.save()
+            messages.success(request, "Inscripción validada exitosamente.")
+        except ValidationError as e:
+            messages.error(request, str(e))
+    return redirect('validardocente', evento_id=inscripcion.evento.id)
+
+@login_required
+@permission_required('eventos.change_inscripcion', raise_exception=True)
+def invalidarinscripcion(request, inscripcion_id):
+    inscripcion = get_object_or_404(Inscripcion, id=inscripcion_id)
+    inscripcion.aceptado = False
+    inscripcion.delete()
+    messages.success(request, "Inscripción rechazada correctamente.")
+    return redirect('validardocente', evento_id=inscripcion.evento.id)

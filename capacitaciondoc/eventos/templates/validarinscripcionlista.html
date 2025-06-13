@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}- Lista de validación de docentes{% endblock %}
+
+{% block content %}
+<div class="card shadow mb-4">
+    <div class="card-body">
+        <h4 class="mb-4">Cursos Registrados</h4>
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>No.</th>
+                        <th>Curso</th>
+                        <th>Periodo</th>
+                        <th>Horas</th>
+                        <th>Lugar</th>
+                        <th>Opciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for evento in eventos %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ evento.curso.nombre }}</td>
+                            <td>{{ evento.curso.periodo.clave }}</td>
+                            <td>{{ evento.curso.horas }}</td>
+                            <td>{{ evento.lugar }}</td>
+                            <td>
+                                <a href="{% url 'validardocente' evento.id %}" class="btn btn-info btn-sm">Ver docentes postulados</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,79 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Aviso de Privacidad</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 40px;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        h1, h2 {
+            color: #004080;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 800px;
+            margin: auto;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        ul {
+            margin-top: 0;
+        }
+
+        .logo-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+            <div class="logo-container">
+                <img src="{% static 'img/logo_sidebar.png' %}" class="img-fluid d-none d-md-inline logo-left" width="15%" height="auto">
+                <img src="{% static 'img/logo_sidebar_ita.png' %}" class="img-fluid d-none d-md-inline logo-right" width="15%" height="auto">
+            </div>
+            
+
+        <h1><center>Aviso de Privacidad</center></h1> 
+
+        <p> El <strong>Instituto Tecnológico Campus "Apizaco"</strong>, con domicilio en <strong>San Andrés Ahuashuatepec, Municipio de Tzompantepec, Tlaxcala, Méx. C.P. 90491</strong>
+            , es responsable del tratamiento de los datos personales que se recaben a través del sistema <strong>CapacitaTec</strong>
+            , en cumplimiento con la legislación vigente en materia de protección de datos personales.</p>
+
+        <h2>1. Datos personales que se recabarán</h2>
+        <p>Se podrán recabar los siguientes datos personales:</p>
+        <ul>
+            <li><strong>Datos de identificación:</strong> nombre completo, CURP, RFC, cargo institucional, entre otros.</li>
+            <li><strong>Datos de contacto:</strong> correo institucional, número telefónico.</li>
+            <li><strong>Datos laborales:</strong> área de adscripción, historial de cursos, evaluaciones.</li>
+            <li><strong>Documentos institucionales:</strong> constancias, formatos oficiales.</li>
+        </ul>
+
+        <h2>2. Finalidades del tratamiento</h2>
+        <p>Los datos se utilizarán para:</p>
+        <ul>
+            <li>Emitir documentos académicos y constancias oficiales.</li>
+            <li>Dar seguimiento a procesos formativos.</li>
+            <li>Facilitar la coordinación institucional.</li>
+            <li>Elaborar reportes y estadísticas internas (con consentimiento previo).</li>
+        </ul>
+
+        <h2>3. Transferencia de datos</h2>
+        <p>Los datos personales sólo se transferirán a autoridades educativas cuando sea legalmente requerido. No se realizarán otras transferencias sin su consentimiento.</p>
+
+        <h2>4. Derechos ARCO</h2>
+        <p>Usted puede ejercer sus derechos de Acceso, Rectificación, Cancelación y Oposición (ARCO), o revocar su consentimiento, escribiendo a nuestro correo: <strong>https://www.apizaco.tecnm.mx/</strong> </strong>.</p>
+
+    </div>
+</body>
+</html>
