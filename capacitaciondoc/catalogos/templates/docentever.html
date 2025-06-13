@@ -54,11 +54,14 @@
             </div>
         </div>
         <div class="form-row">
-            <div class="form-group col-md-6 align-items-center">
+            <div class="form-group col-md-5 align-items-center">
                 <p><strong style="display: block;">Email</strong>{{ docente.user.email}}</p>
             </div>
-            <div class="form-group col-md-6 align-items-center">
+            <div class="form-group col-md-5 align-items-center">
                 <p><strong style="display: block;">Departamento al que corresponde</strong>{{ docente.departamento.departamento}}</p>
+            </div>
+            <div class="form-group col-md-2 align-items-center">
+                <p><strong style="display: block;">Activo</strong><button class="btn btn-sm btn-{% if docente.user.is_active %}success{%else%}danger{% endif %}" disabled>{% if docente.user.is_active %}Activo{%else%}Inactivo{% endif %}</button></p>
             </div>
         </div>
     </div>

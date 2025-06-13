@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} - Lista de Usuarios{% endblock %}
+
+{% block styles %}
+<!-- Custom styles for this page -->
+<link href="{% static 'vendor/datatables/dataTables.bootstrap4.min.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<!-- Page Heading -->
+<h1 class="h3 mb-2 text-gray-800">Usuarios
+</h1>
+<div class="card mb-4">
+    <div class="card-body">
+        Aquí puedes adminisrar los usuarios del sistema.
+    </div>
+</div>
+
+{% if messages %}
+    <div class="messages-container">
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Cerrar">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3 d-flex justify-content-between align-items-center">
+        <h4 class="col-md-5 m-0 font-weight-bold text-primary">Mi usuario</h4>
+        <a href="{% url 'cambiar_password' %}" class="col-md-3 mr-2 btn btn-info mb-3">Cambiar mi contraseña</a>
+        <a href="{% url 'usuarioactualizar' request.user.id %}" class="col-md-3 btn btn-warning mb-3">Modificar información</a>
+    </div>
+    <div class="card-body">
+        <div class="form-row">
+            <div class="form-group col-md-6 align-items-center">
+                <p><strong>Nombre completo: </strong> {{ usuario.get_user_full_name  }}</p>
+            </div>
+            <div class="form-group col-md-6 align-items-center">
+                <p><strong>CURP: </strong>{{ usuario.curp}}</p>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-5 align-items-center">
+                <p><strong>Correo electrónico: </strong> {{ usuario.get_user_full_name  }}</p>
+            </div>
+            <div class="form-group col-md-5 align-items-center">
+                <p><strong>Rol: </strong>{{ usuario.curp}}</p>
+            </div>
+            <div class="form-group col-md-2 align-items-center">
+                <p>
+                    <strong>Activo: </strong>
+                    <button class="btn btn-sm btn-{% if usuario.is_active %}success{%else%}danger{% endif %}" disabled>{% if usuario.is_active %}Activo{%else%}Inactivo{% endif %}</button>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="card shadow mb-4">
+    <div class="card-header py-3 d-flex justify-content-between align-items-center">
+        <h4 class="m-0 font-weight-bold text-primary">Lista de otros usuarios</h4>
+        {% if perms.usuarios.add_customuser %}
+        <a href="{% url 'usuariocrear' %}" class="btn btn-success mb-3">Añadir</a>{% endif %}
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Nombre Completo</th>
+                        <th>CURP</th>
+                        <th>Estatus</th>
+                        <th>Rol</th>
+                        <th>Opciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for usuario in usuarios %}
+                    <tr id="usuario-{{ usuario.id }}">
+                        <td>{{usuario.get_user_full_name}} </td>
+                        <td>{{usuario.curp}}</td>
+                        <td><button class="btn btn-sm btn-{% if usuario.is_active %}success{%else%}danger{% endif %}" disabled>{% if usuario.is_active %}Activo{%else%}Inactivo{% endif %}</button></td>
+                        <td>{{usuario.rol}}</td>
+                        <td>
+                            <!-- Opciones -->
+                            {% if perms.usuarios.view_customuser %}
+                            <a href="{% url 'usuariover' usuario.id %}" class="btn btn-info btn-sm">Ver</a>{% endif %} 
+                            {% if perms.usuarios.change_customuser %}
+                            <a href="{% url 'usuarioactualizar' usuario.id %} " class="btn btn-warning btn-sm">Editar</a>{% endif %}
+                            {% if perms.catalogos.delete_autoridad %}
+                            <a href="{% url 'usuarioeliminar' usuario.id %}" class="btn btn-danger btn-sm">Eliminar</a>{% endif %} 
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+
+{% block scripts %}
+<!-- Page level plugins -->
+<script src="{% static 'vendor/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
+
+<!-- Page level custom scripts -->
+<script src="{% static 'js/demo/datatables-demo.js' %}"></script>
+{% endblock %}

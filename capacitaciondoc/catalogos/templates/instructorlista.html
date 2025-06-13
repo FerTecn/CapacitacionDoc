@@ -12,6 +12,19 @@
 {% endblock %}
 
 {% block content %}
+{% if messages %}
+    <div class="messages-container">
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Cerrar">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
 {% if request.user.rol == 'Instructor' %}
 <!-- Page Heading -->
 <h1 class="h3 text-gray-800">Mis datos como Instructor</h1>
@@ -19,6 +32,7 @@
 <div class="d-flex justify-content-between mb-3">
     <a href="{% url 'instructorver' request.user.id %}" class="btn btn-success btn-sm mr-2">Ver todos mis datos y CV</a>
     <a href="{% url 'instructoractualizar' request.user.id %}" class="btn btn-warning btn-sm ml-2">Modificar todos mis datos</a>
+    <a href="{% url 'cambiar_password' %}" class="btn btn-info btn-sm mr-2">Cambiar mi contraseña</a>
 </div>
 
 <div class="card mb-4">

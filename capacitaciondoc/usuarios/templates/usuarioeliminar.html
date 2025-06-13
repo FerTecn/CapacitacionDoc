@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}- Usuario a eliminar{% endblock %}
+
+{% block content %}
+<div class="card text-center">
+    <div class="card-header">
+      Mensaje de eliminación
+    </div>
+    <div class="card-body">
+      <h1 class="card-title">Eliminar usuario</h1>
+      <p class="card-text">¿Estás seguro de que deseas eliminar al usuario <strong>{{ usuario.get_user_full_name }} {{ usuario.curp }}</strong>?</p>
+      
+      <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Eliminar</button>
+        <a href="{% url 'usuariolista' %}" class="btn btn-secondary">Cancelar</a>
+     </form>
+    </div>
+  </div>
+{% endblock %}

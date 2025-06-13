@@ -25,6 +25,15 @@
             <span>Inicio</span></a>
     </li>
 
+    {% if request.user.rol != 'Docente' and request.user.rol != 'Instructor' %}
+    <!-- Nav Item - Usuarios -->
+    <li class="nav-item {% if request.path == '/usuarios' %}active{% endif %}">
+        <a class="nav-link" href="{% url 'usuariolista' %}">
+            <i class="fas fa-fw fa-user"></i>
+            <span>Usuarios</span></a>
+    </li>
+    {% endif %}
+
     <!-- Nav Item - Datos personales si rol es Docente o Instructor -->
     {% if request.user.rol == "Docente" or request.user.rol == "Instructor" %}
     <li class="nav-item {% if '/catalogos' in request.path %}active{% endif %}">

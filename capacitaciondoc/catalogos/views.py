@@ -13,10 +13,6 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Table, TableStyle
 from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet
 
-from catalogos.forms import AñadirInstructorForm
-from catalogos.models import Instructor
-from usuarios.models import CustomUser
-
 from io import BytesIO
 from .utils import draw_table
 
@@ -31,6 +27,7 @@ from .models import (
     ParticipacionInstructor, 
     Carrera)
 from .models import (
+    CustomUser,
     Docente, Instructor,
     GradoAcademico, Lugar, Sede, Departamento,
     Dirigido, Genero, PerfilCurso ,Periodo, Autoridad)
@@ -40,7 +37,7 @@ from .forms import (
     AgregarDocenteForm, ActualizarDocenteForm, 
     DepartamentoForm, DirigidoForm, GeneroForm, PerfilcursoForm, PeriodoForm)
 from .forms import (
-    AñadirInstructorForm, ActualizarInstructorForm, FormacionAcademicaForm,
+    AgregarInstructorForm, ActualizarInstructorForm, FormacionAcademicaForm,
     ExperienciaLaboralForm, ExperienciaDocenteForm,
     ParticipacionInstructorForm, CarreraForm
 )
@@ -224,32 +221,15 @@ def instructorlista(request):
 @permission_required('catalogos.add_instructor', raise_exception=True)
 def instructorcrear(request):
     if request.method == 'POST':
-        form = AñadirInstructorForm(request.POST)
+        form = AgregarInstructorForm(request.POST)
         if form.is_valid():
-            # Crear el usuario con los campos básicos
-            curp = form.cleaned_data['curp']
-            user = CustomUser.objects.create_user(
-                username=curp,
-                curp=curp,
-                first_name=form.cleaned_data['first_name'],
-                last_name_paterno=form.cleaned_data['last_name_paterno'],
-                last_name_materno=form.cleaned_data['last_name_materno'],
-                password='Temporal123.',
-                rol='Instructor',
-            )
-
-            # Crear el instructor con clave temporal y otros campos en null o vacíos
-            Instructor.objects.create(
-                user=user,
-                clave=None,  
-                fechaNac=None,
-                RFC=None,
-                telefono=None
-            )
-
+            form.save()
+            messages.success(request, "Instructor creado exitosamente. El CURP es también la contraseña temporal.")
             return redirect('instructorlista')
+        else:
+            print(form.errors)
     else:
-        form = AñadirInstructorForm()
+        form = AgregarInstructorForm()
 
     return render(request, 'instructorcrear.html', {'form': form})
 
@@ -534,6 +514,7 @@ def docentecrear(request):
         form = AgregarDocenteForm(request.POST)
         if form.is_valid():
             form.save()
+            messages.success(request, "Docente creado exitosamente. El CURP es también la contraseña temporal.")
             return redirect('docentelista') 
     else:
         form = AgregarDocenteForm()
@@ -575,6 +556,8 @@ def docenteactualizar(request, docente_id=None):
             form.save()
             messages.success(request, "Datos actualizados correctamente.")
             return redirect('docentelista') 
+        else:
+            print(form.errors)
     else:
         form = ActualizarDocenteForm(instance=docente,  user_instance=docente.user)
     return render(request, 'docenteactualizar.html', {'form': form, 'docente': docente})

@@ -1,10 +1,14 @@
 from django import forms
+from django.db import transaction
+from django.contrib.auth.models import Group
+
 from .models import (
     CargoAutoridad, ExperienciaDocente, ExperienciaLaboral, FormacionAcademica, FormatoConstancia, FormatoDepartamento, 
     GradoAcademico, Lugar, ParticipacionInstructor, Sede, 
     Instructor, Docente, Autoridad, Carrera,
     Departamento, Dirigido, Genero, PerfilCurso, Periodo, ValorCalificacion)
 from usuarios.models import CustomUser
+
 
 #GRADO ACADEMICO
 class GradoAcForm(forms.ModelForm):
@@ -42,22 +46,42 @@ class SedeForm(forms.ModelForm):
             self.fields[field].widget.attrs.update({'class': 'form-control'})  
     
 #INSTRUCTORES
-class AñadirInstructorForm(forms.ModelForm):
+class AgregarInstructorForm(forms.ModelForm):
     # Campos del usuario (CustomUser)
     first_name = forms.CharField(label="Nombre(s)")
     last_name_paterno = forms.CharField(label="Apellido paterno")
     last_name_materno = forms.CharField(label="Apellido materno")
     curp = forms.CharField(label="CURP", max_length=18)
+    email = forms.EmailField(label="Correo electrónico")
 
     class Meta:
         model = CustomUser
-        fields = ['first_name', 'last_name_paterno', 'last_name_materno', 'curp']
+        fields = ['first_name', 'last_name_paterno', 'last_name_materno', 'curp', 'email' ]
 
     def clean_curp(self):
         curp = self.cleaned_data['curp']
         if CustomUser.objects.filter(curp=curp).exists():
             raise forms.ValidationError("Este CURP ya está registrado.")
         return curp
+
+    @transaction.atomic
+    def save(self, commit=True):
+        data = self.cleaned_data
+        user = CustomUser.objects.create_user(
+            curp=data['curp'],
+            password=data['curp'],  # Contraseña temporal = CURP
+            first_name=data['first_name'],
+            last_name_paterno=data['last_name_paterno'],
+            last_name_materno=data['last_name_materno'],
+            email=data.get('email'),
+            rol='Instructor',
+        )
+        # Asignar grupo "Instructor"
+        group, created = Group.objects.get_or_create(name='Instructor')
+        user.groups.add(group)
+
+        Instructor.objects.create(user=user)
+        return user
 
 class ActualizarInstructorForm(forms.ModelForm):
     # Campos del modelo CustomUser
@@ -66,6 +90,7 @@ class ActualizarInstructorForm(forms.ModelForm):
     last_name_materno = forms.CharField(max_length=50, label="Apellido Materno", widget=forms.TextInput(attrs={'class': 'form-control'}))
     curp = forms.CharField(max_length=18, label="CURP", widget=forms.TextInput(attrs={'class': 'form-control'}))
     email = forms.EmailField(label="Correo", widget=forms.EmailInput(attrs={'class': 'form-control'}))
+    is_active = forms.BooleanField(label="Activo", required=False, widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
 
     class Meta:
         model = Instructor
@@ -96,6 +121,7 @@ class ActualizarInstructorForm(forms.ModelForm):
             self.fields['last_name_materno'].initial = self.user_instance.last_name_materno
             self.fields['curp'].initial = self.user_instance.curp
             self.fields['email'].initial = self.user_instance.email
+            self.fields['is_active'].initial = self.user_instance.is_active
 
     def save(self, commit=True):
         # Guardar los cambios en el modelo Instructor
@@ -107,6 +133,7 @@ class ActualizarInstructorForm(forms.ModelForm):
             self.user_instance.last_name_materno = self.cleaned_data['last_name_materno']
             self.user_instance.curp = self.cleaned_data['curp']
             self.user_instance.email = self.cleaned_data['email']
+            self.user_instance.is_active = self.cleaned_data['is_active']
             if commit:
                 self.user_instance.save()
         if commit:
@@ -248,32 +275,48 @@ class ParticipacionInstructorForm(forms.ModelForm):
 
 #DOCENTES
 class AgregarDocenteForm(forms.ModelForm):
+    # Campos de CustomUser
+    curp = forms.CharField(label='CURP', max_length=18)
+    first_name = forms.CharField(label='Nombre(s)')
+    last_name_paterno = forms.CharField(label='Apellido paterno')
+    last_name_materno = forms.CharField(label='Apellido materno')
+    email = forms.EmailField(label='Correo electrónico')
+
     class Meta:
-        model = Docente
-        fields = ['clave', 'fechaNac', 'genero', 'RFC', 'telefono', 'departamento']
-        labels = {
-            'clave': 'Clave',
-            'fechaNac': 'Fecha de nacimiento',
-            'genero': 'Género',
-            'departamento': 'Departamento',
-            }
-        
+        model = CustomUser
+        fields = ['curp', 'first_name', 'last_name_paterno', 'last_name_materno', 'email']
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        placeholders = {
-            'fechaNac': 'dd/mm/aa',}
-        
         for field in self.fields:
             self.fields[field].widget.attrs.update({
-                'class': 'form-control',
-                'placeholder': placeholders.get(field, ''), 
-        }) 
-        
-        self.fields['fechaNac'].widget = forms.DateInput(
-            attrs={
-                'type': 'date',
-                'class': 'form-control',
-            }, format='%Y-%m-%d' )
+                'class': 'form-control'
+            })
+
+    def clean_curp(self):
+        curp = self.cleaned_data['curp']
+        if CustomUser.objects.filter(curp=curp).exists():
+            raise forms.ValidationError("Este CURP ya está registrado.")
+        return curp
+
+    @transaction.atomic
+    def save(self, commit=True):
+        data = self.cleaned_data
+        user = CustomUser.objects.create_user(
+            curp=data['curp'],
+            password=data['curp'],  # Contraseña temporal = CURP
+            first_name=data['first_name'],
+            last_name_paterno=data['last_name_paterno'],
+            last_name_materno=data['last_name_materno'],
+            email=data.get('email'),
+            rol='Docente',
+        )
+        # Asignar grupo "Docente"
+        group, created = Group.objects.get_or_create(name='Docente')
+        user.groups.add(group)
+
+        Docente.objects.create(user=user)
+        return user
 
 class ActualizarDocenteForm(forms.ModelForm):
     # Campos del modelo CustomUser
@@ -282,6 +325,7 @@ class ActualizarDocenteForm(forms.ModelForm):
     last_name_materno = forms.CharField(max_length=50, label="Apellido Materno", widget=forms.TextInput(attrs={'class': 'form-control'}))
     curp = forms.CharField(max_length=18, label="CURP", widget=forms.TextInput(attrs={'class': 'form-control'}))
     email = forms.EmailField(label="Correo", widget=forms.EmailInput(attrs={'class': 'form-control'}))
+    is_active = forms.BooleanField(label="Activo", required=False, widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
 
     class Meta:
         model = Docente
@@ -312,6 +356,7 @@ class ActualizarDocenteForm(forms.ModelForm):
             self.fields['last_name_materno'].initial = self.user_instance.last_name_materno
             self.fields['curp'].initial = self.user_instance.curp
             self.fields['email'].initial = self.user_instance.email
+            self.fields['is_active'].initial = self.user_instance.is_active
 
     def save(self, commit=True):
         # Guardar los cambios en el modelo Docente
@@ -323,6 +368,7 @@ class ActualizarDocenteForm(forms.ModelForm):
             self.user_instance.last_name_materno = self.cleaned_data['last_name_materno']
             self.user_instance.curp = self.cleaned_data['curp']
             self.user_instance.email = self.cleaned_data['email']
+            self.user_instance.is_active = self.cleaned_data['is_active']
             if commit:
                 self.user_instance.save()
         if commit:

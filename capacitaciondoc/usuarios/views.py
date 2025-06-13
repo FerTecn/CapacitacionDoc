@@ -1,5 +1,5 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404, render, redirect
+from django.contrib.auth.decorators import login_required, permission_required
 from django.http import HttpResponseForbidden
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.models import Group
@@ -9,8 +9,9 @@ from django.contrib.auth.forms import SetPasswordForm
 from django.contrib.auth.views import PasswordResetConfirmView
 from django.urls import reverse_lazy
 
+from .models import CustomUser
 from catalogos.models import Docente, Instructor
-from .forms import SignupForm, SigninForm
+from .forms import CreateUserForm, SignupForm, SigninForm
 from django.contrib import messages
 
 # Create your views here.
@@ -80,7 +81,76 @@ def signin(request):
             # else:
             #     return redirect('home')
 
- 
+@login_required(login_url='signin')
+@permission_required('usuarios.view_customuser', raise_exception=True)
+def usuariolista(request):
+    usuario = request.user
+    usuarios = []
+
+    if usuario.rol == 'Jefe de Capacitación':
+        usuarios = CustomUser.objects.exclude(rol__in=['Docente', 'Instructor']).exclude(id=usuario.id)
+
+    return render(request, 'usuariolista.html', {'usuarios': usuarios, 'usuario': usuario})
+
+@login_required(login_url='signin')
+@permission_required('usuarios.view_customuser', raise_exception=True)
+def usuariover(request, usuario_id):
+    usuario = get_object_or_404(CustomUser, id=usuario_id)
+    form = CreateUserForm(instance=usuario)
+    return render(request, 'usuariover.html', {'usuario': usuario, 'form': form})
+
+@login_required(login_url='signin')
+@permission_required('usuarios.add_customuser', raise_exception=True)
+def usuariocrear(request):
+    if request.method == 'POST':
+        form = CreateUserForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Usuario creado correctamente.")
+            return redirect('usuariolista')
+        else:
+            print(form.errors)
+    else:
+        form = CreateUserForm()
+    return render(request, 'usuariocrear.html', {'form': form})
+
+@login_required(login_url='signin')
+@permission_required('usuarios.change_customuser', raise_exception=True)
+def usuarioactualizar(request, usuario_id):
+    usuario = get_object_or_404(CustomUser, id=usuario_id)
+    if request.method == 'POST':
+        form = CreateUserForm(request.POST, instance=usuario)
+        if request.user.pk == usuario.pk:
+            # Eliminar el campo is_active si se está editando a sí mismo
+            form.fields.pop('is_active', None)
+
+        if form.is_valid():
+            user = form.save(commit=False)
+
+            # Proteger is_active si se edita a sí mismo
+            if request.user.pk == usuario.pk:
+                user.is_active = CustomUser.objects.get(pk=user.pk).is_active
+
+            user.save()
+            messages.success(request, "Usuario actualizado correctamente.")
+            return redirect('usuariolista')
+    else:
+        form = CreateUserForm(instance=usuario)
+
+        # Eliminar el campo is_active si está editando su propio perfil
+        if request.user.pk == usuario.pk:
+            form.fields.pop('is_active', None)
+    return render(request, 'usuarioactualizar.html', {'form': form})
+
+@login_required(login_url='signin')
+@permission_required('usuarios.delete_customuser', raise_exception=True)
+def usuarioeliminar(request, usuario_id):
+    usuario = get_object_or_404(CustomUser, id=usuario_id)
+    if request.method == 'POST':
+        usuario.delete()
+        messages.success(request, "Usuario eliminado correctamente.")
+        return redirect('usuariolista')
+    return render(request, 'usuarioeliminar.html', {'usuario': usuario})
  
 # Vista para cerrar sesión
 @login_required(login_url='signin')
