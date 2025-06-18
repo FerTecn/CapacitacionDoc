@@ -18,7 +18,7 @@ from django.utils.timezone import now
 def listarcursos4encuesta(request):
     if request.user.rol == "Docente":
         # Filtra las inscripciones del usuario docente autenticado
-        inscripciones = Inscripcion.objects.filter(usuario=request.user).order_by('evento__curso__nombre')
+        inscripciones = Inscripcion.objects.filter(usuario=request.user, aceptado=True).order_by('evento__curso__nombre')
         cursos = []
         for inscripcion in inscripciones:
             curso = inscripcion.evento
@@ -98,7 +98,7 @@ def gracias(request):
 
 def resultados(request, curso_id):
     curso = get_object_or_404(RegistroCurso, id=curso_id)
-    inscripciones = Inscripcion.objects.filter(evento__curso=curso)
+    inscripciones = Inscripcion.objects.filter(evento__curso=curso, aceptado=True)
     encuestas = Encuesta.objects.filter(inscripcion__in=inscripciones)
 
     resultados = {}

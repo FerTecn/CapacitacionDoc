@@ -175,7 +175,7 @@ def listacursos(request):
         eventos = Evento.objects.filter(curso__instructor=user.instructor).order_by('curso__nombre')
 
     elif user.rol == "Docente":
-        inscripciones = Inscripcion.objects.filter(usuario=user).order_by('evento__curso__nombre')
+        inscripciones = Inscripcion.objects.filter(usuario=user, aceptado=True).order_by('evento__curso__nombre')
         eventos = [inscripcion.evento for inscripcion in inscripciones]
         
     else:
@@ -198,7 +198,7 @@ def listacursos(request):
 
 def listaconstancias(request, evento_id):
     evento = get_object_or_404(Evento, id=evento_id)
-    docentes_inscritos = Inscripcion.objects.filter(evento=evento).select_related('usuario')
+    docentes_inscritos = Inscripcion.objects.filter(evento=evento, aceptado=True).select_related('usuario')
     docentes = []
     for docente in docentes_inscritos:
         if docente.usuario.rol == "Docente":
@@ -237,7 +237,7 @@ def estatusconstancia(request, evento_id, user_id):
         messages.warning(request, "El usuario no es un docente.")
         return redirect('lista_constancias', evento_id=evento.id)
 
-    inscripcion = Inscripcion.objects.filter(evento=evento, usuario=user).first()
+    inscripcion = Inscripcion.objects.filter(evento=evento, usuario=user, aceptado=True).first()
     if not inscripcion:
         messages.warning(request, "El usuario no está inscrito en el evento.")
         return redirect('lista_constancias', evento_id=evento.id)
@@ -287,7 +287,7 @@ def generarconstanciadocente(request, evento_id, user_id):
 
     director = get_object_or_404(Autoridad, puesto__cargo_masculino='Director', estatus = True)
 
-    inscrito = Inscripcion.objects.filter(evento__id=evento_id, usuario=docente.user).exists()
+    inscrito = Inscripcion.objects.filter(evento__id=evento_id, usuario=docente.user, aceptado=True).exists()
     if not inscrito:
         messages.warning(request, "No estas inscrito en el evento.")
         return redirect('estatus_constancia_docente', evento_id=evento.id, user_id=docente.user.id)

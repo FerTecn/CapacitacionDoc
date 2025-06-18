@@ -199,6 +199,10 @@ def inscripcionlista(request):
             id__in=Inscripcion.objects.filter(usuario=usuario, aceptado=True).values_list('evento_id', flat=True)
         )
 
+        # Contar inscritos aceptados para pemritir postular infinitos pero solo si aceptados no llegan al limite
+        for evento in eventos_disponibles:
+            evento.inscritos_aceptados = evento.inscripcion_set.filter(aceptado=True).count()
+
         # Cursos en los que está inscrito (que aún no han finalizado)
         eventos_inscritos = eventos.filter(
             id__in=Inscripcion.objects.filter(usuario=usuario, aceptado=True).values_list('evento_id', flat=True),
@@ -328,14 +332,14 @@ def listacursoscalificacion(request):
 #@permission_required('eventos.view_asistencia', raise_exception=True)
 def detalle_curso_asistencia(request, evento_id):
     evento = get_object_or_404(Evento, id=evento_id)
-    inscritos = Inscripcion.objects.filter(evento=evento).select_related('usuario__docente')
+    inscritos = Inscripcion.objects.filter(evento=evento, aceptado=True).select_related('usuario__docente')
     return render(request, 'detallecursoasistencia.html', {'evento': evento, 'inscritos': inscritos})
 
 @login_required(login_url='signin')
 #@permission_required('eventos.view_calificacion', raise_exception=True)
 def detalle_curso_calificacion(request, evento_id):
     evento = get_object_or_404(Evento, id=evento_id)
-    inscritos = Inscripcion.objects.filter(evento=evento).select_related('usuario__docente')
+    inscritos = Inscripcion.objects.filter(evento=evento, aceptado=True).select_related('usuario__docente')
     return render(request, 'detallecursocalificacion.html', {'evento': evento, 'inscritos': inscritos})
 
 @login_required(login_url='signin')
@@ -380,7 +384,7 @@ def generar_dias_semana(evento):
 #@permission_required('eventos.add_asistencia', raise_exception=True)
 def tomar_asistencia(request, evento_id):
     evento = get_object_or_404(Evento, id=evento_id)
-    inscripciones = Inscripcion.objects.filter(evento=evento).select_related('usuario__docente')
+    inscripciones = Inscripcion.objects.filter(evento=evento, aceptado=True).select_related('usuario__docente')
     dias_semana = generar_dias_semana(evento)  # Lista de fechas (Lunes a Viernes)
 
     # Preprocesar asistencias para cada inscripción y día
@@ -1033,15 +1037,11 @@ def validarinscripcion(request, inscripcion_id):
     
     if request.method == "POST":
         try:
-            inscritos_actuales = Inscripcion.objects.filter(evento=inscripcion.evento, aceptado=True).exclude(pk=inscripcion.pk).count()
-            if inscritos_actuales >= inscripcion.evento.cupo_inscritos:
-                raise ValidationError("Ha alcanzado el máximo de inscritos")
-
             inscripcion.aceptado = True
             inscripcion.save()
             messages.success(request, "Inscripción validada exitosamente.")
         except ValidationError as e:
-            messages.error(request, str(e))
+            messages.error(request, f"No se pudo validar la inscripción: {e.messages[0]}")
     return redirect('validardocente', evento_id=inscripcion.evento.id)
 
 @login_required
@@ -1049,6 +1049,6 @@ def validarinscripcion(request, inscripcion_id):
 def invalidarinscripcion(request, inscripcion_id):
     inscripcion = get_object_or_404(Inscripcion, id=inscripcion_id)
     inscripcion.aceptado = False
-    inscripcion.delete()
+    inscripcion.save()
     messages.success(request, "Inscripción rechazada correctamente.")
     return redirect('validardocente', evento_id=inscripcion.evento.id)

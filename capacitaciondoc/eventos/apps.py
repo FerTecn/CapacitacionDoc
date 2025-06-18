@@ -55,6 +55,8 @@ class EventosConfig(AppConfig):
                 
                 academico_group.permissions.add(
                     *permisos_eventos.filter(codename__startswith='view'),
+                    *permisos_inscripciones.filter(codename__startswith='view'),
+                    *permisos_inscripciones.filter(codename__startswith='change'),
                     *permisos_oficios_comision,
                 )
 
