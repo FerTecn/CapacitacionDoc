@@ -10,7 +10,7 @@
     </div>
     <div class="card-body">
       <h1 class="card-title">Eliminar docente</h1>
-      <p class="card-text">¿Estás seguro de http://127.0.0.1:8000/catalogos/docentelista/que deseas eliminar al docente <strong>{{ docente.user.first_name }} {{ docente.user.last_name_paterno }} {{ docente.user.last_name_materno }}</strong>?</p>
+      <p class="card-text">¿Estás seguro de que deseas eliminar al docente <strong>{{ docente.user.first_name }} {{ docente.user.last_name_paterno }} {{ docente.user.last_name_materno }}</strong>?</p>
       
       <form method="post">
         {% csrf_token %}

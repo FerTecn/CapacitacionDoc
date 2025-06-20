@@ -1,12 +1,12 @@
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required, permission_required
 from django.http import HttpResponseForbidden
-from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth import login, logout, authenticate, update_session_auth_hash
 from django.contrib.auth.models import Group
 from django.db import IntegrityError
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import SetPasswordForm
-from django.contrib.auth.views import PasswordResetConfirmView
+from django.contrib.auth.views import PasswordResetConfirmView, PasswordChangeView
 from django.urls import reverse_lazy
 
 from .models import CustomUser
@@ -85,10 +85,7 @@ def signin(request):
 @permission_required('usuarios.view_customuser', raise_exception=True)
 def usuariolista(request):
     usuario = request.user
-    usuarios = []
-
-    if usuario.rol == 'Jefe de Capacitación':
-        usuarios = CustomUser.objects.exclude(rol__in=['Docente', 'Instructor']).exclude(id=usuario.id)
+    usuarios = CustomUser.objects.exclude(rol__in=['Docente', 'Instructor']).exclude(id=usuario.id)
 
     return render(request, 'usuariolista.html', {'usuarios': usuarios, 'usuario': usuario})
 
@@ -237,3 +234,12 @@ def password_reset_complete(request):
     
     # Renderizar la plantilla de confirmación
     return render(request, 'password_reset_complete.html')
+
+class PasswordChangeView(PasswordChangeView):
+    template_name = 'cambiar_password.html'
+    success_url = reverse_lazy('cambiar_password_done')
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        update_session_auth_hash(self.request, form.user)
+        return response

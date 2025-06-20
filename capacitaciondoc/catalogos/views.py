@@ -489,7 +489,9 @@ def instructoractualizar(request, instructor_id=None):
 def instructoreliminar(request, instructor_id):
     instructor = get_object_or_404(Instructor, id=instructor_id)
     if request.method == 'POST':
+        instructor.user.delete()
         instructor.delete()
+        messages.success(request, "Instructor eliminado correctamente.")
         return redirect('instructorlista')  
     return render(request, 'instructoreliminar.html', {'instructor': instructor})
 

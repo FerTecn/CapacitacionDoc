@@ -17,6 +17,12 @@ class Instructor(models.Model):
     def __str__(self):
         return f"{self.user.first_name} {self.user.last_name_paterno} {self.user.last_name_materno}"
     
+    def delete(self, *args, **kwargs):
+        if self.user:
+            self.user.delete()
+        else:
+            super().delete(*args, **kwargs)
+    
     class Meta:
         verbose_name_plural = 'Instructores'
 
@@ -100,6 +106,12 @@ class Docente(models.Model):
         
     def __str__(self):
         return f"{self.user.first_name} {self.user.last_name_paterno} {self.user.last_name_materno} {self.departamento}"
+    
+    def delete(self, *args, **kwargs):
+        if self.user:
+            self.user.delete()
+        else:
+            super().delete(*args, **kwargs)
 
     class Meta:
         verbose_name_plural = 'Docentes'

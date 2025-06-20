@@ -32,8 +32,8 @@ class CustomUser(AbstractUser):
     rol = models.CharField(
         max_length=50,
         choices=[
-            # ('Docente', 'Docente'), 
-            #('Instructor', 'Instructor'), 
+            ('Docente', 'Docente'), 
+            ('Instructor', 'Instructor'), 
             ('Jefe de Capacitación', 'Jefe de Capacitación'),
             ('Jefe Académico', 'Jefe Académico'),
             ('Subdirección', 'Subdirección')
