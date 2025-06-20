@@ -48,7 +48,7 @@
         </div>
         <div class="form-row">
             <div class="form-group col-md-5 align-items-center">
-                <p><strong>Correo electrónico: </strong> {{ usuario.get_user_full_name  }}</p>
+                <p><strong>Correo electrónico: </strong> {{ usuario.email  }}</p>
             </div>
             <div class="form-group col-md-5 align-items-center">
                 <p><strong>Rol: </strong>{{ usuario.curp}}</p>
@@ -92,7 +92,10 @@
                             {% if perms.usuarios.view_customuser %}
                             <a href="{% url 'usuariover' usuario.id %}" class="btn btn-info btn-sm">Ver</a>{% endif %} 
                             {% if perms.usuarios.change_customuser %}
-                            <a href="{% url 'usuarioactualizar' usuario.id %} " class="btn btn-warning btn-sm">Editar</a>{% endif %}
+                                {% if usuario.id == request.user.id or request.user.rol == 'Jefe de Capacitación' %}
+                                    <a href="{% url 'usuarioactualizar' usuario.id %}" class="btn btn-warning btn-sm">Editar</a>
+                                {% endif %}
+                            {% endif %}
                             {% if perms.catalogos.delete_autoridad %}
                             <a href="{% url 'usuarioeliminar' usuario.id %}" class="btn btn-danger btn-sm">Eliminar</a>{% endif %} 
                         </td>

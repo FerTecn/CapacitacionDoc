@@ -32,13 +32,19 @@ class UsuariosConfig(AppConfig):
                 # Asignar permisos a los grupos
 
                 # Grupo Jefe Académico: puede ver usuarios, pero no editarlos
-                academico_group.permissions.add(*permisos_usuarios.filter(codename__startswith='view'))
+                academico_group.permissions.add(
+                    *permisos_usuarios.filter(codename__startswith='view'),
+                    *permisos_usuarios.filter(codename__startswith='change')
+                )
 
                 # Grupo Jefe Capacitación: puede ver, agregar, modificar y eliminar usuarios
                 capacitacion_group.permissions.add(*permisos_usuarios)
 
                 # Grupo Subdirección: puede ver usuarios
-                subdireccion_group.permissions.add(*permisos_usuarios.filter(codename__startswith='view'))
+                subdireccion_group.permissions.add(
+                    *permisos_usuarios.filter(codename__startswith='view'),
+                    *permisos_usuarios.filter(codename__startswith='change')
+                )
 
             except Permission.DoesNotExist as e:
                 # Mostrar un error detallado en la consola si algún permiso no existe

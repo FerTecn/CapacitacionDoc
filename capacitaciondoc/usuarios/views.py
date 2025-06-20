@@ -65,7 +65,21 @@ def signin(request):
     if request.method == 'GET':
         return render(request, 'signin.html', {'form': SigninForm})
     else:
-        user = authenticate(request, username = request.POST['username'], password = request.POST['password'])
+        username = request.POST['username']
+        password = request.POST['password']
+
+        # Verificar si el usuario existe antes de autenticar para poder mostrar si su cuenta es activa o no
+        try:
+            user_obj = CustomUser.objects.get(username=username)
+            if not user_obj.is_active:
+                return render(request, 'signin.html', {
+                    'form': SigninForm,
+                    'error': 'Tu cuenta está desactivada. Contacta al administrador.'
+                })
+        except CustomUser.DoesNotExist:
+            pass
+
+        user = authenticate(request, username = username, password = password)
         if user is None:
             return render(request, 'signin.html', {'form': SigninForm, 'error': 'Usuario y/o contraseña incorrectos'})
         else:
@@ -115,6 +129,12 @@ def usuariocrear(request):
 @permission_required('usuarios.change_customuser', raise_exception=True)
 def usuarioactualizar(request, usuario_id):
     usuario = get_object_or_404(CustomUser, id=usuario_id)
+
+    # Verificar si el usuario tiene permitido editar el perfil solicitado
+    if request.user.rol!="Jefe de Capacitación" and request.user.pk != usuario.pk:
+        messages.warning(request, "No tienes permiso para editar este perfil.")
+        return redirect('usuariolista')
+    
     if request.method == 'POST':
         form = CreateUserForm(request.POST, instance=usuario)
         if request.user.pk == usuario.pk:
