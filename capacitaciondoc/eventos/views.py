@@ -202,6 +202,7 @@ def inscripcionlista(request):
         # Contar inscritos aceptados para pemritir postular infinitos pero solo si aceptados no llegan al limite
         for evento in eventos_disponibles:
             evento.inscritos_aceptados = evento.inscripcion_set.filter(aceptado=True).count()
+            evento.postulado = Inscripcion.objects.filter(evento=evento, usuario=usuario).exists()
 
         # Cursos en los que está inscrito (que aún no han finalizado)
         eventos_inscritos = eventos.filter(

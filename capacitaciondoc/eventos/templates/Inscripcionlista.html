@@ -33,11 +33,26 @@
                     <div class="font-weight-bold text-gray mb-1">{{ evento.curso.instructor }}</div>
                     <div class="font-weight-bold text-gray mb-1">{{ evento.fechaInicio }} - {{evento.fechaFin}}</div>
                     <div class="font-weight-bold text-gray mb-1">{{ evento.horaInicio }} - {{evento.horaFin}}</div>
+                    {% if evento.postulado %}
+                        <div class="w-100 flex items-center mb-3">
+                            <button class="btn btn-outline-success btn-sm btn-icon-split mb-2" style="cursor: not-allowed;">
+                                <span class="icon bg-success text-white-50"><i class="fa-solid fa-check"></i></span>
+                                <span class="text">Postulado</span>
+                            </button>
+                            <button class="btn btn-outline-secondary btn-sm btn-icon-split" style="cursor: not-allowed;">
+                                <span class="icon bg-secondary text-white-50"><i class="fa-solid fa-clock"></i></span>
+                                <span class="text">Esperando aceptación</span>
+                            </button>
+                        </div>
+                    {% endif %}
                     {% if perms.eventos.view_inscripcion %}
                     <a href="{% url 'vercurso' evento.id %}" class="btn btn-info btn-sm btn-block mb-2">Ver</a>{% endif %}
-                    
                     {% if evento.inscritos_aceptados < evento.cupo_inscritos %}
-                        <a href="{% url 'postularinscripcion' evento.id %}" class="btn btn-success btn-sm btn-block">Postular inscripción</a>
+                        {% if evento.postulado %}
+                            <a href="{% url 'invalidarpostulacion' evento.id %}" class="btn btn-danger btn-sm btn-block">Cancelar postulación</a>
+                        {% else %}
+                            <a href="{% url 'postularinscripcion' evento.id %}" class="btn btn-success btn-sm btn-block">Postular inscripción</a>
+                        {% endif %}
                     {% else %}
                         <button class="btn btn-danger btn-sm btn-block" disabled style="color: white; cursor: not-allowed;">
                             Cupo lleno
