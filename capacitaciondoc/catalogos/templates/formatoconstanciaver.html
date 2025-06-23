@@ -37,9 +37,9 @@
 <div class="form-row">
     <div class="form-group col-md-12 align-items-center">
         <p><strong>{{form.vigente.label_tag}}</strong> 
-            <button class="btn {% if formato.vigente %}btn-success{% else %}btn-danger{% endif %}">
+            <span class="badge {% if formato.vigente %}badge-success{% else %}badge-danger{% endif %}">
                 {% if formato.vigente %}Vigente{% else %}No vigente{% endif %}
-            </button>
+            </span>
         </p>
     </div>
 </div>

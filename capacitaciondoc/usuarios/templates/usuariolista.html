@@ -56,7 +56,7 @@
             <div class="form-group col-md-2 align-items-center">
                 <p>
                     <strong>Activo: </strong>
-                    <button class="btn btn-sm btn-{% if usuario.is_active %}success{%else%}danger{% endif %}" disabled>{% if usuario.is_active %}Activo{%else%}Inactivo{% endif %}</button>
+                    <button class="badge badge-{% if usuario.is_active %}success{%else%}danger{% endif %}">{% if usuario.is_active %}Activo{%else%}Inactivo{% endif %}</button>
                 </p>
             </div>
         </div>
@@ -85,7 +85,7 @@
                     <tr id="usuario-{{ usuario.id }}">
                         <td>{{usuario.get_user_full_name}} </td>
                         <td>{{usuario.curp}}</td>
-                        <td><button class="btn btn-sm btn-{% if usuario.is_active %}success{%else%}danger{% endif %}" disabled>{% if usuario.is_active %}Activo{%else%}Inactivo{% endif %}</button></td>
+                        <td><span class="badge badge-{% if usuario.is_active %}success{%else%}danger{% endif %}" disabled>{% if usuario.is_active %}Activo{%else%}Inactivo{% endif %}</span></td>
                         <td>{{usuario.rol}}</td>
                         <td>
                             <!-- Opciones -->

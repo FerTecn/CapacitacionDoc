@@ -113,6 +113,7 @@
                         <th>Género</th>
                         <th>CURP</th>
                         <th>Correo</th>
+                        <th>Estatus</th>
                         <th>Opciones</th>
                     </tr>
                 </thead>
@@ -122,6 +123,7 @@
                         <th>Género</th>
                         <th>CURP</th>
                         <th>Correo</th>
+                        <th>Estatus</th>
                         <th>Opciones</th>
                     </tr>
                 </tfoot>
@@ -136,6 +138,11 @@
                             {% endif %}</td>
                         <td>{{docente.user.curp}}</td>
                         <td>{{docente.user.email}}</td>
+                        <td>{% if docente.user.is_active %}
+                            <span class="badge badge-success">Activo</span>
+                            {% else %}
+                            <span class="badge badge-danger">Inactivo</span>
+                            {% endif %}</td>
                         <td>
                             <!-- Opciones -->
                             {% if perms.catalogos.view_docente %}

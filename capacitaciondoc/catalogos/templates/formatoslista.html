@@ -47,7 +47,7 @@
                                         <td>{{formato.departamento.departamento}}</td>
                                         <td>{{formato.year}}</td>
                                         <td>
-                                            <button class="btn btn-success btn-sm" disabled>Vigente</button>
+                                            <span class="badge badge-success" >Vigente</span>
                                         </td>
                                         <td>
                                             <!-- Opciones -->
@@ -89,7 +89,7 @@
                                             <td>{{formato.departamento.departamento}}</td>
                                             <td>{{formato.year}}</td>
                                             <td>
-                                                <button class="btn btn-warning btn-sm" disabled>No vigente</button>
+                                                <span class="badge badge-warning">No vigente</span>
                                             </td>
                                             <td>
                                                 {% if perms.catalogos.view_formatodepartamento %}
@@ -136,7 +136,7 @@
                                 <tr id="formato-{{ formato.id }}">
                                     <td>{{formato.year}}</td>
                                     <td>
-                                        <button class="btn btn-success btn-sm" disabled>Vigente</button>
+                                        <span class="badge badge-success">Vigente</span>
                                     </td>
                                     <td>
                                         {% if perms.catalogos.view_formatoconstancia %}
@@ -175,7 +175,7 @@
                                     <tr id="formato-{{ formato.id }}">
                                         <td>{{formato.year}}</td>
                                         <td>
-                                            <button class="btn btn-warning btn-sm" disabled>No vigente</button>
+                                            <span class="badge badge-warning">No vigente</span>
                                         </td>
                                         <td>
                                             {% if perms.catalogos.view_formatoconstancia %}

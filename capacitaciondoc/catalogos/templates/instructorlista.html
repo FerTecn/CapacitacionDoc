@@ -101,6 +101,8 @@
                         <tr>
                             <th>Nombre completo</th>
                             <th>CURP</th>
+                            <th>Correo</th>
+                            <th>Estatus</th>
                             <th>Opciones</th>
                         </tr>
                     </thead>
@@ -109,6 +111,12 @@
                         <tr id="instructor-{{ instructor.id }}">
                             <td>{{instructor.user.first_name}} {{instructor.user.last_name_paterno}} {{instructor.user.last_name_materno}}</td>
                             <td>{{instructor.user.curp}}</td>
+                            <td>{{instructor.user.email}}</td>
+                            <td>{% if instructor.user.is_active %}
+                                <span class="badge badge-success">Activo</span>
+                                {% else %}
+                                <span class="badge badge-danger">Inactivo</span>
+                                {% endif %}</td>
                             <td>
                                 <!-- Opciones -->
                                 {% if perms.catalogos.view_instructor %}

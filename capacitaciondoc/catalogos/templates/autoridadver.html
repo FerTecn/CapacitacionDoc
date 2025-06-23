@@ -36,9 +36,9 @@
             <div class="form-group col-md-3 align-items-center">
                 <p><strong style="display: block;">{{form.estatus.label_tag}}</strong>
                     {% if autoridad.estatus %}
-                    <button class="btn btn-success" disabled>Activo</button>
+                    <span class="badge badge-success" disabled>Activo</span>
                     {%else%}
-                    <button class="btn btn-danger" disabled>Inactivo</button>
+                    <span class="badge badge-danger" disabled>Inactivo</span>
                     {% endif %}
                 </p>
             </div>

@@ -56,7 +56,7 @@
                         <td>{{autoridad.nombre}} {{autoridad.apPaterno}} {{autoridad.apMaterno}}</td>
                         <td>{{autoridad.genero}}</td>
                         <td>{{autoridad.get_puesto}}</td> <!-- Obtiene el nombre del puesto según el género-->
-                        <td><button class="btn btn-sm btn-{% if autoridad.estatus %}success{%else%}danger{% endif %}" disabled>{% if autoridad.estatus %}Activo{%else%}Inactivo{% endif %}</button></td>
+                        <td><span class="badge badge-{% if autoridad.estatus %}success{%else%}danger{% endif %}" disabled>{% if autoridad.estatus %}Activo{%else%}Inactivo{% endif %}</span></td>
                         <td>
                             <!-- Opciones -->
                             {% if perms.catalogos.view_autoridad %}
