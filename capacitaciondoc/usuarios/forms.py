@@ -19,10 +19,14 @@ class SignupForm(UserCreationForm):
             'email': forms.EmailInput(attrs={'class': 'form-control'}),
         }
 
+    # Para solo permitir el rol "Jefe de Capacitación"
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['password1'].widget.attrs.update({'class': 'form-control'})
         self.fields['password2'].widget.attrs.update({'class': 'form-control'})
+        self.fields['rol'].choices = [
+            ('Jefe de Capacitación', 'Jefe de Capacitación'),
+        ]
 
 class CreateUserForm(forms.ModelForm):
     class Meta:
@@ -63,6 +67,13 @@ class CreateUserForm(forms.ModelForm):
         if commit:
             user.save()
         return user
+
+    # Para solo permitir agregar roles de de Capacitación, Subdirección y Jefe Académico
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['rol'].choices = [
+            ('Jefe de Capacitación', 'Jefe de Capacitación'),
+        ]
 
 class SigninForm(AuthenticationForm):
     class Meta:
