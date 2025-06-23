@@ -73,6 +73,8 @@ class CreateUserForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['rol'].choices = [
             ('Jefe de Capacitación', 'Jefe de Capacitación'),
+            ('Jefe Académico', 'Jefe Académico'),
+            ('Subdirección', 'Subdirección')
         ]
 
 class SigninForm(AuthenticationForm):
