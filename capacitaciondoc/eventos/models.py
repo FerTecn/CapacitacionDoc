@@ -19,7 +19,7 @@ class Evento(models.Model):
     horaFin = models.TimeField(null=True, blank=True)  # Hora de fin
     cupo_inscritos = models.PositiveIntegerField(
         default=1,
-        validators=[MinValueValidator(1), MaxValueValidator(35)],
+        validators=[MinValueValidator(1), MaxValueValidator(100000000)],
         verbose_name="Cantidad de docentes a inscribir"
     )
     
